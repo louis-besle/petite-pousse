@@ -1,0 +1,24 @@
+# Dépendances
+node_modules/
+
+# Build
+dist/
+dist-ssr/
+coverage/
+playwright-report/
+test-results/
+
+# Environnement
+.env
+.env.*
+!.env.example
+
+# Éditeurs et système
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# Journaux
+*.log
