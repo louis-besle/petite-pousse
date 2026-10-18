@@ -1,4 +1,5 @@
 import { createHashRouter, type RouteObject } from 'react-router-dom'
+import { ClassScreen } from '@/features/class/ClassScreen'
 import { AppShell } from '@/ui/AppShell'
 import { ScreenPlaceholder } from '@/ui/ScreenPlaceholder'
 
@@ -10,7 +11,7 @@ export const routes: RouteObject[] = [
   {
     element: <AppShell />,
     children: [
-      { path: '/', element: <ScreenPlaceholder title="Ma classe" /> },
+      { path: '/', element: <ClassScreen /> },
       { path: '/capture', element: <ScreenPlaceholder title="Choisir un élève" /> },
       {
         path: '/capture/:studentId/photo',

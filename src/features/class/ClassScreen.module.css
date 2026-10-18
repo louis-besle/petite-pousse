@@ -1,0 +1,304 @@
+.screen {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 4px;
+  /* Le CTA fixe occupe 152 px depuis le bas : la coquille n'en réserve que
+     104 px. Ce complément garantit que la dernière carte passe au-dessus. */
+  padding-bottom: 48px;
+}
+
+/* ------------------------------------------------------------------ */
+/* En-tête                                                             */
+/* ------------------------------------------------------------------ */
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.brandline {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: var(--tap-target);
+}
+
+.brandWord {
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.teacherLink {
+  display: grid;
+  place-items: center;
+  width: var(--tap-target);
+  height: var(--tap-target);
+  margin-left: auto;
+  border-radius: 50%;
+  background-color: var(--blush-soft);
+  /* Repli accessible : teinte assombrie avec l'encre, comme les avatars. */
+  color: var(--ink);
+  color: color-mix(in srgb, var(--blush-ink) 65%, var(--ink));
+  font-family: var(--font-title);
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.16s ease;
+}
+
+.teacherLink:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+@media (hover: hover) {
+  .teacherLink:hover {
+    background-color: color-mix(in srgb, var(--blush-soft) 82%, var(--card));
+  }
+}
+
+.greeting {
+  margin-top: 10px;
+  font-size: clamp(28px, 7.5vw, 36px);
+  line-height: 1.03;
+  letter-spacing: -0.035em;
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.year {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+/* ------------------------------------------------------------------ */
+/* Filtres                                                             */
+/* ------------------------------------------------------------------ */
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.filterEmpty {
+  padding: 18px 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.loading {
+  padding: 18px 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+/* ------------------------------------------------------------------ */
+/* Grille d'élèves                                                     */
+/* ------------------------------------------------------------------ */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 700px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1000px) {
+  .grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+  height: 100%;
+  min-height: 112px;
+  padding: 13px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background-color: var(--card);
+  box-shadow: var(--shadow-card);
+  color: var(--ink);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease;
+}
+
+.cardTop {
+  display: flex;
+}
+
+/* L'avatar occupe toute la largeur : initiale à gauche, pastille à droite. */
+.cardTop > span {
+  width: 100%;
+  justify-content: space-between;
+}
+
+.cardName {
+  font-family: var(--font-title);
+  font-size: 21px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+
+.count {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 10.5px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* Petit point sauge : repère visuel, doublé par le texte du compteur. */
+.dot {
+  width: 5px;
+  height: 5px;
+  flex: none;
+  border-radius: 50%;
+  background-color: var(--sage);
+}
+
+.card:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.card:active {
+  transform: scale(0.985);
+}
+
+@media (hover: hover) {
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 0 rgba(47, 42, 36, 0.05);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* État vide                                                           */
+/* ------------------------------------------------------------------ */
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 28px 20px;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-lg);
+  background-color: var(--card);
+  text-align: center;
+}
+
+.emptyTitle {
+  font-family: var(--font-title);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.emptyText {
+  max-width: 34ch;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.emptyLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tap-target);
+  padding: 0 12px;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.emptyLink:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ------------------------------------------------------------------ */
+/* Lien de gestion                                                     */
+/* ------------------------------------------------------------------ */
+
+.manageLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  gap: 6px;
+  min-height: var(--tap-target);
+  padding: 0 12px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.manageLink:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ------------------------------------------------------------------ */
+/* Appel à l'action fixe, au-dessus de la navigation basse            */
+/* ------------------------------------------------------------------ */
+
+.cta {
+  position: fixed;
+  z-index: 40;
+  right: 20px;
+  bottom: calc(96px + env(safe-area-inset-bottom));
+  left: 20px;
+  max-width: 680px;
+  min-height: 56px;
+  margin: 0 auto;
+  font-size: 14.5px;
+}
