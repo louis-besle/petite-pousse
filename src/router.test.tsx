@@ -2,10 +2,12 @@ import { screen } from '@testing-library/react'
 import { renderApp } from './test/render'
 
 describe('routes', () => {
-  it('affiche l’écran Programme sur /programme', () => {
+  it('affiche l’écran Programme sur /programme', async () => {
     renderApp({ route: '/programme' })
 
-    expect(screen.getByRole('heading', { level: 1, name: 'Programme' })).toBeInTheDocument()
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Programme' }),
+    ).toBeInTheDocument()
   })
 
   it('affiche l’écran Bilans sur /bilans', () => {

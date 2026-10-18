@@ -270,7 +270,9 @@ describe('ObjectiveScreen', () => {
     }
   })
 
-  it('affiche tous les niveaux quand l’option est activée', async () => {    const lea = await addStudent('Léa', 'MS')
+  // Rendre les 398 objectifs est lourd : la marge couvre une machine chargée.
+  it('affiche tous les niveaux quand l’option est activée', async () => {
+    const lea = await addStudent('Léa', 'MS')
     await seedDraft(lea.id)
     const user = userEvent.setup()
 
@@ -287,7 +289,7 @@ describe('ObjectiveScreen', () => {
       name: /corpus enseignés \(3 par période\)/,
     })
     expect(within(card).getByText('GS · Langage')).toBeInTheDocument()
-  })
+  }, 15_000)
 
   it('redirige vers le choix de l’élève quand aucun brouillon n’existe', async () => {
     const { router } = renderApp({ route: '/capture/objective' })

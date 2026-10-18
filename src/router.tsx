@@ -6,6 +6,7 @@ import { PhotoScreen } from '@/features/capture/PhotoScreen'
 import { StudentPickerScreen } from '@/features/capture/StudentPickerScreen'
 import { SuccessScreen } from '@/features/capture/SuccessScreen'
 import { ManageStudentsScreen } from '@/features/students/ManageStudentsScreen'
+import { ProgrammeScreen } from '@/features/programme/ProgrammeScreen'
 import { AppShell } from '@/ui/AppShell'
 import { ScreenPlaceholder } from '@/ui/ScreenPlaceholder'
 
@@ -33,7 +34,7 @@ export const routes: RouteObject[] = [
       },
       { path: '/students', element: <ManageStudentsScreen /> },
       { path: '/students/:studentId', element: <DossierScreen /> },
-      { path: '/programme', element: <ScreenPlaceholder title="Programme" /> },
+      { path: '/programme', element: <ProgrammeScreen /> },
       { path: '/bilans', element: <ScreenPlaceholder title="Bilans" /> },
       { path: '/bilans/:studentId', element: <ScreenPlaceholder title="Bilan de l’élève" /> },
       { path: '/settings', element: <ScreenPlaceholder title="Réglages" /> },
