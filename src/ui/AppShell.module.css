@@ -1,0 +1,49 @@
+.shell {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* Réserve la place de la navigation basse (62 px + marges). */
+.withNav {
+  padding-bottom: calc(104px + env(safe-area-inset-bottom));
+}
+
+.main {
+  flex: 1;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 20px 20px 32px;
+}
+
+/* Cible du lien d'évitement : le focus programme ne doit pas dessiner d'anneau. */
+.main:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.skipLink {
+  position: fixed;
+  top: calc(12px + env(safe-area-inset-top));
+  left: 50%;
+  z-index: 100;
+  padding: 10px 18px;
+  border-radius: var(--radius-pill);
+  background-color: var(--ink);
+  color: var(--cream);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: var(--shadow-float);
+  transform: translate(-50%, -200%);
+  transition: transform 0.16s ease;
+}
+
+.skipLink:focus-visible {
+  transform: translate(-50%, 0);
+  outline: 2px solid var(--cream);
+  outline-offset: 2px;
+}

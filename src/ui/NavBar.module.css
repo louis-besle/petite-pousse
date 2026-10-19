@@ -1,0 +1,62 @@
+.nav {
+  position: fixed;
+  z-index: 50;
+  right: 24px;
+  bottom: calc(18px + env(safe-area-inset-bottom));
+  left: 24px;
+  display: flex;
+  gap: 4px;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background-color: var(--card);
+  background-color: color-mix(in srgb, var(--card) 94%, transparent);
+  box-shadow: var(--shadow-float);
+  backdrop-filter: blur(12px);
+}
+
+.link {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-height: var(--tap-target);
+  border-radius: 18px;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: 10.5px;
+  font-weight: 800;
+  line-height: 1.1;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 0.16s ease,
+    color 0.16s ease;
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* Sur le fond encre de l'onglet actif, l'anneau passe en crème à l'intérieur. */
+.active:focus-visible {
+  outline-color: var(--cream);
+  outline-offset: -4px;
+}
+
+.active {
+  background-color: var(--ink);
+  color: var(--cream);
+}
+
+@media (hover: hover) {
+  .link:not(.active):hover {
+    background-color: var(--cream);
+    color: var(--ink);
+  }
+}
