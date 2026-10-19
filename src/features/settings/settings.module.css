@@ -1,0 +1,295 @@
+.screen {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 4px;
+  padding-bottom: 20px;
+}
+
+/* ------------------------------------------------------------------ */
+/* En-tête                                                             */
+/* ------------------------------------------------------------------ */
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.title {
+  font-family: var(--font-title);
+  font-size: clamp(32px, 8.5vw, 40px);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.035em;
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.loading {
+  padding: 18px 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.errorCard {
+  padding: 14px 16px;
+  border: 1px solid color-mix(in srgb, var(--blush-ink) 35%, var(--line));
+  border-radius: var(--radius-md);
+  background-color: var(--blush-soft);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+/* ------------------------------------------------------------------ */
+/* Cartes de section                                                   */
+/* ------------------------------------------------------------------ */
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background-color: var(--card);
+  box-shadow: var(--shadow-card);
+}
+
+.sectionTitle {
+  font-family: var(--font-title);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.hint {
+  color: var(--muted);
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+/* ------------------------------------------------------------------ */
+/* Formulaire école / classe / enseignante                             */
+/* ------------------------------------------------------------------ */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.input {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background-color: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.input::placeholder {
+  color: var(--muted);
+  opacity: 1;
+}
+
+.input:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Année scolaire                                                      */
+/* ------------------------------------------------------------------ */
+
+.yearValue {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  min-height: 34px;
+  padding: 3px 14px;
+  border-radius: var(--radius-pill);
+  background-color: var(--sage-soft);
+  color: var(--ink);
+  color: color-mix(in srgb, var(--sage-ink) 70%, var(--ink));
+  font-family: var(--font-title);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+/* ------------------------------------------------------------------ */
+/* Dates des bilans                                                    */
+/* ------------------------------------------------------------------ */
+
+.ranges {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background-color: var(--paper);
+}
+
+.rangeRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+}
+
+.rangeRow + .rangeRow {
+  border-top: 1px solid var(--line);
+}
+
+.rangeLabel {
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.rangeValue {
+  margin: 0;
+  color: var(--ink);
+  font-size: 12.5px;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: right;
+}
+
+/* ------------------------------------------------------------------ */
+/* Stockage                                                            */
+/* ------------------------------------------------------------------ */
+
+.storageMeter {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.storageText {
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.progressRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.progress {
+  width: 100%;
+  height: 10px;
+  flex: 1;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  accent-color: var(--sage);
+  background-color: var(--cream);
+}
+
+.progress::-webkit-progress-bar {
+  border-radius: var(--radius-pill);
+  background-color: var(--cream);
+}
+
+.progress::-webkit-progress-value {
+  border-radius: var(--radius-pill);
+  background-color: var(--sage);
+}
+
+.progress::-moz-progress-bar {
+  border-radius: var(--radius-pill);
+  background-color: var(--sage);
+}
+
+.progressValue {
+  flex: none;
+  min-width: 38px;
+  color: var(--muted);
+  font-size: 11.5px;
+  font-weight: 800;
+  line-height: 1.2;
+  text-align: right;
+}
+
+.status {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.warning {
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background-color: var(--mustard-soft);
+  color: var(--ink);
+  color: color-mix(in srgb, var(--mustard-ink) 65%, var(--ink));
+  font-size: 12.5px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+/* ------------------------------------------------------------------ */
+/* Confidentialité et version                                          */
+/* ------------------------------------------------------------------ */
+
+.privacyBody {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.privacyActions {
+  margin-top: 18px;
+}
+
+.version {
+  padding-top: 4px;
+  color: var(--muted);
+  font-size: 10.5px;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: 0.08em;
+  text-align: center;
+}

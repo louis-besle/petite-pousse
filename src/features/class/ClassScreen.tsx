@@ -147,6 +147,9 @@ export function ClassScreen() {
             <Icon name="pencil" size={14} />
             Gérer les élèves
           </Link>
+          <Link to="/settings" className={styles.settingsLink}>
+            Réglages
+          </Link>
         </>
       )}
 

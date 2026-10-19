@@ -65,17 +65,29 @@ export async function updateSettings(patch: Partial<Settings>): Promise<void> {
   })
 }
 
+export interface SettingsState {
+  /** `undefined` pendant le chargement initial ou après un échec définitif. */
+  settings: Settings | undefined
+  /** Vrai quand la base ne peut pas être amorcée ou lue. */
+  error: boolean
+}
+
+type SettingsQueryResult =
+  | { status: 'loading' }
+  | { status: 'ready'; settings: Settings }
+  | { status: 'error' }
+
 /**
- * Réglages réactifs. `undefined` tant que la base n'est pas amorcée : les
- * écrans doivent gérer ce chargement initial.
+ * Réglages réactifs avec leur état de panne. Les écrans qui n'ont pas besoin
+ * de distinguer une panne d'un chargement utilisent `useSettings`.
  *
  * L'amorçage se fait hors de `liveQuery` : une requête live ne peut pas ouvrir
- * de transaction d'écriture. Un échec est retenté une fois ; s'il persiste, la
- * panne de stockage devra être remontée par l'écran réglages/sauvegarde
- * (tâche 20).
+ * de transaction d'écriture. Un échec est retenté une fois ; s'il persiste,
+ * `error` passe à vrai pour que l'écran réglages puisse l'expliquer.
  */
-export function useSettings(): Settings | undefined {
+export function useSettingsState(): SettingsState {
   const [ready, setReady] = useState(false)
+  const [seedError, setSeedError] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -92,10 +104,11 @@ export function useSettings(): Settings | undefined {
         } catch (retryError) {
           console.error(
             "Amorçage de la base impossible après une nouvelle tentative : " +
-              'le stockage local doit être signalé par l’écran réglages.',
+              'le stockage local de cet appareil est peut-être indisponible.',
             retryError,
             firstError,
           )
+          if (!cancelled) setSeedError(true)
         }
       } finally {
         if (!cancelled) setReady(true)
@@ -109,10 +122,33 @@ export function useSettings(): Settings | undefined {
     }
   }, [])
 
-  return useLiveQuery(async () => {
-    if (!ready) return undefined
+  // Une lecture qui échoue est renvoyée comme un état, pas comme une exception :
+  // `useLiveQuery` la relancerait au rendu et ferait tomber l'écran entier.
+  const query = useLiveQuery<SettingsQueryResult>(async () => {
+    if (!ready) return { status: 'loading' }
 
-    const settings = await db.settings.get(SETTINGS_ID)
-    return settings ? toDomainSettings(settings) : undefined
+    try {
+      const record = await db.settings.get(SETTINGS_ID)
+      if (!record) return { status: 'error' }
+
+      return { status: 'ready', settings: toDomainSettings(record) }
+    } catch (error) {
+      console.error('Lecture des réglages impossible.', error)
+      return { status: 'error' }
+    }
   }, [ready])
+
+  if (seedError || query?.status === 'error') {
+    return { settings: undefined, error: true }
+  }
+  if (query?.status === 'ready') {
+    return { settings: query.settings, error: false }
+  }
+
+  return { settings: undefined, error: false }
+}
+
+/** Réglages réactifs. `undefined` tant que la base n'est pas amorcée. */
+export function useSettings(): Settings | undefined {
+  return useSettingsState().settings
 }
