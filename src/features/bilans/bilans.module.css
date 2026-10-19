@@ -226,6 +226,41 @@
 }
 
 /* ------------------------------------------------------------------ */
+/* Génération des bilans de la classe                                  */
+/* ------------------------------------------------------------------ */
+
+.batch {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background-color: var(--card);
+  box-shadow: var(--shadow-card);
+}
+
+.batchHint {
+  color: var(--muted);
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.batchProgress {
+  width: 100%;
+  height: 6px;
+  accent-color: var(--sage);
+}
+
+.batchStatus {
+  color: var(--ink);
+  font-size: 12.5px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+/* ------------------------------------------------------------------ */
 /* Date de changement                                                  */
 /* ------------------------------------------------------------------ */
 

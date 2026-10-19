@@ -1,19 +1,25 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { db } from '@/db/db'
 import { useSchoolYears } from '@/db/schoolYears'
 import { useSettings } from '@/db/settings'
 import { useStudents } from '@/db/students'
 import { useValidationsForYear } from '@/db/validations'
 import { countValidationsInPeriod } from '@/domain/bilan'
+import { referential } from '@/domain/referential'
 import {
   periodForDate,
   periodRange,
   resolveCurrentSchoolYearId,
 } from '@/domain/schoolYear'
-import type { SchoolYear } from '@/domain/types'
+import type { Photo, SchoolYear } from '@/domain/types'
 import { formatShortDate, todayIso } from '@/lib/date'
+import { downloadBlob } from '@/lib/share'
 import { Avatar } from '@/ui/Avatar'
+import { Button } from '@/ui/Button'
 import { Icon } from '@/ui/icons'
+import { useToast } from '@/ui/useToast'
+import type { BatchProgress } from './batch'
 import styles from './bilans.module.css'
 import { PeriodEditor } from './PeriodEditor'
 
@@ -61,6 +67,42 @@ function statusFor(
   return { label: 'En cours', tone: 'current' }
 }
 
+const BATCH_ERROR_MESSAGE = 'Les bilans n’ont pas pu être générés. Réessaie.'
+
+/** « 1 bilan téléchargé. », « 2 bilans téléchargés. » */
+function downloadedLabel(count: number): string {
+  if (count === 1) return '1 bilan téléchargé.'
+  return `${count} bilans téléchargés.`
+}
+
+/** « Générer les 2 bilans (ZIP) », au singulier pour un seul élève. */
+function batchActionLabel(count: number): string {
+  return count === 1
+    ? 'Générer le bilan (ZIP)'
+    : `Générer les ${count} bilans (ZIP)`
+}
+
+/**
+ * Charge en une passe les photos des réussites de l'année : le modèle de bilan
+ * les retrouve par identifiant, sans requête par élève.
+ */
+async function loadPhotos(
+  validations: readonly { photoId?: string }[],
+): Promise<Map<string, Photo>> {
+  const photoIds: string[] = []
+  for (const validation of validations) {
+    if (validation.photoId !== undefined) photoIds.push(validation.photoId)
+  }
+
+  const photos = new Map<string, Photo>()
+  if (photoIds.length === 0) return photos
+
+  for (const photo of await db.photos.bulkGet(photoIds)) {
+    if (photo !== undefined) photos.set(photo.id, photo)
+  }
+  return photos
+}
+
 function BilansHeader() {
   return (
     <header className={styles.header}>
@@ -82,10 +124,13 @@ export function BilansScreen() {
   const settings = useSettings()
   const schoolYears = useSchoolYears()
   const students = useStudents()
+  const { showToast } = useToast()
 
   const [yearChoice, setYearChoice] = useState<string>()
   const [periodChoice, setPeriodChoice] = useState<1 | 2>()
   const [editingCutover, setEditingCutover] = useState(false)
+  const [batchBusy, setBatchBusy] = useState(false)
+  const [batchProgress, setBatchProgress] = useState<BatchProgress | null>(null)
 
   const years = schoolYears ?? []
   // L'année par défaut et le statut « Passé » suivent l'année qui contient la
@@ -125,6 +170,12 @@ export function BilansScreen() {
     )
   }
 
+  // Copies rétrécies pour la closure de génération : TypeScript ne conserve
+  // pas les gardes du rendu au fond d'une fonction asynchrone.
+  const batchStudents = students
+  const batchYear = year
+  const batchSettings = settings
+
   const today = todayIso()
   const periods = ([1, 2] as const).map((period) => {
     const range = periodRange(year, period)
@@ -159,6 +210,46 @@ export function BilansScreen() {
     setPeriodChoice(undefined)
   }
 
+  /**
+   * Génère le ZIP de tous les bilans de la période sélectionnée. `./batch` est
+   * importé au clic : pdf-lib et fontkit ne pèsent pas sur l'affichage initial.
+   */
+  async function handleGenerateBundle(): Promise<void> {
+    if (batchBusy || batchStudents.length === 0) return
+
+    setBatchBusy(true)
+    setBatchProgress(null)
+    try {
+      const { generateBilanBundle } = await import('./batch')
+      const photos = await loadPhotos(validations ?? [])
+      const bundle = await generateBilanBundle(
+        {
+          students: batchStudents,
+          year: batchYear,
+          period: selectedPeriod,
+          validations: validations ?? [],
+          photos,
+          meta: {
+            schoolName: batchSettings.schoolName ?? '',
+            className: batchSettings.className ?? '',
+            teacherName: batchSettings.teacherName ?? '',
+          },
+          referential,
+        },
+        (progress) => setBatchProgress(progress),
+      )
+
+      downloadBlob(bundle.blob, bundle.filename)
+      showToast(downloadedLabel(bundle.count))
+    } catch (error) {
+      console.error('Génération des bilans impossible.', error)
+      showToast(BATCH_ERROR_MESSAGE)
+    } finally {
+      setBatchBusy(false)
+      setBatchProgress(null)
+    }
+  }
+
   return (
     <section className={styles.screen}>
       <BilansHeader />
@@ -171,6 +262,7 @@ export function BilansScreen() {
           id="bilans-year"
           className={styles.yearSelect}
           value={year.id}
+          disabled={batchBusy}
           onChange={(event) => handleYearChange(event.target.value)}
         >
           {yearIds.map((yearId) => (
@@ -201,6 +293,7 @@ export function BilansScreen() {
                   type="button"
                   className={styles.periodCard}
                   aria-pressed={selected}
+                  disabled={batchBusy}
                   onClick={() => setPeriodChoice(item.period)}
                 >
                   <span className={styles.periodMarker} aria-hidden="true">
@@ -226,6 +319,7 @@ export function BilansScreen() {
           <button
             type="button"
             className={styles.cutoverButton}
+            disabled={batchBusy}
             onClick={() => setEditingCutover(true)}
           >
             <Icon name="pencil" size={14} />
@@ -244,6 +338,41 @@ export function BilansScreen() {
             </div>
           ) : (
             <>
+              <div className={styles.batch}>
+                <Button
+                  variant="dark"
+                  fullWidth
+                  disabled={batchBusy}
+                  aria-busy={batchBusy || undefined}
+                  onClick={() => {
+                    void handleGenerateBundle()
+                  }}
+                >
+                  <Icon name="download" size={18} />
+                  {batchBusy
+                    ? 'Préparation des bilans…'
+                    : batchActionLabel(students.length)}
+                </Button>
+                <p className={styles.batchHint}>
+                  Tous les élèves de la classe sont inclus, même ceux sans
+                  réussite sur cette période.
+                </p>
+
+                {batchProgress === null ? null : (
+                  <>
+                    <progress
+                      className={styles.batchProgress}
+                      max={batchProgress.total}
+                      value={batchProgress.done}
+                      aria-label="Progression de la génération des bilans"
+                    />
+                    <p className={styles.batchStatus} role="status">
+                      {`Bilan ${batchProgress.done} sur ${batchProgress.total} · ${batchProgress.student.firstName}`}
+                    </p>
+                  </>
+                )}
+              </div>
+
               <p className={styles.eyebrow}>
                 {studentCountLabel(students.length)}
               </p>

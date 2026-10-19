@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { expect, test } from '@playwright/test'
+import { unzipSync } from 'fflate'
 import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs'
 import { addStudent, gotoRoute, openClass, readDb, seedValidation } from './helpers'
 
@@ -156,4 +157,55 @@ test.describe('bilans', () => {
       }
     },
   )
+
+  test('génère le lot de bilans de la classe en un ZIP', async ({ page }) => {
+    test.setTimeout(180_000)
+
+    // Même horloge figée que le scénario individuel : période 1 par défaut.
+    await page.clock.setFixedTime(new Date('2026-11-07T10:00:00'))
+
+    await addStudent(page, 'Léa', 'MS')
+    await addStudent(page, 'Adam', 'PS')
+    await openClass(page)
+
+    const students = await readDb(page, 'students')
+    expect(students).toHaveLength(2)
+    const lea = students.find((student) => student.firstName === 'Léa')
+    expect(lea).toBeDefined()
+
+    // Une seule réussite : Adam doit tout de même produire un PDF.
+    await seedValidation(page, {
+      studentId: String(lea?.id),
+      objectiveId: 'lang-vocabulaire-01',
+      date: '2026-10-12',
+    })
+
+    await gotoRoute(page, '/bilans')
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Bilans', exact: true }),
+    ).toBeVisible()
+
+    const downloadPromise = page.waitForEvent('download', { timeout: 120_000 })
+    await page
+      .getByRole('button', { name: 'Générer les 2 bilans (ZIP)', exact: true })
+      .click()
+    const download = await downloadPromise
+
+    expect(download.suggestedFilename()).toBe('bilans-1-2026-2027.zip')
+
+    const filePath = await download.path()
+    expect(filePath).not.toBeNull()
+    const entries = unzipSync(new Uint8Array(readFileSync(filePath as string)))
+
+    // Deux entrées PDF, une par élève, y compris celui sans réussite.
+    expect(Object.keys(entries).sort()).toEqual([
+      'bilan-adam-1-2026-2027.pdf',
+      'bilan-lea-1-2026-2027.pdf',
+    ])
+
+    for (const bytes of Object.values(entries)) {
+      expect(new TextDecoder().decode(bytes.slice(0, 5))).toBe('%PDF-')
+      expect(bytes.byteLength).toBeGreaterThan(1_000)
+    }
+  })
 })
