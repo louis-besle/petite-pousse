@@ -25,8 +25,14 @@ if (typeof window !== 'undefined') {
   })
 }
 
-// Chaque test part d'une base vide, ouverte sur le schéma courant.
+// Chaque test part d'une base vide, ouverte sur le schéma courant, et d'URL
+// de blobs sans historique d'appels.
 beforeEach(async () => {
+  if (typeof window !== 'undefined') {
+    vi.mocked(URL.createObjectURL).mockClear()
+    vi.mocked(URL.revokeObjectURL).mockClear()
+  }
+
   await db.delete()
   await db.open()
 })

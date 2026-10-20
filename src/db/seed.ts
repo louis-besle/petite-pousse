@@ -28,12 +28,20 @@ function defaultSettings(currentSchoolYearId: string): SettingsRecord {
   }
 }
 
+/** Crée l'année si elle manque ; une année existante n'est jamais écrasée. */
+async function ensureSchoolYearRow(id: string): Promise<void> {
+  if (!(await db.schoolYears.get(id))) {
+    await db.schoolYears.add(defaultSchoolYear(id))
+  }
+}
+
 /**
  * Amorce la base : réglages par défaut et année scolaire courante.
  *
- * Idempotent et non destructif : les réglages et l'année existants ne sont
- * jamais écrasés. Si les réglages existent mais que l'année qu'ils référencent
- * a disparu, elle est recréée avec ses bornes par défaut.
+ * Idempotent et non destructif : les réglages et les années existants ne sont
+ * jamais écrasés. L'année calculée est toujours garantie, même quand les
+ * réglages ont été repris d'une année antérieure et pointent encore vers elle ;
+ * `settings.currentSchoolYearId` n'est jamais modifié automatiquement.
  */
 export async function ensureSeed(): Promise<void> {
   const currentSchoolYearId = schoolYearIdForDate(localTodayIso())
@@ -41,17 +49,13 @@ export async function ensureSeed(): Promise<void> {
   await db.transaction('rw', db.settings, db.schoolYears, async () => {
     const settings = await db.settings.get(SETTINGS_ID)
 
+    await ensureSchoolYearRow(currentSchoolYearId)
+
     if (!settings) {
-      if (!(await db.schoolYears.get(currentSchoolYearId))) {
-        await db.schoolYears.add(defaultSchoolYear(currentSchoolYearId))
-      }
       await db.settings.add(defaultSettings(currentSchoolYearId))
       return
     }
 
-    const referencedYearId = settings.currentSchoolYearId || currentSchoolYearId
-    if (!(await db.schoolYears.get(referencedYearId))) {
-      await db.schoolYears.add(defaultSchoolYear(referencedYearId))
-    }
+    await ensureSchoolYearRow(settings.currentSchoolYearId)
   })
 }
