@@ -1,0 +1,18 @@
+.screen {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 12px;
+}
+
+.title {
+  font-size: clamp(30px, 8vw, 42px);
+}
+
+/* `--muted` reste au-dessus de 4,5:1 sur le papier ; `--faint` est trop clair. */
+.note {
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.45;
+}
