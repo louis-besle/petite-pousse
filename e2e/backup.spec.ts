@@ -1,4 +1,4 @@
-import { writeFileSync } from 'node:fs'
+import { readFileSync, writeFileSync } from 'node:fs'
 import { expect, test } from '@playwright/test'
 import {
   addStudent,
@@ -12,6 +12,8 @@ import {
 } from './helpers'
 
 test.describe('sauvegardes', () => {
+  const PASSWORD = 'mot-de-passe-solide'
+
   test.beforeEach(async ({ page }) => {
     // Date figée au 12 octobre 2026 : les réussites semées tombent dans l'année
     // amorcée (2026-2027) quel que soit le jour d'exécution. Seule `Date` est
@@ -169,4 +171,115 @@ test.describe('sauvegardes', () => {
     expect(await readDb(page, 'validations')).toEqual(before.validations)
     expect(await readDb(page, 'photos')).toEqual(before.photos)
   })
+
+  test(
+    'exporte et restaure une sauvegarde chiffrée, après un mot de passe erroné',
+    async ({ page }) => {
+      await addStudent(page, 'Léa', 'MS')
+      await openClass(page)
+
+      const students = await readDb(page, 'students')
+      expect(students).toHaveLength(1)
+      const studentId = String(students[0]?.id)
+
+      await seedValidation(page, {
+        studentId,
+        objectiveId: 'lang-vocabulaire-01',
+        date: '2026-10-12',
+        withPhoto: true,
+      })
+
+      await gotoRoute(page, '/settings')
+      await expect(
+        page.getByRole('heading', { level: 2, name: 'Sauvegarde' }),
+      ).toBeVisible()
+      await dismissPrivacy(page)
+
+      const protect = page.getByRole('checkbox', {
+        name: 'Protéger par un mot de passe',
+      })
+      await expect(protect).toBeEnabled()
+      await protect.check()
+
+      await page.getByLabel('Mot de passe', { exact: true }).fill(PASSWORD)
+      await page
+        .getByLabel('Confirmer le mot de passe', { exact: true })
+        .fill(PASSWORD)
+
+      const downloadPromise = page.waitForEvent('download', { timeout: 60_000 })
+      await page
+        .getByRole('button', { name: 'Exporter une sauvegarde', exact: true })
+        .click()
+      const download = await downloadPromise
+
+      expect(download.suggestedFilename()).toMatch(
+        /^carnet-de-reussites-backup-\d{4}-\d{2}-\d{2}-chiffre\.zip$/,
+      )
+      const backupPath = await download.path()
+      expect(backupPath).not.toBeNull()
+
+      // Le ZIP chiffré ne laisse aucune donnée de `data.json` en clair.
+      const rawArchive = readFileSync(backupPath as string, 'latin1')
+      expect(rawArchive).not.toContain('schemaVersion')
+
+      await clearDb(page)
+      await page.reload()
+      await expect(
+        page.getByRole('heading', { level: 2, name: 'Sauvegarde' }),
+      ).toBeVisible()
+      await dismissPrivacy(page)
+
+      await page
+        .getByRole('button', { name: 'Importer une sauvegarde', exact: true })
+        .click()
+      await page
+        .locator('input[type="file"]')
+        .setInputFiles(backupPath as string)
+
+      const passwordSheet = page.getByRole('dialog', {
+        name: 'Sauvegarde chiffrée',
+      })
+      await expect(passwordSheet).toBeVisible()
+
+      const passwordInput = passwordSheet.getByLabel('Mot de passe', {
+        exact: true,
+      })
+      await passwordInput.fill('mauvais-mot-de-passe')
+      await passwordSheet
+        .getByRole('button', { name: 'Lire la sauvegarde' })
+        .click()
+
+      await expect(passwordSheet.getByRole('alert')).toContainText(
+        /incorrect/i,
+      )
+      await expect(passwordSheet).toBeVisible()
+
+      await passwordInput.fill(PASSWORD)
+      await passwordSheet
+        .getByRole('button', { name: 'Lire la sauvegarde' })
+        .click()
+
+      const confirm = page.getByRole('dialog', {
+        name: 'Restaurer cette sauvegarde ?',
+      })
+      await expect(confirm).toBeVisible()
+      await expect(confirm).toContainText('Sauvegarde chiffrée')
+      await expect(confirm).toContainText('1 élève')
+      await expect(confirm).toContainText('1 réussite')
+      await expect(confirm).toContainText('1 photo')
+
+      await confirm
+        .getByRole('button', { name: 'Restaurer la sauvegarde', exact: true })
+        .click()
+
+      await expect(page.getByText('Sauvegarde restaurée.')).toBeVisible()
+      await expect(confirm).toBeHidden()
+
+      const restoredStudents = await readDb(page, 'students')
+      expect(restoredStudents).toHaveLength(1)
+      expect(restoredStudents[0]?.firstName).toBe('Léa')
+      expect(await readDb(page, 'validations')).toHaveLength(1)
+      expect(await readDb(page, 'photos')).toHaveLength(1)
+    },
+  )
 })

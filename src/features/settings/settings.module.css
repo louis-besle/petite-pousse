@@ -315,6 +315,73 @@
 }
 
 /* ------------------------------------------------------------------ */
+/* Chiffrement par mot de passe                                        */
+/* ------------------------------------------------------------------ */
+
+.passwordBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--tap-target);
+  color: var(--ink);
+  font-size: 13.5px;
+  font-weight: 700;
+  line-height: 1.35;
+  cursor: pointer;
+}
+
+.checkbox {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  accent-color: var(--sage);
+}
+
+.passwordField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.passwordActions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.passwordHint {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.passwordError {
+  color: var(--blush-ink);
+  font-size: 12.5px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.passwordForm {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.formActions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+/* ------------------------------------------------------------------ */
 /* Confidentialité et version                                          */
 /* ------------------------------------------------------------------ */
 
