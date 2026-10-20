@@ -135,7 +135,7 @@ describe('ClassScreen', () => {
     await user.click(cta)
 
     expect(
-      await screen.findByRole('heading', { level: 1, name: 'Choisir un élève' }),
+      await screen.findByRole('heading', { level: 1, name: 'Pour qui ?' }),
     ).toBeInTheDocument()
   })
 })

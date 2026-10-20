@@ -88,3 +88,18 @@ export interface CompressedPhoto {
   height: number
   mime: 'image/jpeg'
 }
+
+/**
+ * Brouillon de capture : l'élève choisi et, une fois la photo prise, ses
+ * données compressées. Une seule ligne, toujours identifiée par `'current'`,
+ * pour qu'un rechargement iOS reprenne le parcours sans perdre la photo.
+ */
+export interface CaptureDraft {
+  id: 'current'
+  studentId: string
+  full?: Blob
+  thumb?: Blob
+  width?: number
+  height?: number
+  createdAt: string
+}

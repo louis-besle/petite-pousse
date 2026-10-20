@@ -1,0 +1,505 @@
+/* ------------------------------------------------------------------ */
+/* Structure commune aux étapes de capture (sans navigation basse)     */
+/* ------------------------------------------------------------------ */
+
+.screen {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: calc(
+    100dvh - 52px - env(safe-area-inset-top) - env(safe-area-inset-bottom)
+  );
+  padding-bottom: 24px;
+}
+
+/* L'appel à l'action fixe occupe 96 px depuis le bas. */
+.photoScreen {
+  padding-bottom: calc(104px + env(safe-area-inset-bottom));
+}
+
+/* ------------------------------------------------------------------ */
+/* Barre supérieure : retour, titre, pastille d'étape                  */
+/* ------------------------------------------------------------------ */
+
+.topBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: var(--tap-target);
+}
+
+.topTitle {
+  min-width: 0;
+  font-family: var(--font-title);
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.stepPill {
+  margin-left: auto;
+  padding: 8px 12px;
+  flex: none;
+  border-radius: var(--radius-pill);
+  background-color: var(--sage-soft);
+  color: var(--sage-ink);
+  font-size: 10.5px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------------------------ */
+/* Étape 1 : titre et recherche                                        */
+/* ------------------------------------------------------------------ */
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pickerTitle {
+  font-size: 26px;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+}
+
+.pickerSub {
+  color: var(--muted);
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.loading,
+.filterEmpty {
+  padding: 18px 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+/* ------------------------------------------------------------------ */
+/* Grille d'élèves : 2 colonnes sur téléphone                         */
+/* ------------------------------------------------------------------ */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 700px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1000px) {
+  .grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.studentCard {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 58px;
+  padding: 0 11px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background-color: var(--card);
+  box-shadow: var(--shadow-card);
+  color: var(--ink);
+  text-align: left;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform 0.16s ease,
+    border-color 0.16s ease,
+    box-shadow 0.16s ease;
+}
+
+.studentCard:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.studentCard:active:not(:disabled) {
+  transform: scale(0.985);
+}
+
+.studentCard:disabled {
+  opacity: 0.66;
+  cursor: progress;
+}
+
+@media (hover: hover) {
+  .studentCard:hover:not(:disabled) {
+    transform: translateY(-1px);
+    border-color: color-mix(in srgb, var(--line) 70%, var(--ink));
+    box-shadow: 0 5px 0 rgba(47, 42, 36, 0.045);
+  }
+}
+
+.studentName {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-family: var(--font-title);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------------------------ */
+/* État vide                                                           */
+/* ------------------------------------------------------------------ */
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 28px 20px;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-lg);
+  background-color: var(--card);
+  text-align: center;
+}
+
+.emptyTitle {
+  font-family: var(--font-title);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.emptyText {
+  max-width: 34ch;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.emptyLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tap-target);
+  padding: 0 12px;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.emptyLink:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ------------------------------------------------------------------ */
+/* Étape 2 : rappel de l'élève                                         */
+/* ------------------------------------------------------------------ */
+
+.recap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background-color: var(--card);
+  box-shadow: var(--shadow-card);
+}
+
+.recapAvatar {
+  display: flex;
+  flex: none;
+}
+
+.recapName {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-family: var(--font-title);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recapCheck {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  flex: none;
+  border-radius: 50%;
+  background-color: var(--sage);
+  color: var(--cream);
+}
+
+/* ------------------------------------------------------------------ */
+/* Viseur                                                              */
+/* ------------------------------------------------------------------ */
+
+.viewfinder {
+  padding: 10px;
+  border-radius: 26px;
+  background-color: var(--ink);
+  box-shadow: 0 18px 34px rgba(47, 42, 36, 0.18);
+}
+
+.frame {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: clamp(240px, 42vh, 360px);
+  overflow: hidden;
+  border-radius: 18px;
+  background-color: var(--paper);
+  background-image: radial-gradient(rgba(47, 42, 36, 0.055) 1px, transparent 1.2px);
+  background-size: 17px 17px;
+}
+
+.placeholder {
+  display: flex;
+  opacity: 0.2;
+  transform: rotate(-8deg);
+}
+
+.preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.viewfinderChip {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px 5px 6px;
+  border-radius: var(--radius-pill);
+  background-color: rgba(47, 42, 36, 0.58);
+  color: var(--cream);
+  font-size: 9.5px;
+  font-weight: 800;
+  line-height: 1.2;
+  backdrop-filter: blur(6px);
+}
+
+.viewfinderMini {
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  flex: none;
+  border-radius: 50%;
+  background-color: var(--blush-soft);
+  color: var(--blush-ink);
+  font-family: var(--font-title);
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.takenBadge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 9px;
+  border-radius: var(--radius-pill);
+  background-color: var(--sage);
+  color: var(--cream);
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.focus {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 2;
+  width: min(120px, 34vw);
+  aspect-ratio: 1;
+  border: 1px solid rgba(47, 42, 36, 0.24);
+  border-radius: 16px;
+  transform: translate(-50%, -50%);
+}
+
+.focus::before,
+.focus::after {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(47, 42, 36, 0.38);
+}
+
+.focus::before {
+  top: -2px;
+  left: -2px;
+  border-right: 0;
+  border-bottom: 0;
+  border-radius: 8px 0 0 0;
+}
+
+.focus::after {
+  right: -2px;
+  bottom: -2px;
+  border-top: 0;
+  border-left: 0;
+  border-radius: 0 0 8px 0;
+}
+
+.hint {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  z-index: 2;
+  padding: 6px 10px;
+  border-radius: var(--radius-pill);
+  background-color: rgba(47, 42, 36, 0.58);
+  color: var(--cream);
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  backdrop-filter: blur(6px);
+}
+
+/* ------------------------------------------------------------------ */
+/* Barre d'état et actions secondaires                                 */
+/* ------------------------------------------------------------------ */
+
+.photoBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 2px;
+  color: var(--muted);
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+.photoStatus {
+  min-width: 0;
+}
+
+.photoActions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: none;
+}
+
+/* L'encre garde un contraste AA sur le papier, contrairement à la terre cuite. */
+.textAction {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-target);
+  padding: 0 2px;
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.textAction:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.textAction:disabled {
+  opacity: 0.55;
+  cursor: progress;
+}
+
+/* ------------------------------------------------------------------ */
+/* Bandeau « la photo reste sur l'appareil »                           */
+/* ------------------------------------------------------------------ */
+
+.infoStrip {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 2px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background-color: var(--sage-soft);
+  color: var(--sage-ink);
+}
+
+.infoStrip svg {
+  flex: none;
+  margin-top: 1px;
+}
+
+.infoStrip p {
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.infoStrip p span {
+  display: block;
+  font-weight: 600;
+}
+
+/* ------------------------------------------------------------------ */
+/* Appel à l'action fixe, au-dessus de la zone sûre                    */
+/* ------------------------------------------------------------------ */
+
+.ctaBar {
+  position: fixed;
+  right: 20px;
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  left: 20px;
+  z-index: 40;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.cta {
+  min-height: 56px;
+  font-size: 14.5px;
+}

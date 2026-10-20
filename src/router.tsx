@@ -1,5 +1,7 @@
 import { createHashRouter, type RouteObject } from 'react-router-dom'
 import { ClassScreen } from '@/features/class/ClassScreen'
+import { PhotoScreen } from '@/features/capture/PhotoScreen'
+import { StudentPickerScreen } from '@/features/capture/StudentPickerScreen'
 import { AppShell } from '@/ui/AppShell'
 import { ScreenPlaceholder } from '@/ui/ScreenPlaceholder'
 
@@ -12,10 +14,10 @@ export const routes: RouteObject[] = [
     element: <AppShell />,
     children: [
       { path: '/', element: <ClassScreen /> },
-      { path: '/capture', element: <ScreenPlaceholder title="Choisir un élève" /> },
+      { path: '/capture', element: <StudentPickerScreen /> },
       {
         path: '/capture/:studentId/photo',
-        element: <ScreenPlaceholder title="Prendre une photo" />,
+        element: <PhotoScreen />,
       },
       {
         path: '/capture/objective',
