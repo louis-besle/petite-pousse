@@ -338,7 +338,7 @@ describe('PhotoScreen', () => {
       expect(router.state.location.pathname).toBe('/capture/objective'),
     )
     expect(
-      await screen.findByRole('heading', { level: 1, name: 'Choisir un objectif' }),
+      await screen.findByRole('heading', { level: 1, name: "Choisir l'objectif" }),
     ).toBeInTheDocument()
   })
 
@@ -500,7 +500,7 @@ describe('PhotoScreen', () => {
       expect(router.state.location.pathname).toBe('/capture/objective'),
     )
     expect(
-      await screen.findByRole('heading', { level: 1, name: 'Choisir un objectif' }),
+      await screen.findByRole('heading', { level: 1, name: "Choisir l'objectif" }),
     ).toBeInTheDocument()
   })
 })

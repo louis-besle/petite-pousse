@@ -1,7 +1,9 @@
 import { createHashRouter, type RouteObject } from 'react-router-dom'
 import { ClassScreen } from '@/features/class/ClassScreen'
+import { ObjectiveScreen } from '@/features/capture/ObjectiveScreen'
 import { PhotoScreen } from '@/features/capture/PhotoScreen'
 import { StudentPickerScreen } from '@/features/capture/StudentPickerScreen'
+import { SuccessScreen } from '@/features/capture/SuccessScreen'
 import { AppShell } from '@/ui/AppShell'
 import { ScreenPlaceholder } from '@/ui/ScreenPlaceholder'
 
@@ -21,11 +23,11 @@ export const routes: RouteObject[] = [
       },
       {
         path: '/capture/objective',
-        element: <ScreenPlaceholder title="Choisir un objectif" />,
+        element: <ObjectiveScreen />,
       },
       {
         path: '/success/:validationId',
-        element: <ScreenPlaceholder title="Réussite enregistrée" />,
+        element: <SuccessScreen />,
       },
       { path: '/students', element: <ScreenPlaceholder title="Gérer les élèves" /> },
       { path: '/students/:studentId', element: <ScreenPlaceholder title="Dossier élève" /> },
