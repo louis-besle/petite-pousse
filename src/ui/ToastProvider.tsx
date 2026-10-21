@@ -19,11 +19,11 @@ export interface ToastProviderProps {
 
 /**
  * Un seul toast à la fois : un nouveau message remplace le courant et relance
- * le minuteur de 2,6 s.
+ * le minuteur de 2,6 s. La région live est montée en permanence, seul son
+ * texte change.
  */
 export function ToastProvider({ children }: ToastProviderProps) {
-  const [toast, setToast] = useState<{ id: number; message: string } | null>(null)
-  const idRef = useRef(0)
+  const [message, setMessage] = useState<string | null>(null)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const clearTimer = useCallback(() => {
@@ -34,12 +34,11 @@ export function ToastProvider({ children }: ToastProviderProps) {
   }, [])
 
   const showToast = useCallback(
-    (message: string) => {
+    (nextMessage: string) => {
       clearTimer()
-      idRef.current += 1
-      setToast({ id: idRef.current, message })
+      setMessage(nextMessage)
       timerRef.current = setTimeout(() => {
-        setToast(null)
+        setMessage(null)
         timerRef.current = null
       }, TOAST_DURATION_MS)
     },
@@ -53,9 +52,7 @@ export function ToastProvider({ children }: ToastProviderProps) {
   return (
     <ToastContext.Provider value={api}>
       {children}
-      {toast !== null
-        ? createPortal(<Toast key={toast.id} message={toast.message} />, document.body)
-        : null}
+      {createPortal(<Toast message={message} />, document.body)}
     </ToastContext.Provider>
   )
 }
