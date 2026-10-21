@@ -11,6 +11,7 @@ import type { SchoolYear, Settings, Validation } from '@/domain/types'
 import { formatLongDate } from '@/lib/date'
 import { Button } from '@/ui/Button'
 import { ConfirmSheet } from '@/ui/ConfirmSheet'
+import { InstallHint, isIosDevice, useIsStandalone } from '@/ui/InstallHint'
 import { Sheet } from '@/ui/Sheet'
 import { useToast } from '@/ui/useToast'
 import { BackupPanel } from './BackupPanel'
@@ -263,6 +264,38 @@ function BilanDatesSection({ year, validations }: BilanDatesSectionProps) {
 }
 
 /**
+ * Installation sur l'écran d'accueil : notice iOS détaillée, ou renvoi vers le
+ * menu du navigateur sur Android et ordinateur.
+ */
+function InstallSection() {
+  const standalone = useIsStandalone()
+
+  return (
+    <section className={styles.card} aria-labelledby="install-heading">
+      <h2 id="install-heading" className={styles.sectionTitle}>
+        Installer l’application
+      </h2>
+
+      {standalone ? (
+        <p className={styles.hint}>
+          L’application est déjà installée sur cet appareil.
+        </p>
+      ) : (
+        <>
+          <InstallHint />
+          {isIosDevice() ? null : (
+            <p className={styles.hint}>
+              Sur Android ou sur ordinateur, ouvre le menu du navigateur puis
+              choisis « Installer l’application ».
+            </p>
+          )}
+        </>
+      )}
+    </section>
+  )
+}
+
+/**
  * Réglages : école et classe, année scolaire, dates de bilan, stockage,
  * confidentialité et version. La notice de confidentialité s'ouvre au premier
  * lancement, puis uniquement via « Relire la notice ».
@@ -346,6 +379,8 @@ export function SettingsScreen() {
       <StoragePanel />
 
       <BackupPanel />
+
+      <InstallSection />
 
       <section className={styles.card} aria-labelledby="privacy-heading">
         <h2 id="privacy-heading" className={styles.sectionTitle}>
