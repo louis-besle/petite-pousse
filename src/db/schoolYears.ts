@@ -1,3 +1,4 @@
+import Dexie from 'dexie'
 import { format, isValid, parseISO } from 'date-fns'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { defaultSchoolYear, nextSchoolYearId, schoolYearIdForDate } from '@/domain/schoolYear'
@@ -22,16 +23,36 @@ function assertDateString(value: string, field: string): void {
 /**
  * Année scolaire d'une date, créée avec les bornes par défaut si elle manque.
  * Une année existante n'est jamais écrasée ni supprimée.
+ *
+ * La lecture et la création partagent une transaction d'écriture : deux appels
+ * concurrents se sérialisent, le second lit la ligne créée par le premier. Le
+ * repli sur `ConstraintError` couvre le cas où la création a lieu hors de cette
+ * transaction (appel imbriqué dans une transaction parente).
  */
 export async function getOrCreateSchoolYear(date: string): Promise<SchoolYear> {
   const id = schoolYearIdForDate(date)
-
-  const existing = await db.schoolYears.get(id)
-  if (existing) return existing
-
   const year = defaultSchoolYear(id)
-  await db.schoolYears.add(year)
-  return year
+
+  try {
+    return await db.transaction('rw', db.schoolYears, async () => {
+      const existing = await db.schoolYears.get(id)
+      if (existing) return existing
+
+      await db.schoolYears.add(year)
+      return year
+    })
+  } catch (error) {
+    if (error instanceof Dexie.ConstraintError) {
+      const concurrent = await db.schoolYears.get(id)
+      if (concurrent) return concurrent
+
+      throw new Error(
+        `Impossible de créer l'année scolaire « ${id} » : conflit de création concurrente.`,
+        { cause: error },
+      )
+    }
+    throw error
+  }
 }
 
 /**
@@ -89,7 +110,15 @@ export async function startNextSchoolYear(currentId: string): Promise<SchoolYear
       await db.schoolYears.add(year)
     }
 
-    await db.settings.update(SETTINGS_ID, { currentSchoolYearId: nextId })
+    const settingsUpdated = await db.settings.update(SETTINGS_ID, {
+      currentSchoolYearId: nextId,
+    })
+    if (settingsUpdated === 0) {
+      throw new Error(
+        'Réglages introuvables : impossible de basculer vers la nouvelle année scolaire.',
+      )
+    }
+
     return year
   })
 }

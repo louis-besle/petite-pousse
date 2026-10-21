@@ -87,14 +87,16 @@ export async function createValidation(input: CreateValidationInput): Promise<Va
 export async function deleteValidation(id: string): Promise<void> {
   await db.transaction('rw', db.validations, db.photos, async () => {
     const validation = await db.validations.get(id)
-    if (!validation) return
 
+    // Même si la validation a déjà disparu, ses photos ne doivent pas rester.
     await deletePhotosForValidation(id)
-    if (validation.photoId !== undefined) {
+    if (validation?.photoId !== undefined) {
       await db.photos.delete(validation.photoId)
     }
 
-    await db.validations.delete(id)
+    if (validation) {
+      await db.validations.delete(id)
+    }
   })
 }
 

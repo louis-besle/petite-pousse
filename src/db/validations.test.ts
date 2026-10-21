@@ -120,6 +120,24 @@ describe('createValidation', () => {
     expect(await db.validations.count()).toBe(1)
   })
 
+  it('n’accepte qu’une validation sur deux créations concurrentes', async () => {
+    const base = await baseInput('2026-10-12')
+
+    const results = await Promise.allSettled([
+      createValidation({ ...base, photo: makePhoto('concurrente-a') }),
+      createValidation({ ...base, photo: makePhoto('concurrente-b') }),
+    ])
+
+    const fulfilled = results.filter((result) => result.status === 'fulfilled')
+    const rejected = results.filter((result) => result.status === 'rejected')
+
+    expect(fulfilled).toHaveLength(1)
+    expect(rejected).toHaveLength(1)
+    expect(rejected[0]?.reason).toBeInstanceOf(AlreadyValidatedError)
+    expect(await db.validations.count()).toBe(1)
+    expect(await db.photos.count()).toBe(1)
+  })
+
   it('n’ajoute pas de photo orpheline quand la validation est refusée', async () => {
     const base = await baseInput('2026-10-12')
 
@@ -185,6 +203,17 @@ describe('deleteValidation', () => {
     await deleteValidation(validation.id)
 
     expect(await db.validations.get(validation.id)).toBeUndefined()
+    expect(await db.photos.get(photoId)).toBeUndefined()
+  })
+
+  it('supprime une photo orpheline même si la validation a déjà disparu', async () => {
+    const base = await baseInput()
+    const validation = await createValidation({ ...base, photo: makePhoto() })
+    const photoId = validation.photoId!
+    await db.validations.delete(validation.id)
+
+    await deleteValidation(validation.id)
+
     expect(await db.photos.get(photoId)).toBeUndefined()
   })
 

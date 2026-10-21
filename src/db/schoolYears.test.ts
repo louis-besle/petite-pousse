@@ -46,6 +46,22 @@ describe('getOrCreateSchoolYear', () => {
     expect(await db.schoolYears.get('2026-2027')).toEqual(adjusted)
   })
 
+  it('est idempotent sous appels concurrents', async () => {
+    const [first, second] = await Promise.allSettled([
+      getOrCreateSchoolYear('2026-10-12'),
+      getOrCreateSchoolYear('2026-10-12'),
+    ])
+
+    expect(first.status).toBe('fulfilled')
+    expect(second.status).toBe('fulfilled')
+
+    const firstYear = first.status === 'fulfilled' ? first.value : undefined
+    const secondYear = second.status === 'fulfilled' ? second.value : undefined
+    expect(firstYear?.id).toBe('2026-2027')
+    expect(secondYear?.id).toBe('2026-2027')
+    expect(await db.schoolYears.count()).toBe(1)
+  })
+
   it('rattache juillet à l’année scolaire précédente', async () => {
     const year = await getOrCreateSchoolYear('2027-07-15')
 
