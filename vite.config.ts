@@ -28,9 +28,15 @@ export default defineConfig({
         'apple-touch-icon-180x180.png',
       ],
       manifest: {
+        // Identité explicite : ne pas dépendre des valeurs par défaut du plugin.
+        id: '/',
+        start_url: '/',
+        scope: '/',
         name: 'Carnet de réussites',
         short_name: 'Carnet',
         lang: 'fr',
+        // Pas d'`orientation` : l'iPad doit rester utilisable en paysage
+        // (comportement actuel du manifest).
         display: 'standalone',
         theme_color: '#FBF6EC',
         background_color: '#FBF6EC',
