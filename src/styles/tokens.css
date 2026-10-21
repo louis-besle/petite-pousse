@@ -47,6 +47,10 @@
   --d-vivant: #7e8b57;
   --d-vivant-soft: #e7ebd8;
   --d-vivant-ink: #5f6b3d;
+  --d-evar: #b2698a;
+  --d-evar-soft: #f6dfe6;
+  /* 5,6:1 sur --d-evar-soft, comme les autres encres de domaine. */
+  --d-evar-ink: #8a3f5c;
 
   /* Typographie */
   --font-title: 'Fraunces', Georgia, 'Times New Roman', serif;

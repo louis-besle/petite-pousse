@@ -263,6 +263,11 @@
   color: var(--d-vivant-ink);
 }
 
+.domainIcon[data-domain='evar'] {
+  background-color: var(--d-evar-soft);
+  color: var(--d-evar-ink);
+}
+
 .domainText {
   display: flex;
   min-width: 0;

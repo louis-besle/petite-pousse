@@ -32,7 +32,7 @@ export interface BilanModel {
 
 /**
  * Un domaine retiré du référentiel garde sa place, après les six domaines
- * officiels, grâce au libellé figé dans l'instantané de la validation.
+ * officiels et l’EVAR, grâce au libellé figé dans l'instantané de la validation.
  */
 const FALLBACK_DOMAIN_ORDER = 99
 

@@ -4,6 +4,15 @@ Date de vérification : **2026-11-07**.
 Périmètre : les six domaines de `scripts/referential/source/objectives.csv` et le
 référentiel généré `src/data/referential.json` (version `2026.1.0`).
 
+> **Ajout EVAR (version `2026.2.0`).** Les neuf objectifs du programme EVAR
+> (BO n°6 du 6 février 2025) ont été ajoutés après cette vérification. Les
+> comptes 398 objectifs / 37 compétences / six domaines ci-dessous décrivent
+> donc la version `2026.1.0` vérifiée, pas la version courante
+> `2026.2.0` (407 objectifs / 40 compétences / sept catégories). La
+> reproductibilité du CSV vers le JSON est désormais couverte par
+> `scripts/referential/build.test.ts`. La vérification éditoriale EVAR contre
+> l’annexe du BO n°6 reste à consigner séparément.
+
 ## Sources
 
 - **BO n°41 du 31 octobre 2024** (langage et mathématiques) :

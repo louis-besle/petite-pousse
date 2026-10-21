@@ -3,6 +3,15 @@ import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { buildReferentialFromCsv } from './build'
 
+const sourceCsv = readFileSync(
+  new URL('./source/objectives.csv', import.meta.url),
+  'utf8',
+)
+
+const embeddedReferential = JSON.parse(
+  readFileSync(new URL('../../src/data/referential.json', import.meta.url), 'utf8'),
+) as unknown
+
 const fixtureCsv = readFileSync(
   new URL('./__fixtures__/objectives.csv', import.meta.url),
   'utf8',
@@ -27,6 +36,7 @@ describe('buildReferentialFromCsv', () => {
       'maths',
       'temps',
       'vivant',
+      'evar',
     ])
 
     expect(referential.competencies).toHaveLength(2)
@@ -122,6 +132,10 @@ describe('buildReferentialFromCsv', () => {
     const missingColumn = fixtureCsv.replace('source_page', 'page_source')
 
     expect(() => buildReferentialFromCsv(missingColumn)).toThrow(/source_page/)
+  })
+
+  it('reproduit exactement le référentiel embarqué depuis la source officielle', () => {
+    expect(buildReferentialFromCsv(sourceCsv)).toEqual(embeddedReferential)
   })
 
   it('accepte un CSV sans objectif', () => {

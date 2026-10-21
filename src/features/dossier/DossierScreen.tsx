@@ -29,6 +29,7 @@ const DOMAIN_ICONS: Record<Domain['id'], IconName> = {
   arts: 'palette',
   temps: 'clock',
   vivant: 'leaf',
+  evar: 'heart',
 }
 
 interface DomainGroup {
@@ -113,8 +114,8 @@ function ValidationRow({
 
 /**
  * Dossier d'un élève : réussites de l'année sélectionnée, réparties dans les
- * six domaines officiels. Changer d'année ne filtre que l'affichage ; toutes
- * les lignes restent en base.
+ * six domaines officiels et le programme EVAR. Changer d'année ne filtre que
+ * l'affichage ; toutes les lignes restent en base.
  */
 export function DossierScreen() {
   const { studentId = '' } = useParams<{ studentId: string }>()

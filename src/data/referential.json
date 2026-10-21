@@ -1,5 +1,5 @@
 {
-  "version": "2026.1.0",
+  "version": "2026.2.0",
   "domains": [
     {
       "id": "langage",
@@ -36,6 +36,12 @@
       "label": "Vivant",
       "longLabel": "Découvrir le monde du vivant, de la matière et des objets",
       "order": 6
+    },
+    {
+      "id": "evar",
+      "label": "EVAR",
+      "longLabel": "Éducation à la vie affective et relationnelle",
+      "order": 7
     }
   ],
   "competencies": [
@@ -223,6 +229,21 @@
       "id": "vivant-matiere-melanges",
       "domainId": "vivant",
       "label": "Découvrir les états de la matière et les mélanges"
+    },
+    {
+      "id": "evar-corps",
+      "domainId": "evar",
+      "label": "Se connaître, vivre et grandir avec son corps"
+    },
+    {
+      "id": "evar-relations",
+      "domainId": "evar",
+      "label": "Rencontrer les autres et construire des relations, s’y épanouir"
+    },
+    {
+      "id": "evar-societe",
+      "domainId": "evar",
+      "label": "Trouver sa place dans la société, y être libre et responsable"
     }
   ],
   "objectives": [
@@ -6630,6 +6651,150 @@
       "source": {
         "bo": "BO n°19 du 7 mai 2026",
         "page": 63
+      }
+    },
+    {
+      "id": "evar-corps-avant4",
+      "competencyId": "evar-corps",
+      "domainId": "evar",
+      "label": "Connaître son corps et comprendre ce qu’est l’intimité.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Ils réfléchissent aux lieux où ils peuvent se sentir en sécurité pour s’habiller ou se déshabiller, comme la salle de bains."
+      },
+      "source": {
+        "bo": "BO n° 6 du 6 février 2025",
+        "page": 11
+      }
+    },
+    {
+      "id": "evar-corps-4",
+      "competencyId": "evar-corps",
+      "domainId": "evar",
+      "label": "Connaître son corps et identifier des émotions.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Ils décrivent les émotions à partir d’expressions du visage de personnages dans des livres ou sur des images."
+      },
+      "source": {
+        "bo": "BO n° 6 du 6 février 2025",
+        "page": 13
+      }
+    },
+    {
+      "id": "evar-corps-5",
+      "competencyId": "evar-corps",
+      "domainId": "evar",
+      "label": "Connaître son corps, ses sensations et ses émotions.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Ils cherchent un personnage triste ou heureux dans des œuvres d’art ou des photographies."
+      },
+      "source": {
+        "bo": "BO n° 6 du 6 février 2025",
+        "page": 15
+      }
+    },
+    {
+      "id": "evar-relations-avant4",
+      "competencyId": "evar-relations",
+      "domainId": "evar",
+      "label": "Apprendre à exprimer son accord ou son refus, apprendre à envisager et à respecter un refus.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "« Est-ce que je peux m’assoir à côté de toi ? » « D’accord, je veux bien te prendre la main. »"
+      },
+      "source": {
+        "bo": "BO n° 6 du 6 février 2025",
+        "page": 12
+      }
+    },
+    {
+      "id": "evar-relations-4",
+      "competencyId": "evar-relations",
+      "domainId": "evar",
+      "label": "Identifier une personne de confiance (adulte, enfant), apprendre à faire appel à elle.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Ils étudient un album jeunesse sur des secrets et les émotions qui l’entourent."
+      },
+      "source": {
+        "bo": "BO n° 6 du 6 février 2025",
+        "page": 13
+      }
+    },
+    {
+      "id": "evar-relations-5",
+      "competencyId": "evar-relations",
+      "domainId": "evar",
+      "label": "Identifier différents types de sentiments dans sa relation à l’autre.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Ils identifient ce qui rend une relation positive : la confiance, le partage, le respect, l’échange, l’empathie, l’entraide, etc."
+      },
+      "source": {
+        "bo": "BO n° 6 du 6 février 2025",
+        "page": 15
+      }
+    },
+    {
+      "id": "evar-societe-avant4",
+      "competencyId": "evar-societe",
+      "domainId": "evar",
+      "label": "Appréhender et comprendre l’égalité entre les filles et les garçons et la liberté d’être soi-même.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Ils réalisent une affiche avec les jeux préférés de la classe et comprennent que ces jeux ne sont pas réservés uniquement aux filles ou aux garçons."
+      },
+      "source": {
+        "bo": "BO n° 6 du 6 février 2025",
+        "page": 12
+      }
+    },
+    {
+      "id": "evar-societe-4",
+      "competencyId": "evar-societe",
+      "domainId": "evar",
+      "label": "Vivre l’égalité entre les filles et les garçons. Découvrir les différentes structures familiales et les respecter.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Ils observent différentes familles à partir d’images, de photographies ou de la lecture d’un album sur le thème « qu’est-ce qu’une famille ? »."
+      },
+      "source": {
+        "bo": "BO n° 6 du 6 février 2025",
+        "page": 14
+      }
+    },
+    {
+      "id": "evar-societe-5",
+      "competencyId": "evar-societe",
+      "domainId": "evar",
+      "label": "Découvrir les ressemblances et les différences entre les autres et soi, respecter les autres dans leur différence, être respecté par eux.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Ils décrivent les différences entre les personnages d’un album de littérature jeunesse."
+      },
+      "source": {
+        "bo": "BO n° 6 du 6 février 2025",
+        "page": 16
       }
     }
   ]

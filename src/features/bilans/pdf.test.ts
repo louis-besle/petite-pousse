@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
-import { PDFDocument } from 'pdf-lib'
+import { PDFBool, PDFDict, PDFDocument, PDFName } from 'pdf-lib'
 import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs'
 import { beforeAll, describe, expect, it, vi } from 'vitest'
 import type { BilanEntry, BilanModel } from '@/domain/bilan'
@@ -125,6 +125,17 @@ describe('generateBilanPdf', () => {
     expect(document.getTitle()).toBe('Bilan de Léa M.')
     expect(document.getAuthor()).toBe('Mme Martin')
     expect(document.getSubject()).toBe('Bilan des réussites')
+
+    // Le titre du document doit s'afficher dans la visionneuse ; le PDF reste
+    // non balisé, l'aperçu HTML demeure la version accessible.
+    const viewerPreferences = document.catalog.lookup(
+      PDFName.of('ViewerPreferences'),
+      PDFDict,
+    )
+    expect(viewerPreferences).toBeDefined()
+    expect(viewerPreferences?.get(PDFName.of('DisplayDocTitle'))).toBe(
+      PDFBool.True,
+    )
   })
 
   it(
@@ -244,6 +255,30 @@ describe('generateBilanPdf', () => {
 
       expect(page?.text).toContain('Réaliser une composition en volume')
       expect(page?.text).toContain('Photo')
+    },
+    PDF_TIMEOUT,
+  )
+
+  it(
+    'affiche une réussite EVAR avec son intitulé et le libellé du domaine',
+    async () => {
+      const bilan = model([
+        {
+          id: 'evar',
+          entries: [
+            entry('Connaître son corps et comprendre ce qu’est l’intimité', '2026-10-12', {
+              domainId: 'evar',
+              domainLabel: 'EVAR',
+            }),
+          ],
+        },
+      ])
+
+      const bytes = await generateBilanPdf(bilan, META, fonts)
+      const [page] = await extractPages(bytes)
+
+      expect(page?.text).toContain('EVAR')
+      expect(page?.text).toContain('Connaître son corps et comprendre ce qu’est l’intimité')
     },
     PDF_TIMEOUT,
   )

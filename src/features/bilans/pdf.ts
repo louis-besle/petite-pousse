@@ -1,5 +1,13 @@
 import fontkit from '@pdf-lib/fontkit'
-import { PDFDocument, rgb, type PDFFont, type PDFImage, type PDFPage, type RGB } from 'pdf-lib'
+import {
+  PDFDocument,
+  PDFName,
+  rgb,
+  type PDFFont,
+  type PDFImage,
+  type PDFPage,
+  type RGB,
+} from 'pdf-lib'
 import type { BilanEntry, BilanModel } from '@/domain/bilan'
 import type { Domain, SchoolYear, Student } from '@/domain/types'
 import { formatShortDate } from '@/lib/date'
@@ -57,7 +65,7 @@ const MUTED = rgb(0.42, 0.38, 0.33)
 const LINE = rgb(0.918, 0.863, 0.776)
 const PAPER = rgb(1, 0.992, 0.976)
 
-/** Couleurs d'accent et fonds doux des six domaines (mêmes valeurs que l'UI). */
+/** Couleurs d'accent et fonds doux des domaines (mêmes valeurs que l'UI). */
 const DOMAIN_COLORS: Record<Domain['id'], RGB> = {
   langage: rgb(0.435, 0.561, 0.416),
   maths: rgb(0.498, 0.647, 0.722),
@@ -65,6 +73,7 @@ const DOMAIN_COLORS: Record<Domain['id'], RGB> = {
   arts: rgb(0.851, 0.643, 0.255),
   temps: rgb(0.725, 0.541, 0.431),
   vivant: rgb(0.494, 0.545, 0.341),
+  evar: rgb(0.698, 0.412, 0.541),
 }
 
 const DOMAIN_SOFT: Record<Domain['id'], RGB> = {
@@ -74,6 +83,7 @@ const DOMAIN_SOFT: Record<Domain['id'], RGB> = {
   arts: rgb(0.98, 0.922, 0.788),
   temps: rgb(0.949, 0.89, 0.843),
   vivant: rgb(0.906, 0.922, 0.847),
+  evar: rgb(0.965, 0.875, 0.902),
 }
 
 /** Couleur de repli pour un domaine retiré du référentiel. */
@@ -440,6 +450,13 @@ export async function generateBilanPdf(
   document.setCreator('Carnet de réussites')
   document.setProducer('Carnet de réussites')
   document.setLanguage('fr-FR')
+  // Affiche le titre du document dans la barre de la visionneuse, utile quand
+  // plusieurs bilans sont ouverts. Le PDF reste non balisé : l'aperçu HTML est
+  // la version accessible.
+  document.catalog.set(
+    PDFName.of('ViewerPreferences'),
+    document.context.obj({ DisplayDocTitle: true }),
+  )
 
   const images = await embedPhotos(document, model)
   const pages: PDFPage[] = []

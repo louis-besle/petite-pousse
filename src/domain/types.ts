@@ -17,7 +17,7 @@ export interface SchoolYear {
 }
 
 export interface Domain {
-  id: 'langage' | 'maths' | 'corps' | 'arts' | 'temps' | 'vivant'
+  id: 'langage' | 'maths' | 'corps' | 'arts' | 'temps' | 'vivant' | 'evar'
   label: string
   longLabel: string
   order: number
