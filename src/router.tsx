@@ -5,6 +5,7 @@ import { DossierScreen } from '@/features/dossier/DossierScreen'
 import { PhotoScreen } from '@/features/capture/PhotoScreen'
 import { StudentPickerScreen } from '@/features/capture/StudentPickerScreen'
 import { SuccessScreen } from '@/features/capture/SuccessScreen'
+import { ManageStudentsScreen } from '@/features/students/ManageStudentsScreen'
 import { AppShell } from '@/ui/AppShell'
 import { ScreenPlaceholder } from '@/ui/ScreenPlaceholder'
 
@@ -30,7 +31,7 @@ export const routes: RouteObject[] = [
         path: '/success/:validationId',
         element: <SuccessScreen />,
       },
-      { path: '/students', element: <ScreenPlaceholder title="Gérer les élèves" /> },
+      { path: '/students', element: <ManageStudentsScreen /> },
       { path: '/students/:studentId', element: <DossierScreen /> },
       { path: '/programme', element: <ScreenPlaceholder title="Programme" /> },
       { path: '/bilans', element: <ScreenPlaceholder title="Bilans" /> },
