@@ -39,9 +39,9 @@ function miniReferential(objectives: Objective[]) {
 describe('referential', () => {
   it('exporte un référentiel validé avec les six domaines officiels', () => {
     expect(validateReferential(referential)).toEqual(referential)
-    expect(referential.version).toBe('2026.0.0')
-    expect(referential.competencies).toEqual([])
-    expect(referential.objectives).toEqual([])
+    expect(referential.version).toBe('2026.1.0')
+    expect(referential.competencies.length).toBeGreaterThan(0)
+    expect(referential.objectives.length).toBeGreaterThan(0)
     expect(referential.domains.map((domain) => domain.id)).toEqual([
       'langage',
       'corps',

@@ -1,5 +1,5 @@
 {
-  "version": "2026.0.0",
+  "version": "2026.1.0",
   "domains": [
     {
       "id": "langage",
@@ -38,6 +38,1547 @@
       "order": 6
     }
   ],
-  "competencies": [],
-  "objectives": []
+  "competencies": [
+    {
+      "id": "lang-vocabulaire",
+      "domainId": "langage",
+      "label": "Enrichir son vocabulaire"
+    },
+    {
+      "id": "lang-syntaxe",
+      "domainId": "langage",
+      "label": "Développer sa syntaxe"
+    },
+    {
+      "id": "lang-articulation",
+      "domainId": "langage",
+      "label": "Articuler distinctement"
+    },
+    {
+      "id": "lang-discours",
+      "domainId": "langage",
+      "label": "Produire des discours variés"
+    },
+    {
+      "id": "lang-phonologie",
+      "domainId": "langage",
+      "label": "Acquérir les habiletés phonologiques et le principe alphabétique"
+    },
+    {
+      "id": "lang-diversite",
+      "domainId": "langage",
+      "label": "S’éveiller à la diversité linguistique"
+    },
+    {
+      "id": "lang-ecrits",
+      "domainId": "langage",
+      "label": "Écouter et comprendre différentes formes d’écrits"
+    },
+    {
+      "id": "lang-geste",
+      "domainId": "langage",
+      "label": "Apprendre le geste d’écriture"
+    },
+    {
+      "id": "lang-premiers-ecrits",
+      "domainId": "langage",
+      "label": "Produire de premiers écrits"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "lang-vocabulaire-01",
+      "competencyId": "lang-vocabulaire",
+      "domainId": "langage",
+      "label": "Comprendre, mémoriser, réemployer les mots des corpus enseignés (2 par période).",
+      "ageBands": [
+        "before4",
+        "from4"
+      ],
+      "examples": {
+        "before4": "Comprendre et utiliser les réseaux lexicaux : • de la vie familiale ; • des activités récurrentes dans la vie de la classe (ex. :verbes de mouvement en lien avec les activités de motricité) ; • des relations avec les autres, des activités scolaires, des albums lus en classe.",
+        "from4": "Comprendre et utiliser : • les mots qui vont permettre de décrire l’environnement immédiat de l’élève ; • les mots spécifiques des projets et des différents domaines travaillés en classe ; • les mots des histoires entendues."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 8
+      }
+    },
+    {
+      "id": "lang-vocabulaire-02",
+      "competencyId": "lang-vocabulaire",
+      "domainId": "langage",
+      "label": "Organiser les mots en catégorie et en réseau.",
+      "ageBands": [
+        "before4",
+        "from4",
+        "from5"
+      ],
+      "examples": {
+        "before4": "Attribuer un objet à une catégorie.",
+        "from4": "Trouver un intrus dans une catégorie.",
+        "from5": "Chercher des hyperonymes des réseaux étudiés (véhicule est un hyperonyme de voiture, bus, vélo, etc. ; animal est un hyperonyme de chat, chien, grenouille, etc.)."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 8
+      }
+    },
+    {
+      "id": "lang-vocabulaire-03",
+      "competencyId": "lang-vocabulaire",
+      "domainId": "langage",
+      "label": "Comprendre, mémoriser, réemployer les mots des corpus enseignés (3 par période).",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Comprendre et utiliser : • les mots des émotions, des sentiments et des états mentaux des personnages de fiction ; • les mots qui entretiennent une proximité phonique (poule/roule/boule/moule) ; • les mots qui vont permettre de s’emparer des apprentissages du CP."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 9
+      }
+    },
+    {
+      "id": "lang-syntaxe-01",
+      "competencyId": "lang-syntaxe",
+      "domainId": "langage",
+      "label": "Diversifier les pronoms employés.",
+      "ageBands": [
+        "before4",
+        "from4",
+        "from5"
+      ],
+      "examples": {
+        "before4": "Comprendre et utiliser : • les pronoms il-elle/ils-elles : « Il mange le gâteau », « Elle est partie », « Ils sont sur le toboggan » ; • plus tard dans l’année, le pronom je : « Moi, je mange le gâteau. »",
+        "from4": "Utiliser : • le pronom tu : « Toi, tu manges le gâteau » ; • le pronom on : « On a été chez mamie et on a mangé le gâteau. »",
+        "from5": "Utiliser les pronoms nous et vous : « Avec les CP, nous avons mangé un gâteau », « Vous, vous mangez un gâteau et pas nous. »"
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 10
+      }
+    },
+    {
+      "id": "lang-syntaxe-02",
+      "competencyId": "lang-syntaxe",
+      "domainId": "langage",
+      "label": "Construire à l’oral un système de temps de plus en plus efficace.",
+      "ageBands": [
+        "before4",
+        "from4",
+        "from5"
+      ],
+      "examples": {
+        "before4": "Utiliser : • dans la première partie de l’année, le présent : « Il mange le gâteau » ; • en fin d’année, un système à trois temps : présent/passé composé/présent à valeur de futur proche (aller) : « Moi, je fais du toboggan. J’ai joué à la balançoire et je vais faire du vélo. »",
+        "from4": "Utiliser : • l’imparfait et le passé composé : « Moi, j’étais dans la cour. J’ai fait du vélo » ; • le conditionnel : « Moi, je serais un voleur et toi, tu serais un gendarme. »",
+        "from5": "Utiliser : • un système à trois temps : imparfait/plus-que-parfait/imparfait à valeur de futur dans le passé (aller) « Moi, j’étais sur un toboggan. J’avais fait de la balançoire et j’allais faire du vélo » ; • le futur simple : « Quand on écrira aux correspondants » ; • un système à deux temps : futur/futur antérieur : « Quand on ira chez les correspondants, on aura déjà été au spectacle et on pourra leur raconter l’histoire. »"
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 10
+      }
+    },
+    {
+      "id": "lang-syntaxe-03",
+      "competencyId": "lang-syntaxe",
+      "domainId": "langage",
+      "label": "Formuler des énoncés de plus en plus complexes.",
+      "ageBands": [
+        "before4",
+        "from4",
+        "from5"
+      ],
+      "examples": {
+        "before4": "Coordonner des propositions grâce à de premiers connecteurs : et/et puis : « Il monte sur le banc et puis il lance le ballon et puis il saute. »",
+        "from4": "Utiliser : • dans son énoncé de nouveaux connecteurs temporels et spatiaux : d’abord/ensuite/après/pendant, etc. : « D’abord j’ai lancé le ballon et après j’ai sauté dans le cerceau » ; • de nouveaux connecteurs afin de subordonner les propositions : parce que/que/qui : « Moi, je n’ai pas mon manteau parce qu’il est resté dans la voiture. »",
+        "from5": "Utiliser de nouveaux introducteurs de complexité : où/quand/pour que/si/comme, etc. : • « Là, c’est la maison où le loup a mangé le petit chaperon rouge. » • « Le chevreau s’est caché dans l’horloge pour que le loup ne le voie pas. » • « Quand je vais à la boulangerie, la boulangère me donne un bonbon. » • « Comme il fait chaud, elle va boire de l’eau. »"
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 10
+      }
+    },
+    {
+      "id": "lang-articulation-01",
+      "competencyId": "lang-articulation",
+      "domainId": "langage",
+      "label": "Articuler distinctement les couples de consonnes proches suivants : t/k, f/s, m/n.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "À partir d’un imagier composé de paires distinctives, prononcer correctement : cour/tour, cube/tube, cassé/café, pouce/pouf, nain/main."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 11
+      }
+    },
+    {
+      "id": "lang-articulation-02",
+      "competencyId": "lang-articulation",
+      "domainId": "langage",
+      "label": "Distinguer et produire correctement les nasales : é/in, a/an, o/on.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "À partir d’un imagier composé de paires distinctives, notamment dans une situation de jeu traditionnel, prononcer correctement : ville/fil, dessert/désert, poison/poisson, pépé/bébé, doigt/toit, gare/car et les mots à phonèmes proches : boule/poule."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 11
+      }
+    },
+    {
+      "id": "lang-articulation-03",
+      "competencyId": "lang-articulation",
+      "domainId": "langage",
+      "label": "Articuler distinctement les couples de consonnes proches suivants : f/v, s/z, p/b, t/d, k/g.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "À partir d’un imagier composé de paires distinctives, notamment dans une situation de jeu traditionnel, prononcer correctement : ville/fil, dessert/désert, poison/poisson, pépé/bébé, doigt/toit, gare/car et les mots à phonèmes proches : boule/poule."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 11
+      }
+    },
+    {
+      "id": "lang-articulation-04",
+      "competencyId": "lang-articulation",
+      "domainId": "langage",
+      "label": "Prononcer correctement les couples de consonnes proches suivants : ch/s, ch/j, ch/z.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "À partir d’un imagier composé de paires distinctives, notamment dans une situation de jeux traditionnels, prononcer correctement : chaud/seau ; mouche/mousse ; bijou/bisou ; manche/mange."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 11
+      }
+    },
+    {
+      "id": "lang-articulation-05",
+      "competencyId": "lang-articulation",
+      "domainId": "langage",
+      "label": "Prononcer correctement les doubles consonnes : br/cr/bl/pl/sl.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "À partir d’un imagier composé de paires distinctives, notamment dans une situation de jeux traditionnels, prononcer correctement : chaud/seau ; mouche/mousse ; bijou/bisou ; manche/mange."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 11
+      }
+    },
+    {
+      "id": "lang-discours-01",
+      "competencyId": "lang-discours",
+      "domainId": "langage",
+      "label": "Entrer en communication verbale avec un adulte ou un autre élève.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Oser parler pour exprimer un besoin ou prendre part à la vie de la classe."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 12
+      }
+    },
+    {
+      "id": "lang-discours-02",
+      "competencyId": "lang-discours",
+      "domainId": "langage",
+      "label": "Dire ce qu’on fait.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "S’exprimer lorsqu’on est sollicité."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 12
+      }
+    },
+    {
+      "id": "lang-discours-03",
+      "competencyId": "lang-discours",
+      "domainId": "langage",
+      "label": "Dire ce qu’on a fait et, peu à peu, ce qu’on va faire.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Dire : « Moi, je fais du toboggan. J’ai joué à la balançoire et je vais faire du vélo. »"
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 12
+      }
+    },
+    {
+      "id": "lang-discours-04",
+      "competencyId": "lang-discours",
+      "domainId": "langage",
+      "label": "Prendre part à l’oralisation d’un court texte mémorisé.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Participer à un moment collectif d’oralisation d’une comptine, d’une chanson, d’un court poème ou d’un bref extrait d’un album qui a été mémorisé."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 12
+      }
+    },
+    {
+      "id": "lang-discours-05",
+      "competencyId": "lang-discours",
+      "domainId": "langage",
+      "label": "Dire ce qu’on va faire.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Dire : « Après la récréation, on va aller dans la salle de motricité et on va rouler sur le tapis. »"
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 12
+      }
+    },
+    {
+      "id": "lang-discours-06",
+      "competencyId": "lang-discours",
+      "domainId": "langage",
+      "label": "Dire comment on a fait ou comment on va faire.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Dire : « Sur la grande affiche, on a collé les papiers et après on a mis la peinture avec les doigts. On a tapoté doucement. Dans l’atelier, on va coller les papiers et après on va mettre la peinture. »"
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 12
+      }
+    },
+    {
+      "id": "lang-discours-07",
+      "competencyId": "lang-discours",
+      "domainId": "langage",
+      "label": "Oraliser un court texte mémorisé.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Réciter une comptine, une chanson, un court poème ou un bref extrait d’album qui a été mémorisé."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 12
+      }
+    },
+    {
+      "id": "lang-discours-08",
+      "competencyId": "lang-discours",
+      "domainId": "langage",
+      "label": "Participer à des échanges en restant dans le propos.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Dire : « Sur la grande affiche, on a collé les papiers et après on a mis la peinture avec les doigts. On a tapoté doucement. Dans l’atelier, on va coller les papiers et après on va mettre la peinture. »"
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 12
+      }
+    },
+    {
+      "id": "lang-discours-09",
+      "competencyId": "lang-discours",
+      "domainId": "langage",
+      "label": "Décrire une action ou une activité qui a été menée par un autre élève.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Dire : « Peut-être que Corentin a mis la peinture avant de dessiner avec les feutres. »"
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 12
+      }
+    },
+    {
+      "id": "lang-discours-10",
+      "competencyId": "lang-discours",
+      "domainId": "langage",
+      "label": "Se faire comprendre, par le truchement du langage, d’un adulte qui ne connait rien à la situation évoquée.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Suffisamment se décentrer et identifier les informations qu’on doit communiquer pour qu’un interlocuteur qui n’a pas vécu la situation évoquée puisse la comprendre."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 12
+      }
+    },
+    {
+      "id": "lang-discours-11",
+      "competencyId": "lang-discours",
+      "domainId": "langage",
+      "label": "Participer à une conversation avec un adulte ou des pairs et reformuler son propos s’il n’a pas été compris.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Dire : « Pour acheter les fruits du gouter, il faudrait compter les élèves de la classe. »"
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 12
+      }
+    },
+    {
+      "id": "lang-discours-12",
+      "competencyId": "lang-discours",
+      "domainId": "langage",
+      "label": "Émettre une hypothèse.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Dire : « Si on voulait de la peinture verte, il faudrait mélanger du jaune avec du bleu. »"
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 12
+      }
+    },
+    {
+      "id": "lang-phonologie-01",
+      "competencyId": "lang-phonologie",
+      "domainId": "langage",
+      "label": "Identifier les sons de la langue, lors de situations d’écoute proposées par le professeur.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Discriminer et identifier des sons familiers, localiser le son (la source)."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 13
+      }
+    },
+    {
+      "id": "lang-phonologie-02",
+      "competencyId": "lang-phonologie",
+      "domainId": "langage",
+      "label": "Identifier un mot donné à l’oral dans une phrase, dans un texte.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Reconnaitre les sons de la langue les plus fréquents dans une suite."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 13
+      }
+    },
+    {
+      "id": "lang-phonologie-03",
+      "competencyId": "lang-phonologie",
+      "domainId": "langage",
+      "label": "Scander les syllabes d’un mot.",
+      "ageBands": [
+        "before4",
+        "from4"
+      ],
+      "examples": {
+        "before4": "Prononcer son prénom, puis une comptine en scandant les syllabes.",
+        "from4": "À l’oral et sans support écrit, dénombrer les syllabes de mots familiers, comparer les mots selon le nombre de syllabes et les classer (ex. : discriminer une syllabe cible dans une suite de syllabes énoncées MA → FA → PA → MA → SA)."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 13
+      }
+    },
+    {
+      "id": "lang-phonologie-04",
+      "competencyId": "lang-phonologie",
+      "domainId": "langage",
+      "label": "Dire des comptines courtes comprenant des phonèmes proches.",
+      "ageBands": [
+        "before4",
+        "from4"
+      ],
+      "examples": {
+        "before4": "Dire des comptines courtes comprenant des phonèmes proches.",
+        "from4": "Ajouter, supprimer, permuter, répéter, fusionner, substituer les syllabes d’un mot dit à l’oral."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 13
+      }
+    },
+    {
+      "id": "lang-phonologie-05",
+      "competencyId": "lang-phonologie",
+      "domainId": "langage",
+      "label": "Reconnaitre et nommer certaines lettres de son prénom écrit en capitales.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Retrouver l’étiquette de son prénom (lettres capitales) parmi d’autres en prenant des indices sur les lettres (mêmes signes limités, permanents, alignés, normés)."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 14
+      }
+    },
+    {
+      "id": "lang-phonologie-06",
+      "competencyId": "lang-phonologie",
+      "domainId": "langage",
+      "label": "Utiliser la voix parlée, chantée et les possibilités vocales (imitation de sons, onomatopées) afin d’expérimenter différents sons.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Reproduire des sons (onomatopées)."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 14
+      }
+    },
+    {
+      "id": "lang-phonologie-07",
+      "competencyId": "lang-phonologie",
+      "domainId": "langage",
+      "label": "Entendre, discriminer des phonèmes.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Discriminer et identifier les sons de la langue. Les localiser dans une suite."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 14
+      }
+    },
+    {
+      "id": "lang-phonologie-08",
+      "competencyId": "lang-phonologie",
+      "domainId": "langage",
+      "label": "Manipuler les syllabes d’un mot (ajout, suppression, permutation, répétition, fusion, substitution).",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Ajouter, supprimer, permuter, répéter, fusionner, substituer les syllabes d’un mot dit à l’oral."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 14
+      }
+    },
+    {
+      "id": "lang-phonologie-09",
+      "competencyId": "lang-phonologie",
+      "domainId": "langage",
+      "label": "Nommer les lettres de son prénom et quelques lettres de mots connus (le professeur nomme systématiquement les lettres).",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Épeler son prénom ou un mot connu afin qu’un tiers puisse le composer."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 14
+      }
+    },
+    {
+      "id": "lang-phonologie-10",
+      "competencyId": "lang-phonologie",
+      "domainId": "langage",
+      "label": "Connaitre la correspondance entre les lettres scriptes majuscules et minuscules et les lettres cursives minuscules.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Composer un mot connu en commençant par la première lettre et respectant l’ordre des lettres (même graphie, puis graphies différentes)."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 14
+      }
+    },
+    {
+      "id": "lang-phonologie-11",
+      "competencyId": "lang-phonologie",
+      "domainId": "langage",
+      "label": "Donner les valeurs sonores de quelques lettres de mots simples connus.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Utiliser le nom de quelques lettres connues pour représenter les sons entendus (les voyelles)."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 14
+      }
+    },
+    {
+      "id": "lang-phonologie-12",
+      "competencyId": "lang-phonologie",
+      "domainId": "langage",
+      "label": "Utiliser les possibilités sonores de la voix.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Différencier les sons proches : on/en/un."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 14
+      }
+    },
+    {
+      "id": "lang-phonologie-13",
+      "competencyId": "lang-phonologie",
+      "domainId": "langage",
+      "label": "Augmenter sa mémoire auditive et sa capacité de concentration.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Discriminer et identifier les sons de la langue. Les localiser dans une suite et les mémoriser."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 14
+      }
+    },
+    {
+      "id": "lang-phonologie-14",
+      "competencyId": "lang-phonologie",
+      "domainId": "langage",
+      "label": "Supprimer, ajouter, remplacer, inverser, substituer, fusionner les syllabes d’un mot.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Fusionner les syllabes d’attaque de POISSON et la syllabe finale de SOURIS pour obtenir un pseudo-mot POIRIS."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 15
+      }
+    },
+    {
+      "id": "lang-phonologie-15",
+      "competencyId": "lang-phonologie",
+      "domainId": "langage",
+      "label": "Repérer et produire des rimes et des assonances.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Localiser un phonème dans un mot."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 15
+      }
+    },
+    {
+      "id": "lang-phonologie-16",
+      "competencyId": "lang-phonologie",
+      "domainId": "langage",
+      "label": "Entendre, discriminer, manipuler des phonèmes.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Trouver l’intrus à l’initiale entre sac/Sacha/cartable ;"
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 15
+      }
+    },
+    {
+      "id": "lang-phonologie-17",
+      "competencyId": "lang-phonologie",
+      "domainId": "langage",
+      "label": "Connaitre le nom des lettres de l’alphabet.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Épeler les lettres d’un mot connu afin qu’un tiers puisse l’écrire."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 15
+      }
+    },
+    {
+      "id": "lang-phonologie-18",
+      "competencyId": "lang-phonologie",
+      "domainId": "langage",
+      "label": "Connaitre les différentes graphies d’une même lettre (majuscule lettre capitale ; minuscules scriptes ; cursives).",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Reconnaitre et nommer toutes les lettres d’un mot écrit dans les trois graphies."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 15
+      }
+    },
+    {
+      "id": "lang-phonologie-19",
+      "competencyId": "lang-phonologie",
+      "domainId": "langage",
+      "label": "Distinguer des lettres visuellement proches (b/d, c/e/o, p/q) grâce à leur écriture cursive et les nommer correctement.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Reconnaitre et nommer toutes les lettres d’un mot écrit dans les trois graphies."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 15
+      }
+    },
+    {
+      "id": "lang-phonologie-20",
+      "competencyId": "lang-phonologie",
+      "domainId": "langage",
+      "label": "Connaitre le nom des lettres de l’alphabet et leur valeur sonore hormis les occlusives.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Répéter un mot lentement et essayer de prolonger les phonèmes (voyelles, consonnes fricatives : s/r/f/v/j/ch et liquide : l) pour retrouver les lettres auxquelles ils correspondent."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 15
+      }
+    },
+    {
+      "id": "lang-phonologie-21",
+      "competencyId": "lang-phonologie",
+      "domainId": "langage",
+      "label": "Discriminer des mots auditivement proches.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Discriminer et identifier les mots auditivement proches : poule/boule/roule/moule/coule/foule."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 15
+      }
+    },
+    {
+      "id": "lang-diversite-01",
+      "competencyId": "lang-diversite",
+      "domainId": "langage",
+      "label": "Écouter des chants, des comptines, des histoires connues dans des versions en français et en langue étrangère.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Manifester son intérêt pour d’autres langues que la sienne."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 16
+      }
+    },
+    {
+      "id": "lang-diversite-02",
+      "competencyId": "lang-diversite",
+      "domainId": "langage",
+      "label": "Participer à des jeux dans une autre langue : jeux de doigts, rondes, jeux dansés, mimes, jeux de cour, jeux de cartes.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Mémoriser des chants et des comptines dans une autre langue."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 16
+      }
+    },
+    {
+      "id": "lang-diversite-03",
+      "competencyId": "lang-diversite",
+      "domainId": "langage",
+      "label": "Comparer des histoires lues en français et dans une autre langue.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Distinguer des sons nouveaux en les comparant avec des sons de la langue française."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 16
+      }
+    },
+    {
+      "id": "lang-ecrits-01",
+      "competencyId": "lang-ecrits",
+      "domainId": "langage",
+      "label": "Repérer les outils fonctionnels utilisés quotidiennement en classe (étiquette du prénom, emploi du temps, affiches, etc.).",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Associer un écrit connu à son utilisation : « C’est pour : chanter, raconter/écouter des histoires, le dire aux parents, faire un gâteau. »"
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 17
+      }
+    },
+    {
+      "id": "lang-ecrits-02",
+      "competencyId": "lang-ecrits",
+      "domainId": "langage",
+      "label": "Reconnaitre quelques écrits utilisés et produits en classe (comptines, recettes, carnet de lecteur).",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Associer un écrit connu à son utilisation : « C’est pour : chanter, raconter/écouter des histoires, le dire aux parents, faire un gâteau. »"
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 17
+      }
+    },
+    {
+      "id": "lang-ecrits-03",
+      "competencyId": "lang-ecrits",
+      "domainId": "langage",
+      "label": "Reconnaitre un personnage, le nommer et le situer dans les illustrations.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Identifier les livres dans lesquels se retrouve un même personnage."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 17
+      }
+    },
+    {
+      "id": "lang-ecrits-04",
+      "competencyId": "lang-ecrits",
+      "domainId": "langage",
+      "label": "Comprendre des histoires où l’enchainement des actions peut être rattaché à des expériences connues de la vie quotidienne (le bain, le coucher, etc.).",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Utiliser une marotte et raconter ce que le personnage fait dans chacun des albums."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 17
+      }
+    },
+    {
+      "id": "lang-ecrits-05",
+      "competencyId": "lang-ecrits",
+      "domainId": "langage",
+      "label": "Reconnaitre, nommer et identifier la fonction de différents écrits rencontrés dans la vie courante.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Comprendre la fonction et la destination d’une lettre d’information aux parents, des étiquettes de rangement dans la classe, de l’affichage du menu de la cantine, etc."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 17
+      }
+    },
+    {
+      "id": "lang-ecrits-06",
+      "competencyId": "lang-ecrits",
+      "domainId": "langage",
+      "label": "Prendre conscience de la notion de destinataire et de contenu de la requête adressée par un écrit.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Comprendre la fonction et la destination d’une lettre d’information aux parents, des étiquettes de rangement dans la classe, de l’affichage du menu de la cantine, etc."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 17
+      }
+    },
+    {
+      "id": "lang-ecrits-07",
+      "competencyId": "lang-ecrits",
+      "domainId": "langage",
+      "label": "Identifier et utiliser quotidiennement des outils fonctionnels pour se repérer, s’organiser, ranger.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Identifier les livres présents dans la classe et leur usage."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 17
+      }
+    },
+    {
+      "id": "lang-ecrits-08",
+      "competencyId": "lang-ecrits",
+      "domainId": "langage",
+      "label": "Identifier et décrire le personnage principal et les personnages secondaires.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "À l’aide d’un support (marotte, décor, boite à histoires, tapis d’histoires), raconter l’histoire entendue plusieurs fois, en structurant son propos selon les caractéristiques des personnages et l’enchainement des évènements."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 17
+      }
+    },
+    {
+      "id": "lang-ecrits-09",
+      "competencyId": "lang-ecrits",
+      "domainId": "langage",
+      "label": "Comprendre des histoires dont les actions sont organisées autour d’une structure répétitive (rencontres successives) et commencer à comprendre les informations implicites (émotions, états et sentiments des personnages).",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "À l’aide d’un support (marotte, décor, boite à histoires, tapis d’histoires), raconter l’histoire entendue plusieurs fois, en structurant son propos selon les caractéristiques des personnages et l’enchainement des évènements."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 17
+      }
+    },
+    {
+      "id": "lang-ecrits-10",
+      "competencyId": "lang-ecrits",
+      "domainId": "langage",
+      "label": "Différencier les types d’écrits et associer un écrit à un projet d’écriture ou de communication.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Identifier la fonction d’un écrit (ex. : une recette de cuisine), liée aux raisons que l’on peut avoir de l’utiliser."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 17
+      }
+    },
+    {
+      "id": "lang-ecrits-11",
+      "competencyId": "lang-ecrits",
+      "domainId": "langage",
+      "label": "Repérer et dégager la structure et l’organisation (mise en page, typographie) de formes d’écrits fréquemment utilisés en classe (structure de la lettre, de la recette, du conte, d’un écrit documentaire, d’une notice de fabrication).",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Utiliser le vocabulaire approprié pour parler des écrits (page, paragraphe, ligne, majuscule, ponctuation)."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 17
+      }
+    },
+    {
+      "id": "lang-ecrits-12",
+      "competencyId": "lang-ecrits",
+      "domainId": "langage",
+      "label": "Construire les caractéristiques des personnages archétypaux (loup, princesse, ogre, sorcière, renard, fée, etc.).",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Expliquer les motivations des personnages (vouloir grandir, être le plus fort, etc.), leurs émotions (être en colère, avoir peur, etc.), les expériences qu’ils vivent et leurs relations avec autrui (l’amitié, l’entraide, la ruse, etc.)."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 18
+      }
+    },
+    {
+      "id": "lang-ecrits-13",
+      "competencyId": "lang-ecrits",
+      "domainId": "langage",
+      "label": "Comprendre des histoires où l’enchainement des actions est lié au destin de personnages centraux ou secondaires qui évoluent et interagissent, dans des lieux diversifiés.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Raconter une histoire connue, dans son intégralité et sans support."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 18
+      }
+    },
+    {
+      "id": "lang-ecrits-14",
+      "competencyId": "lang-ecrits",
+      "domainId": "langage",
+      "label": "Comprendre les émotions, les intentions et les sentiments qui animent les personnages.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Transposer les émotions ressenties par les personnages à sa propre expérience."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 18
+      }
+    },
+    {
+      "id": "lang-ecrits-15",
+      "competencyId": "lang-ecrits",
+      "domainId": "langage",
+      "label": "Établir un lien entre la lecture effectuée et sa propre expérience.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Transposer les émotions ressenties par les personnages à sa propre expérience."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 18
+      }
+    },
+    {
+      "id": "lang-geste-01",
+      "competencyId": "lang-geste",
+      "domainId": "langage",
+      "label": "Participer aux activités de motricité générale, de motricité fine et aux exercices de graphismes ;",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Exercer sa dextérité par des activités manuelles (reproduire des formes en pâte à modeler)."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 18
+      }
+    },
+    {
+      "id": "lang-geste-02",
+      "competencyId": "lang-geste",
+      "domainId": "langage",
+      "label": "Guider son geste par le regard lorsqu’il trace ou écrit ;",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Produire librement des tracés continus ou discontinus."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 18
+      }
+    },
+    {
+      "id": "lang-geste-03",
+      "competencyId": "lang-geste",
+      "domainId": "langage",
+      "label": "Prendre des repères spatiaux sur le support utilisé pour tracer.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Tracer quelques formes de base : traits verticaux, traits horizontaux, points, boucles et cercles."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 18
+      }
+    },
+    {
+      "id": "lang-geste-04",
+      "competencyId": "lang-geste",
+      "domainId": "langage",
+      "label": "Adopter une posture adaptée au geste d’écriture.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Copier en lettres capitales son prénom et/ou d’autres mots du répertoire de mots familiers de la classe."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 19
+      }
+    },
+    {
+      "id": "lang-geste-05",
+      "competencyId": "lang-geste",
+      "domainId": "langage",
+      "label": "Adopter une préhension correcte du stylo et s’entrainer à ne pas le lever en écrivant.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Copier en lettres capitales son prénom et/ou d’autres mots du répertoire de mots familiers de la classe."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 19
+      }
+    },
+    {
+      "id": "lang-geste-06",
+      "competencyId": "lang-geste",
+      "domainId": "langage",
+      "label": "Utiliser de façon coordonnée les quatre articulations qui servent à tenir et guider le crayon (épaule, coude, poignet, doigts).",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Se repérer sur un support d’écriture (aller de gauche à droite)."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 19
+      }
+    },
+    {
+      "id": "lang-geste-07",
+      "competencyId": "lang-geste",
+      "domainId": "langage",
+      "label": "Tracer des lettres capitales.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Copier en lettres capitales son prénom et/ou d’autres mots du répertoire de mots familiers de la classe."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 19
+      }
+    },
+    {
+      "id": "lang-geste-08",
+      "competencyId": "lang-geste",
+      "domainId": "langage",
+      "label": "S’initier aux tracés de l’écriture cursive.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Se repérer sur un support d’écriture (aller de gauche à droite)."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 19
+      }
+    },
+    {
+      "id": "lang-geste-09",
+      "competencyId": "lang-geste",
+      "domainId": "langage",
+      "label": "Tenir correctement son stylo par la pince des doigts et utiliser de façon coordonnée les quatre articulations (épaule, coude, poignet, doigts).",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Écrire un mot orthographiquement transparent en cursive avec ou sans modèle."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 19
+      }
+    },
+    {
+      "id": "lang-geste-10",
+      "competencyId": "lang-geste",
+      "domainId": "langage",
+      "label": "Travailler la ligature entre deux lettres.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Mémoriser et automatiser le tracé des lettres en cursive et leur enchainement pour écrire son prénom sans modèle."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 19
+      }
+    },
+    {
+      "id": "lang-geste-11",
+      "competencyId": "lang-geste",
+      "domainId": "langage",
+      "label": "Tracer des lettres en écriture cursive, les enchainer.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Mémoriser et automatiser le tracé des lettres en cursive et leur enchainement pour écrire son prénom sans modèle."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 19
+      }
+    },
+    {
+      "id": "lang-premiers-ecrits-01",
+      "competencyId": "lang-premiers-ecrits",
+      "domainId": "langage",
+      "label": "Percevoir que l’écrit encode l’oral.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Demander à l’adulte d’écrire, de légender un dessin, comprendre que le dessin se distingue de l’écriture."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 20
+      }
+    },
+    {
+      "id": "lang-premiers-ecrits-02",
+      "competencyId": "lang-premiers-ecrits",
+      "domainId": "langage",
+      "label": "Utiliser un support écrit connu.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Réciter une comptine apprise en identifiant le support écrit dont elle est issue."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 20
+      }
+    },
+    {
+      "id": "lang-premiers-ecrits-03",
+      "competencyId": "lang-premiers-ecrits",
+      "domainId": "langage",
+      "label": "Mimer la posture et les gestes d’écriture de l’adulte lors de la production de traces qui s’apparentent à de l’écriture.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Tracer des signes sur une feuille en indiquant au professeur qu’on a écrit."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 20
+      }
+    },
+    {
+      "id": "lang-premiers-ecrits-04",
+      "competencyId": "lang-premiers-ecrits",
+      "domainId": "langage",
+      "label": "Tracer volontairement des signes abstraits dont on comprend qu’il ne s’agit pas de dessins, mais de lettres.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Tracer des signes sur une feuille en indiquant au professeur qu’on a écrit."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 20
+      }
+    },
+    {
+      "id": "lang-premiers-ecrits-05",
+      "competencyId": "lang-premiers-ecrits",
+      "domainId": "langage",
+      "label": "Comprendre que lorsque l’adulte lit un même écrit plusieurs fois, ce qu’il lit est toujours identique.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Participer à l’activité de dictée à l’adulte et s’engager dans des essais d’écriture."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 20
+      }
+    },
+    {
+      "id": "lang-premiers-ecrits-06",
+      "competencyId": "lang-premiers-ecrits",
+      "domainId": "langage",
+      "label": "Comprendre que l’écrit code des sons.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Utiliser le nom de quelques lettres connues pour représenter les sons entendus."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 20
+      }
+    },
+    {
+      "id": "lang-premiers-ecrits-07",
+      "competencyId": "lang-premiers-ecrits",
+      "domainId": "langage",
+      "label": "Proposer au professeur, lors d’une activité de dictée à l’adulte, le contenu d’un court message, stabiliser un énoncé oral et le mémoriser pour pouvoir ensuite le dicter au professeur.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Participer à l’activité de dictée à l’adulte et s’engager dans des essais d’écriture."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 20
+      }
+    },
+    {
+      "id": "lang-premiers-ecrits-08",
+      "competencyId": "lang-premiers-ecrits",
+      "domainId": "langage",
+      "label": "Comparer la longueur d’un texte écrit et la durée du texte entendu.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Recourir aux compétences qui seront nécessaires à l’activité d’écriture : reconnaitre par exemple la syllabe d’attaque d’un mot."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 20
+      }
+    },
+    {
+      "id": "lang-premiers-ecrits-09",
+      "competencyId": "lang-premiers-ecrits",
+      "domainId": "langage",
+      "label": "Savoir que le sens de la lecture est de gauche à droite et de haut en bas.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Utiliser le nom de quelques lettres connues pour représenter les sons entendus."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 20
+      }
+    },
+    {
+      "id": "lang-premiers-ecrits-10",
+      "competencyId": "lang-premiers-ecrits",
+      "domainId": "langage",
+      "label": "Chercher parmi les outils à sa disposition des modèles qui seront réutilisés dans un essai d’écriture.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Écrire un mot transparent avec l’appui d’un modèle, sur commande du professeur."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 20
+      }
+    },
+    {
+      "id": "lang-premiers-ecrits-11",
+      "competencyId": "lang-premiers-ecrits",
+      "domainId": "langage",
+      "label": "Segmenter l’oral en mots, les mots en syllabes, quelques syllabes en phonèmes.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Repérer un mot transparent dans une phrase écrite que le professeur vient de lire."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 20
+      }
+    },
+    {
+      "id": "lang-premiers-ecrits-12",
+      "competencyId": "lang-premiers-ecrits",
+      "domainId": "langage",
+      "label": "Comprendre que l’écrit encode l’oral et que les sons de la langue sont codés par des lettres.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Repérer un oubli volontaire par le professeur d’un mot lors d’une activité de dictée à l’adulte."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 20
+      }
+    },
+    {
+      "id": "lang-premiers-ecrits-13",
+      "competencyId": "lang-premiers-ecrits",
+      "domainId": "langage",
+      "label": "Suivre la trace écrite des yeux lors d’une relecture par l’adulte d’un message produit lors d’une dictée à l’adulte.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Repérer un oubli volontaire par le professeur d’un mot lors d’une activité de dictée à l’adulte."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 20
+      }
+    },
+    {
+      "id": "lang-premiers-ecrits-14",
+      "competencyId": "lang-premiers-ecrits",
+      "domainId": "langage",
+      "label": "Mémoriser la graphie d’un mot transparent, en s’appuyant sur la connaissance des lettres et la conscience phonologique et le retranscrire sur un support.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Utiliser ses propres ressources mémorisées et celles de la classe pour écrire des mots."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 21
+      }
+    },
+    {
+      "id": "lang-premiers-ecrits-15",
+      "competencyId": "lang-premiers-ecrits",
+      "domainId": "langage",
+      "label": "Réinvestir ses premières connaissances relatives au principe alphabétique pour produire un écrit.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Proposer l’écriture d’un mot transparent et expliciter la stratégie utilisée (copie de morceaux de mots, tracé de lettres connues, recours au principe alphabétique)."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 21
+      }
+    },
+    {
+      "id": "lang-premiers-ecrits-16",
+      "competencyId": "lang-premiers-ecrits",
+      "domainId": "langage",
+      "label": "Se repérer dans l’alphabet pour retrouver l’écriture d’une lettre nécessaire pour produire un écrit.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Proposer l’écriture d’un mot transparent et expliciter la stratégie utilisée (copie de morceaux de mots, tracé de lettres connues, recours au principe alphabétique)."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 21
+      }
+    },
+    {
+      "id": "lang-premiers-ecrits-17",
+      "competencyId": "lang-premiers-ecrits",
+      "domainId": "langage",
+      "label": "Mémoriser l’écriture de mots transparents ou de syllabes connues pour les réutiliser dans une production d’écrit.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Utiliser ses propres ressources mémorisées et celles de la classe pour écrire des mots."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 21
+      }
+    },
+    {
+      "id": "lang-premiers-ecrits-18",
+      "competencyId": "lang-premiers-ecrits",
+      "domainId": "langage",
+      "label": "Comprendre qu’il existe une norme pour écrire : ponctuation, majuscules, mise en page, etc.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Utiliser quelques rapports phonie-graphie parmi les plus simples à percevoir : quelques voyelles simples et quelques consonnes fricatives (s, f, v, z, r) et liquides (l) pour produire des écrits."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 21
+      }
+    },
+    {
+      "id": "lang-premiers-ecrits-19",
+      "competencyId": "lang-premiers-ecrits",
+      "domainId": "langage",
+      "label": "Persévérer pour mener la production d’écrit à son terme : préparation, énonciation et révision.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Utiliser ses propres ressources mémorisées et celles de la classe pour écrire des mots."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 21
+      }
+    }
+  ]
 }

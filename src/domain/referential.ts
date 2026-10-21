@@ -2,7 +2,7 @@ import { z } from 'zod'
 import rawReferential from '../data/referential.json'
 import type { AgeBand, Competency, Domain, Objective, Section } from './types'
 
-export const REFERENTIAL_VERSION = '2026.0.0'
+export const REFERENTIAL_VERSION = '2026.1.0'
 
 export const DOMAIN_IDS = ['langage', 'corps', 'arts', 'maths', 'temps', 'vivant'] as const
 export const AGE_BANDS = ['before4', 'from4', 'from5'] as const
