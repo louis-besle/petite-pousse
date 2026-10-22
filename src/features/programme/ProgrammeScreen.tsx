@@ -245,8 +245,14 @@ export function ProgrammeScreen() {
     setSelectedObjectiveId(undefined)
     showToast(`Réussite ajoutée à ${student.firstName}.`)
 
-    if (selectedYear !== currentYearId) {
-      setYearChoice(schoolYearIdForDate(todayIso()))
+    // `ensureSeed` ne fait jamais avancer `settings.currentSchoolYearId` : la
+    // validation est classée dans l'année de sa date, pas dans celle des
+    // réglages. On ne bascule donc que vers cette année-là, et seulement si le
+    // sélecteur peut la proposer.
+    const validationYearId = schoolYearIdForDate(todayIso())
+    if (selectedYear === 'all' || selectedYear === validationYearId) return
+    if (yearIds.includes(validationYearId)) {
+      setYearChoice(validationYearId)
     }
   }
 

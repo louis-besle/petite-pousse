@@ -270,7 +270,8 @@ describe('ObjectiveScreen', () => {
     }
   })
 
-  // Rendre les 398 objectifs est lourd : la marge couvre une machine chargée.
+  // Marge de 15 s pour le rendu complet des 398 cartes sous la charge parallèle
+  // de la suite (accommodation de test, pas un benchmark produit).
   it('affiche tous les niveaux quand l’option est activée', async () => {
     const lea = await addStudent('Léa', 'MS')
     await seedDraft(lea.id)

@@ -2,6 +2,7 @@ import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { db } from '@/db/db'
 import { ensureSeed } from '@/db/seed'
+import { updateSettings } from '@/db/settings'
 import { createValidation } from '@/db/validations'
 import { REFERENTIAL_VERSION, referential } from '@/domain/referential'
 import type { AgeBand, Objective, Section } from '@/domain/types'
@@ -282,7 +283,7 @@ describe('ProgrammeScreen', () => {
     expect(filteredBar).toHaveAccessibleName(/1 élève sur 3/)
   })
 
-  it('bascule sur l’année en cours après une validation rapide hors année courante', async () => {
+  it('bascule sur l’année de la validation après une validation rapide hors année courante', async () => {
     await db.schoolYears.add(
       makeSchoolYear({
         id: '2025-2026',
@@ -315,10 +316,112 @@ describe('ProgrammeScreen', () => {
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
     )
     // La validation est datée d'aujourd'hui : le sélecteur bascule sur l'année
-    // courante pour que le compteur mis à jour soit visible.
+    // de la validation pour que le compteur mis à jour soit visible.
     await waitFor(() =>
       expect(screen.getByRole('combobox', { name: 'Année scolaire' })).toHaveValue(
         schoolYearIdForDate(todayIso()),
+      ),
+    )
+  })
+
+  it('conserve « Toutes les années » et compte les validations de deux années', async () => {
+    await addStudent('Léa', 'MS')
+    const adam = await addStudent('Adam', 'PS')
+    const zoe = await addStudent('Zoé', 'GS')
+    await addValidation(adam.id, 'lang-vocabulaire-02', '2025-10-12', 'before4')
+    await addValidation(zoe.id, 'lang-vocabulaire-02', '2026-10-12', 'from5')
+
+    const user = userEvent.setup()
+    renderApp({ route: '/programme' })
+
+    const yearSelect = await screen.findByRole('combobox', { name: 'Année scolaire' })
+    await user.selectOptions(yearSelect, 'all')
+    await waitFor(() => expect(yearSelect).toHaveValue('all'))
+
+    await searchObjective('organiser')
+    await screen.findByText(LANGAGE_2.label)
+    expect(within(objectiveItem(LANGAGE_2.label)).getByText('2 élèves')).toBeInTheDocument()
+
+    await openObjective(user, LANGAGE_2.label)
+    const sheet = await screen.findByRole('dialog')
+    await user.click(
+      within(sheet).getByRole('button', { name: 'Valider pour un élève' }),
+    )
+    await user.click(within(sheet).getByRole('button', { name: /^Léa/ }))
+
+    await waitFor(() =>
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
+    )
+    expect(await screen.findByText('Réussite ajoutée à Léa.')).toBeInTheDocument()
+
+    // « Toutes les années » reste le filtre choisi : la nouvelle ligne y est déjà.
+    expect(screen.getByRole('combobox', { name: 'Année scolaire' })).toHaveValue('all')
+    await waitFor(() =>
+      expect(within(objectiveItem(LANGAGE_2.label)).getByText('3 élèves')).toBeInTheDocument(),
+    )
+  })
+
+  it('bascule sur l’année de la validation quand les réglages sont restés sur une année antérieure', async () => {
+    // Simule un septembre avant la bascule explicite : `ensureSeed` ne fait
+    // jamais avancer les réglages tout seul.
+    await updateSettings({ currentSchoolYearId: '2025-2026' })
+    await addStudent('Léa', 'MS')
+
+    const user = userEvent.setup()
+    renderApp({ route: '/programme' })
+
+    const yearSelect = await screen.findByRole('combobox', { name: 'Année scolaire' })
+    await waitFor(() => expect(yearSelect).toHaveValue('2025-2026'))
+
+    await searchObjective('2 par période')
+    await screen.findByText(LANGAGE_1.label)
+    await openObjective(user, LANGAGE_1.label)
+    const sheet = await screen.findByRole('dialog')
+    await user.click(
+      within(sheet).getByRole('button', { name: 'Valider pour un élève' }),
+    )
+    await user.click(within(sheet).getByRole('button', { name: /^Léa/ }))
+
+    await waitFor(() =>
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
+    )
+
+    // La validation appartient à l'année de sa date, pas à l'année des réglages.
+    const validationYear = schoolYearIdForDate(todayIso())
+    await waitFor(() =>
+      expect(screen.getByRole('combobox', { name: 'Année scolaire' })).toHaveValue(
+        validationYear,
+      ),
+    )
+    await waitFor(() =>
+      expect(within(objectiveItem(LANGAGE_1.label)).getByText('1 élève')).toBeInTheDocument(),
+    )
+  })
+
+  it('affiche le nombre d’objectifs filtrés et de validations par domaine', async () => {
+    const lea = await addStudent('Léa', 'MS')
+    const adam = await addStudent('Adam', 'PS')
+    await addValidation(lea.id, 'lang-vocabulaire-01', '2026-10-12')
+    await addValidation(adam.id, 'lang-vocabulaire-02', '2026-10-12')
+
+    const user = userEvent.setup()
+    renderApp({ route: '/programme' })
+
+    const langageToggle = await screen.findByRole('button', { name: /^Langage/ })
+    const langageObjectives = referential.objectives.filter(
+      (objective) => objective.domainId === 'langage',
+    )
+    expect(langageToggle).toHaveTextContent(
+      `${langageObjectives.length} objectifs · 2 validations`,
+    )
+
+    await user.click(within(levelFilters()).getByRole('button', { name: 'PS' }))
+    const psObjectives = langageObjectives.filter((objective) =>
+      objective.ageBands.includes('before4'),
+    )
+    await waitFor(() =>
+      expect(langageToggle).toHaveTextContent(
+        `${psObjectives.length} objectifs · 2 validations`,
       ),
     )
   })
