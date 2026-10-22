@@ -8,11 +8,11 @@
 
 **Verdict : partiellement conforme.**
 
-- **WCAG 2.1 / 2.2 A et AA :** aucune violation détectée par axe sur les **18 états audités** (12 écrans et 6 feuilles modales). Les vérifications clavier, focus, contraste, reflow, espacement du texte, orientation et mouvement réduit passent.
-- **RGAA 4.1.2 :** les 106 critères ont été examinés. **57 sont conformes**, **47 sont non applicables** (aucune vidéo, aucun tableau, aucun cadre, etc.) et **2 sont partiels** :
-  - **7.1** — compatibilité avec les technologies d’assistance : testée sur Chromium uniquement, pas de matrice NVDA / JAWS / VoiceOver / TalkBack ;
-  - **13.3** — le PDF généré n’est pas un PDF balisé ; l’aperçu HTML A4 équivalent est la version accessible annoncée à l’écran.
-- **Taux de conformité sur les critères applicables : 57 / 59 = 96,6 %.** Un taux de 100 % et l’absence de critère partiel sont nécessaires pour déclarer une conformité RGAA. Le résultat est donc **partiellement conforme**, et non « conforme ».
+- **WCAG 2.1 / 2.2 A et AA :** aucune violation détectée par axe sur les **19 états audités** (13 écrans et 6 feuilles modales). Les vérifications clavier, focus, contraste, reflow, espacement du texte, orientation et mouvement réduit passent. Un contrôle complémentaire est rejoué sur **WebKit**, le moteur de Safari sur iPhone et iPad.
+- **RGAA 4.1.2 :** les 106 critères ont été examinés. **57 sont conformes**, **47 sont non applicables** (aucune vidéo, aucun tableau, aucun cadre, etc.), **1 est partiel** et **1 est non conforme** :
+  - **7.1** — compatibilité avec les technologies d’assistance : testée sur Chromium et WebKit, mais **aucune matrice VoiceOver / TalkBack n’a encore été exécutée sur appareil réel**. Le protocole est prêt : [`PROTOCOLE-LECTEURS-ECRAN.md`](./PROTOCOLE-LECTEURS-ECRAN.md) ;
+  - **13.3** — le PDF généré n’est **pas un PDF balisé** : le critère reste **non conforme**. L’aperçu HTML A4 équivalent, annoncé à l’écran, est la version accessible et la mesure compensatoire.
+- **Taux de conformité sur les critères applicables : 57 / 59 = 96,6 %.** Un taux de 100 % et l’absence de critère partiel ou non conforme sont nécessaires pour déclarer une conformité RGAA. Le résultat est donc **partiellement conforme**, et non « conforme ».
 
 > Cet audit est un audit technique du produit. Il ne remplace ni une déclaration d’accessibilité légale, ni un audit RGAA contradictoire avec un échantillon représentatif et une matrice de technologies d’assistance.
 
@@ -50,10 +50,11 @@
 
 - Application servie localement par Vite (`localhost:4173`) sur la révision auditée ; la production sera à re-vérifier après déploiement.
 - Chromium via Playwright 1.65, viewport téléphone 390 × 844, plus 320 × 640 et 640 × 320.
+- WebKit via Playwright 1.65 (`npx playwright test --project=webkit`), viewport iPhone 390 × 844, tactile : contrôle de non-régression complémentaire sur le moteur de Safari iOS.
 - `@axe-core/playwright` 4.14.0, règles `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`.
 - Validateur HTML du W3C (validator.nu).
 - Calculs de contraste WCAG 2.x (luminance relative).
-- Pas de test avec lecteur d’écran réel : VoiceOver, NVDA, JAWS et TalkBack restent à exécuter.
+- Pas de test avec lecteur d’écran réel : VoiceOver, NVDA, JAWS et TalkBack restent à exécuter. Le protocole complet est fourni dans [`PROTOCOLE-LECTEURS-ECRAN.md`](./PROTOCOLE-LECTEURS-ECRAN.md).
 
 ## 3. Méthode
 
@@ -67,9 +68,17 @@
 
 ### axe
 
-- **18 états audités**, **0 violation** WCAG A/AA.
-- Les 27 tests E2E d’accessibilité passent : `e2e/a11y.spec.ts`.
+- **19 états audités**, **0 violation** WCAG A/AA.
+- Les 28 tests E2E d’accessibilité passent : `e2e/a11y.spec.ts`.
 - Un seul résultat **incomplet** subsiste, sur la notice de confidentialité : axe ne peut pas calculer le contraste lorsqu’une feuille modale recouvre la page. Vérification manuelle : texte atténué `#6b6154` sur papier `#fbf6ec` = **5,63:1**, conforme.
+
+### WebKit — preuve complémentaire
+
+`e2e/webkit.spec.ts` rejoue dans WebKit, au format iPhone 13 (390 × 844, tactile), les parcours critiques : chargement et titre, classe, filtre du programme, validation d’une capture, aperçu HTML du bilan et analyse axe des écrans principaux. Aucune violation WCAG A/AA n’y est détectée.
+
+Cette preuve **complète** Chromium : elle vérifie que le moteur de Safari iOS ne casse ni la sémantique, ni le focus, ni les styles. Elle **ne remplace pas** les tests VoiceOver et TalkBack, qui restent à exécuter sur appareil réel — voir le § 7.2.
+
+**Limite de l’environnement.** Le WebKit fourni par Playwright sous Windows refuse l’écriture d’un `Blob` de photo dans IndexedDB (`UnknownError: Error preparing Blob/File data to be stored in object store`). Le test WebKit couvre donc une validation de capture **sans photo** ; le parcours photo complet reste vérifié par le protocole manuel sur appareil réel. Cette limitation doit être reconfirmée sur Safari iOS physique, où le stockage de photos est un usage courant.
 
 ### Validateur HTML du W3C
 
@@ -151,22 +160,24 @@ Tous les textes atteignent **4,5:1** ; les composants d’interface et élément
 
 ## 7. Points de vigilance et limites
 
-### 7.1 PDF non balisé — RGAA 13.3 partiel
+### 7.1 PDF non balisé — RGAA 13.3 non conforme
 
-Le PDF est produit par `pdf-lib`. Il contient du texte réel, des métadonnées (titre, auteur, sujet, langue `fr-FR`) et des images, mais il n’est **pas balisé** : pas d’ordre de lecture structuré, pas d’alternatives textuelles intégrées aux images, pas de tableau de structure. Un lecteur d’écran peut lire le texte, mais l’expérience n’est pas équivalente à un PDF/UA.
+Le PDF est produit par `pdf-lib`. Il contient du texte réel, des métadonnées (titre, auteur, sujet, langue `fr-FR`) et des images, mais il n’est **pas balisé** : pas d’ordre de lecture structuré, pas d’alternatives textuelles intégrées aux images, pas de tableau de structure. Un lecteur d’écran peut lire le texte, mais l’expérience n’est pas équivalente à un PDF/UA. **Le critère 13.3 reste donc non conforme pour ce fichier.**
 
-**Mesure compensatoire :** l’aperçu HTML A4 à l’écran est complet, sémantique et annoncé comme la version accessible. Le PDF reste un format d’impression. Pour une conformité stricte 13.3, il faudrait produire un PDF/UA (par exemple avec un moteur de mise en page balisé) ou retirer le téléchargement PDF au profit de l’impression navigateur.
+**Mesure compensatoire :** l’aperçu HTML A4 à l’écran est complet, sémantique et annoncé comme la version accessible (note « L’aperçu à l’écran est la version accessible ; le PDF… est destiné à l’impression »). Le PDF reste un format d’impression. Pour une conformité stricte 13.3, il faudrait produire un PDF/UA (par exemple avec un moteur de mise en page balisé) ou retirer le téléchargement PDF au profit de l’impression navigateur. L’étape 10 du protocole manuel vérifie cet aperçu avec lecteur d’écran.
 
-### 7.2 Technologies d’assistance — RGAA 7.1 partiel
+### 7.2 Technologies d’assistance — RGAA 7.1 partiel, matrice sur appareil en attente
 
-Les tests sont exécutés sur Chromium avec l’arbre d’accessibilité du navigateur. Aucun test réel n’a été mené avec :
+Les tests sont exécutés sur Chromium **et sur WebKit** avec l’arbre d’accessibilité du navigateur. Aucun test réel n’a été mené avec :
 
 - NVDA + Firefox ou Chrome sur Windows ;
 - JAWS + Chrome ;
 - VoiceOver + Safari sur macOS, iPhone et iPad ;
 - TalkBack + Chrome sur Android.
 
-Les sémantiques DOM, les noms accessibles et les annonces live sont conformes aux attentes, mais une validation avec lecteur d’écran reste nécessaire avant de déclarer 7.1 conforme.
+Les sémantiques DOM, les noms accessibles et les annonces live sont conformes aux attentes, et le contrôle automatique WebKit ne révèle aucune régression du moteur Safari. **Ces preuves restent indirectes : une validation avec lecteur d’écran est nécessaire avant de déclarer 7.1 conforme.**
+
+Le protocole exécutable est prêt : [`PROTOCOLE-LECTEURS-ECRAN.md`](./PROTOCOLE-LECTEURS-ECRAN.md). Il couvre VoiceOver (iPhone/iPadOS) et TalkBack (Android), avec 12 étapes, les sept contrôles transverses (titre de page, focus après changement de route, navigation par titres, libellés et erreurs de formulaire, piège de focus des feuilles, annonces `aria-live`, alternative HTML au PDF) et un modèle de résultats. **Tant qu’il n’a pas été exécuté sur les deux plateformes, 7.1 reste partiel.**
 
 ### 7.3 Aperçu A4 sur petit écran
 
@@ -178,22 +189,22 @@ Aucune déclaration d’accessibilité légale n’est publiée. Elle n’est pa
 
 ## 8. Matrice RGAA 4.1.2
 
-| Thème | Critères | Conformes | Non applicables | Partiels |
-| --- | ---: | ---: | ---: | ---: |
-| 1. Images | 9 | 4 | 5 | 0 |
-| 2. Cadres | 2 | 0 | 2 | 0 |
-| 3. Couleurs | 3 | 3 | 0 | 0 |
-| 4. Multimédia | 13 | 0 | 13 | 0 |
-| 5. Tableaux | 8 | 0 | 8 | 0 |
-| 6. Liens | 2 | 2 | 0 | 0 |
-| 7. Scripts | 5 | 3 | 1 | 1 |
-| 8. Éléments obligatoires | 10 | 7 | 3 | 0 |
-| 9. Structuration | 4 | 3 | 1 | 0 |
-| 10. Présentation | 14 | 14 | 0 | 0 |
-| 11. Formulaires | 13 | 10 | 3 | 0 |
-| 12. Navigation | 11 | 6 | 5 | 0 |
-| 13. Consultation | 12 | 5 | 6 | 1 |
-| **Total** | **106** | **57** | **47** | **2** |
+| Thème | Critères | Conformes | Non applicables | Partiels | Non conformes |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 1. Images | 9 | 4 | 5 | 0 | 0 |
+| 2. Cadres | 2 | 0 | 2 | 0 | 0 |
+| 3. Couleurs | 3 | 3 | 0 | 0 | 0 |
+| 4. Multimédia | 13 | 0 | 13 | 0 | 0 |
+| 5. Tableaux | 8 | 0 | 8 | 0 | 0 |
+| 6. Liens | 2 | 2 | 0 | 0 | 0 |
+| 7. Scripts | 5 | 3 | 1 | 1 | 0 |
+| 8. Éléments obligatoires | 10 | 7 | 3 | 0 | 0 |
+| 9. Structuration | 4 | 3 | 1 | 0 | 0 |
+| 10. Présentation | 14 | 14 | 0 | 0 | 0 |
+| 11. Formulaires | 13 | 10 | 3 | 0 | 0 |
+| 12. Navigation | 11 | 6 | 5 | 0 | 0 |
+| 13. Consultation | 12 | 5 | 6 | 0 | 1 |
+| **Total** | **106** | **57** | **47** | **1** | **1** |
 
 La matrice détaillée, avec le statut et la justification de chaque critère, est fournie dans [`RGAA-4.1-matrice.csv`](./RGAA-4.1-matrice.csv).
 
@@ -202,12 +213,17 @@ La matrice détaillée, avec le statut et la justification de chaque critère, e
 - **C** : conforme sur le périmètre audité, avec preuve automatisée ou vérification manuelle.
 - **NA** : non applicable (aucun média, aucun tableau, aucun cadre, aucun CAPTCHA, etc.).
 - **P** : partiel, réserve documentée ci-dessus.
+- **NC** : non conforme, réserve documentée ci-dessus (PDF non balisé, critère 13.3).
 
 ## 9. Reproduction
 
 ```bash
-# Audit WCAG complet (écrans, feuilles, clavier, reflow, mouvement)
-npm run test:e2e -- a11y.spec.ts
+# Audit WCAG complet (écrans, feuilles, clavier, reflow, mouvement) — Chromium
+npm run test:e2e -- a11y.spec.ts --project=chromium
+
+# Contrôle complémentaire WebKit (Safari iPhone/iPad)
+npx playwright install webkit
+npx playwright test --project=webkit
 
 # Suite unitaire, lint, types et build
 npm run test:run
@@ -215,6 +231,11 @@ npm run lint
 npm run typecheck
 npm run build
 ```
+
+Le protocole manuel VoiceOver / TalkBack, avec les 12 étapes et le modèle de
+résultats, se trouve dans [`PROTOCOLE-LECTEURS-ECRAN.md`](./PROTOCOLE-LECTEURS-ECRAN.md).
+Il doit être exécuté sur appareil réel avant toute déclaration de conformité
+RGAA 7.1.
 
 ### Sources
 
