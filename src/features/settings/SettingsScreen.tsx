@@ -13,6 +13,7 @@ import { Button } from '@/ui/Button'
 import { ConfirmSheet } from '@/ui/ConfirmSheet'
 import { Sheet } from '@/ui/Sheet'
 import { useToast } from '@/ui/useToast'
+import { BackupPanel } from './BackupPanel'
 import { StoragePanel } from './StoragePanel'
 import styles from './settings.module.css'
 
@@ -343,6 +344,8 @@ export function SettingsScreen() {
       )}
 
       <StoragePanel />
+
+      <BackupPanel />
 
       <section className={styles.card} aria-labelledby="privacy-heading">
         <h2 id="privacy-heading" className={styles.sectionTitle}>

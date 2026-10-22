@@ -123,6 +123,36 @@ describe('ClassScreen', () => {
     expect(within(card).queryByText('1 réussite')).not.toBeInTheDocument()
   })
 
+  it('rappelle de sauvegarder quand aucune sauvegarde n’a encore été faite', async () => {
+    await ensureSeed()
+    const lea = await addStudent('Léa', 'MS')
+    await addValidation(lea.id, 0)
+
+    renderApp({ route: '/' })
+
+    expect(await screen.findByRole('link', { name: /Sauvegarde conseillée/ })).toHaveAttribute(
+      'href',
+      '/settings',
+    )
+  })
+
+  it('ne rappelle pas la sauvegarde quand elle est récente', async () => {
+    await ensureSeed()
+    const lea = await addStudent('Léa', 'MS')
+    await addValidation(lea.id, 0)
+    await updateSettings({
+      lastBackupAt: new Date().toISOString(),
+      lastBackupValidationCount: 1,
+    })
+
+    renderApp({ route: '/' })
+    await screen.findByRole('link', { name: /Léa/ })
+
+    expect(
+      screen.queryByRole('link', { name: /Sauvegarde conseillée/ }),
+    ).not.toBeInTheDocument()
+  })
+
   it('ouvre l’écran de capture depuis le bouton photo', async () => {
     await ensureSeed()
     await addStudent('Léa', 'MS')

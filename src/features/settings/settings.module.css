@@ -267,6 +267,54 @@
 }
 
 /* ------------------------------------------------------------------ */
+/* Sauvegarde                                                          */
+/* ------------------------------------------------------------------ */
+
+.backupSummary {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background-color: var(--paper);
+}
+
+.backupProgress {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Le champ de fichier reste accessible aux technologies d'assistance, mais le
+   bouton visible déclenche l'ouverture du sélecteur. */
+.fileInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  border: 0;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.backupDialogProgress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.backupDialogProgress progress {
+  height: 10px;
+  flex: 1;
+  accent-color: var(--sage);
+}
+
+/* ------------------------------------------------------------------ */
 /* Confidentialité et version                                          */
 /* ------------------------------------------------------------------ */
 
