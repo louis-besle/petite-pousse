@@ -1,0 +1,1301 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Carnet de réussites — prototype cliquable</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBF6EC; --cream:#FFF8EE; --card:#FFFCF6; --ink:#2F2A24;
+    --muted:#6B6154; --faint:#8A7E6D; --line:#EADCC6;
+    --terra:#D9765B; --terra-dark:#C46046; --sage:#6F8F6A; --sage-soft:#DCE7D6; --sage-ink:#4F6E4B; --sage-pale:#F0F5EA;
+    --mustard:#E7B65C; --mustard-soft:#FAEBC9; --mustard-ink:#9A7420;
+    --sky:#8FB3C7; --sky-soft:#DDE9EE; --sky-ink:#527A90;
+    --blush:#E9A6A0; --blush-soft:#F7DEDA; --blush-ink:#B8625A;
+    --d-langage:#6F8F6A; --d-langage-soft:#E7EEDF; --d-langage-ink:#4F6E4B;
+    --d-maths:#7FA5B8; --d-maths-soft:#E2EDF1; --d-maths-ink:#527A90;
+    --d-corps:#D9765B; --d-corps-soft:#F7DEDA; --d-corps-ink:#B8625A;
+    --d-arts:#D9A441; --d-arts-soft:#FAEBC9; --d-arts-ink:#96701F;
+    --d-temps:#B98A6E; --d-temps-soft:#F2E3D7; --d-temps-ink:#8E644C;
+    --d-vivant:#7E8B57; --d-vivant-soft:#E7EBD8; --d-vivant-ink:#5F6B3D;
+    --shadow-card:0 2px 0 rgba(47,42,36,.035);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; color:var(--ink); font-family:'Nunito',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    background:
+      radial-gradient(600px 400px at 80% 12%, rgba(231,182,92,.20), transparent 70%),
+      radial-gradient(700px 500px at 8% 90%, rgba(111,143,106,.16), transparent 70%),
+      #E9DCC6;
+  }
+  body::before{
+    content:""; position:fixed; inset:0; pointer-events:none; opacity:.5;
+    background-image:radial-gradient(rgba(47,42,36,.10) 1px, transparent 1px);
+    background-size:22px 22px;
+    mask-image:radial-gradient(circle at 50% 45%, #000 20%, transparent 80%);
+  }
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+  button:focus-visible{outline:2px solid var(--terra); outline-offset:2px}
+  input{font:inherit;color:inherit}
+  h1,h2,h3,p{margin:0}
+  .stage{
+    position:relative; z-index:1; min-height:100vh; display:flex; align-items:center; justify-content:center;
+    gap:clamp(32px,6vw,96px); padding:48px clamp(24px,5vw,80px);
+  }
+  .stage-copy{width:min(340px,100%); margin-left:auto}
+  .eyebrow{font-size:9.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+  .stage-copy h1{font-family:'Fraunces',Georgia,serif;font-size:clamp(38px,4.4vw,54px);line-height:.98;letter-spacing:-.035em;margin:12px 0 16px}
+  .lede{font-size:14px;line-height:1.55;font-weight:600;color:var(--muted)}
+  .legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+  .legend button{font-size:11px;font-weight:800;padding:9px 13px;border-radius:999px;border:1px solid rgba(47,42,36,.16);background:rgba(255,252,246,.62);transition:.18s}
+  .legend button:hover{background:var(--card);transform:translateY(-1px)}
+  .note{margin-top:24px;font-size:10.5px;line-height:1.6;color:var(--faint);font-weight:600;max-width:300px}
+  .reset{margin-top:18px;font-size:10.5px;font-weight:800;color:var(--terra);text-decoration:underline;text-underline-offset:3px}
+  .device{
+    position:relative; flex:none; width:410px; height:864px; padding:10px; border-radius:52px;
+    background:linear-gradient(150deg,#3B352D,#211E1A 60%);
+    box-shadow:0 50px 100px rgba(47,42,36,.34), 0 10px 24px rgba(47,42,36,.18), inset 0 0 0 1px rgba(255,248,238,.10);
+  }
+  .island{position:absolute;z-index:50;top:20px;left:50%;transform:translateX(-50%);width:92px;height:24px;border-radius:14px;background:#1B1815;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
+  .app{
+    position:relative; width:390px; height:844px; border-radius:42px; overflow:hidden;
+    background-color:var(--paper);
+    background-image:radial-gradient(rgba(47,42,36,.035) 1px, transparent 1px);
+    background-size:17px 17px;
+    isolation:isolate;
+  }
+  .screen{
+    position:absolute; inset:0; overflow-y:auto; overflow-x:hidden; padding:46px 24px 150px;
+    scrollbar-width:none;
+  }
+  .screen::-webkit-scrollbar{display:none}
+  .screen-anim{animation:screenIn .3s cubic-bezier(.2,.8,.2,1) both}
+  @keyframes screenIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+  .brandline{display:flex;align-items:center;gap:9px}
+  .brandline .mark{display:flex;flex:none}
+  .brandline .word{font-size:9px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+  .brandline .avatar-btn{margin-left:auto;width:44px;height:44px;border-radius:50%;background:var(--blush-soft);display:grid;place-items:center;font-family:'Fraunces',serif;font-size:19px;font-weight:700;color:var(--blush-ink)}
+  .display{font-family:'Fraunces',Georgia,serif;font-size:31px;line-height:1.02;letter-spacing:-.035em;font-weight:700;margin:16px 0 7px}
+  .display.sm{font-size:26px;margin:10px 0 4px}
+  .display.xs{font-size:23px;margin:6px 0 2px}
+  .sub{font-size:12.5px;font-weight:600;color:var(--muted);line-height:1.4}
+  .sub.tiny{font-size:10.5px;color:var(--faint)}
+  .head-row{display:flex;align-items:flex-start;gap:12px}
+  .head-row .grow{flex:1;min-width:0}
+  .icon-btn{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--card);display:grid;place-items:center;flex:none;color:var(--ink);box-shadow:var(--shadow-card)}
+  .icon-btn.plain{border-color:transparent;background:transparent;box-shadow:none}
+  .step-pill{font-size:10.5px;font-weight:800;color:var(--sage-ink);background:var(--sage-soft);padding:8px 12px;border-radius:999px;white-space:nowrap}
+  .screen-top{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+  .screen-top .title{font-family:'Fraunces',serif;font-size:19px;font-weight:600;letter-spacing:-.02em}
+  .screen-top .step-pill{margin-left:auto}
+
+  .chips{display:flex;gap:8px;margin:18px 0 14px}
+  .chip{height:34px;padding:0 14px;border-radius:17px;border:1px solid var(--line);background:var(--card);font-size:11.5px;font-weight:700;color:var(--muted);white-space:nowrap;transition:.16s}
+  .chip.active{background:var(--ink);border-color:var(--ink);color:var(--cream)}
+  .chip:active{transform:scale(.97)}
+  .scroller{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:14px -24px 12px;padding:0 24px 2px}
+  .scroller::-webkit-scrollbar{display:none}
+  .scroller .chip{flex:none}
+
+  .student-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .student-card{
+    height:112px;padding:13px 14px;text-align:left;border-radius:20px;border:1px solid var(--line);
+    background:var(--card);box-shadow:var(--shadow-card);display:flex;flex-direction:column;justify-content:space-between;
+    transition:transform .16s ease, box-shadow .16s ease;animation:rise .35s both;animation-delay:calc(var(--i,0)*28ms);
+  }
+  .student-card:hover{transform:translateY(-2px);box-shadow:0 7px 0 rgba(47,42,36,.05)}
+  .student-card:active{transform:scale(.985)}
+  .student-top{display:flex;align-items:center;justify-content:space-between}
+  .avatar{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-family:'Fraunces',serif;font-size:16px;font-weight:700;flex:none}
+  .section-pill{font-size:9px;font-weight:800;padding:4px 9px;border-radius:999px;letter-spacing:.03em}
+  .student-name{font-family:'Fraunces',serif;font-size:21px;font-weight:600;line-height:1;letter-spacing:-.02em}
+  .count{font-size:10.5px;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:6px}
+  .dot{width:5px;height:5px;border-radius:50%;background:var(--sage);flex:none}
+  .text-link{display:block;width:100%;text-align:center;margin:18px 0 0;font-size:11.5px;font-weight:800;color:var(--faint);text-decoration:underline;text-underline-offset:3px}
+
+  .cta{
+    position:absolute;z-index:30;left:24px;right:24px;bottom:96px;height:56px;border-radius:28px;
+    background:var(--terra);color:var(--cream);font-size:14.5px;font-weight:800;
+    display:flex;align-items:center;justify-content:center;gap:10px;
+    box-shadow:0 4px 0 var(--terra-dark), 0 16px 26px rgba(217,118,91,.24);
+    transition:transform .12s, box-shadow .12s;
+  }
+  .cta:active{transform:translateY(3px);box-shadow:0 1px 0 var(--terra-dark)}
+  .cta.dark{background:var(--ink);box-shadow:0 4px 0 #1B1815, 0 16px 26px rgba(47,42,36,.2)}
+  .cta[disabled]{opacity:1;background:#E9DCC8;color:#9A8B76;pointer-events:none;box-shadow:0 4px 0 #D8C7AD}
+  .cta svg{flex:none}
+  .no-nav .cta{bottom:24px}
+  .no-nav{padding-bottom:96px}
+
+  .nav{position:absolute;z-index:35;left:24px;right:24px;bottom:18px;height:62px;padding:6px;border-radius:24px;background:rgba(255,252,246,.94);border:1px solid var(--line);backdrop-filter:blur(12px);display:flex;gap:4px;box-shadow:0 12px 28px rgba(47,42,36,.10)}
+  .nav button{flex:1;border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:9.5px;font-weight:800;color:var(--faint);transition:.16s}
+  .nav button.active{background:var(--ink);color:var(--cream)}
+
+  .name-pill{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:10px 12px;margin-bottom:14px;box-shadow:var(--shadow-card)}
+  .name-pill .info{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .name-pill .nm{display:block;font-family:'Fraunces',serif;font-size:16px;font-weight:600;line-height:1.1}
+  .name-pill .meta{display:block;font-size:10px;font-weight:600;color:var(--faint);margin-top:2px}
+  .name-pill .check{width:22px;height:22px;border-radius:50%;background:var(--sage);display:grid;place-items:center;color:var(--cream);flex:none}
+
+  .field{display:flex;align-items:center;gap:10px;height:46px;padding:0 15px;border-radius:16px;border:1px solid var(--line);background:var(--card);box-shadow:var(--shadow-card)}
+  .field svg{color:var(--faint);flex:none}
+  .field input{flex:1;min-width:0;border:0;outline:0;background:transparent;font-size:12px;font-weight:600}
+  .field input::placeholder{color:var(--faint);font-weight:600}
+
+  .viewfinder{position:relative;height:352px;border-radius:26px;background:var(--ink);padding:10px;overflow:hidden;box-shadow:0 18px 34px rgba(47,42,36,.18)}
+  .viewfinder .scene{position:relative;height:100%;border-radius:18px;overflow:hidden;background:#F2E6D2}
+  .viewfinder .scene svg{width:100%;height:100%;display:block}
+  .vf-chip{position:absolute;top:12px;left:12px;z-index:2;display:flex;align-items:center;gap:6px;background:rgba(47,42,36,.58);color:var(--cream);border-radius:999px;padding:5px 10px 5px 6px;font-size:9.5px;font-weight:800;backdrop-filter:blur(6px)}
+  .vf-chip .mini{width:15px;height:15px;border-radius:50%;background:var(--blush-soft);color:var(--blush-ink);display:grid;place-items:center;font-family:'Fraunces',serif;font-size:9px}
+  .focus{position:absolute;z-index:2;left:50%;top:50%;width:120px;height:120px;transform:translate(-50%,-50%);border:1.5px solid rgba(255,248,238,.72);border-radius:16px}
+  .focus::before,.focus::after{content:"";position:absolute;width:20px;height:20px;border:2px solid var(--cream)}
+  .focus::before{left:-2px;top:-2px;border-right:0;border-bottom:0;border-radius:8px 0 0 0}
+  .focus::after{right:-2px;bottom:-2px;border-left:0;border-top:0;border-radius:0 0 8px 0}
+  .vf-hint{position:absolute;z-index:2;left:50%;bottom:12px;transform:translateX(-50%);white-space:nowrap;background:rgba(47,42,36,.58);color:var(--cream);border-radius:999px;padding:6px 10px;font-size:9px;font-weight:700;backdrop-filter:blur(6px)}
+  .taken-badge{position:absolute;z-index:3;top:12px;right:12px;display:flex;align-items:center;gap:5px;background:var(--sage);color:var(--cream);border-radius:999px;padding:5px 9px;font-size:9px;font-weight:800}
+  .viewfinder.flash::after{content:"";position:absolute;inset:0;background:#fff;z-index:5;animation:flash .42s ease-out both;border-radius:26px}
+  @keyframes flash{0%{opacity:0}18%{opacity:.95}100%{opacity:0}}
+  .vf-bar{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding:0 2px;font-size:10px;font-weight:700;color:var(--faint)}
+  .vf-bar button{font-size:10px;font-weight:800;color:var(--terra)}
+
+  .info-strip{display:flex;gap:10px;align-items:flex-start;background:var(--sage-soft);border-radius:16px;padding:12px 14px;margin-top:14px;color:var(--sage-ink)}
+  .info-strip svg{flex:none;margin-top:1px}
+  .info-strip p{font-size:10.5px;font-weight:700;line-height:1.45}
+  .info-strip p span{display:block;font-weight:600;opacity:.82}
+
+  .pick-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
+  .pick-card{display:flex;align-items:center;gap:9px;height:58px;padding:0 11px;border-radius:16px;border:1px solid var(--line);background:var(--card);text-align:left;box-shadow:var(--shadow-card);transition:.15s}
+  .pick-card:hover{transform:translateY(-1px);border-color:#DCCCB2}
+  .pick-card .avatar{width:32px;height:32px;font-size:14px}
+  .pick-name{flex:1;min-width:0;font-family:'Fraunces',serif;font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pick-sec{font-size:8.5px;font-weight:800;padding:3px 6px;border-radius:999px}
+
+  .recap{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .recap .thumb{width:48px;height:48px;border-radius:12px;overflow:hidden;flex:none;border:1px solid var(--line);background:var(--card)}
+  .recap .t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .recap .nm{display:block;font-family:'Fraunces',serif;font-size:15px;font-weight:600;line-height:1.1}
+  .recap .meta{display:flex;align-items:center;gap:5px;font-size:9.5px;font-weight:700;color:var(--faint);margin-top:2px}
+  .no-photo{font-size:9px;font-weight:800;background:var(--mustard-soft);color:var(--mustard-ink);padding:5px 9px;border-radius:999px;white-space:nowrap}
+
+  .objective-list{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+  .objective{display:flex;gap:12px;align-items:center;width:100%;min-height:72px;padding:12px 12px 12px 13px;border-radius:18px;border:1px solid var(--line);background:var(--card);text-align:left;box-shadow:var(--shadow-card);transition:.15s}
+  .objective:hover{border-color:#DCCCB2}
+  .objective.selected{background:var(--sage-pale);border-color:#B9CDB0;box-shadow:inset 0 0 0 .5px #B9CDB0}
+  .objective.done{opacity:.66}
+  .objective .check{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;flex:none;color:var(--cream);background:var(--card)}
+  .objective.selected .check{background:var(--sage);border-color:var(--sage)}
+  .objective.done .check{background:var(--sage);border-color:var(--sage);opacity:.8}
+  .objective .txt{flex:1;min-width:0}
+  .objective .obj-title{font-size:12.5px;font-weight:700;line-height:1.28;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .objective .obj-meta{font-size:9.5px;font-weight:700;color:var(--faint);margin-top:5px}
+  .objective.selected .obj-meta{color:var(--sage-ink)}
+  .objective.done .obj-meta{color:var(--sage-ink)}
+  .empty{padding:28px 20px;text-align:center;font-size:11.5px;font-weight:600;color:var(--faint);border:1px dashed var(--line);border-radius:18px;background:rgba(255,252,246,.5)}
+
+  .success{display:flex;flex-direction:column;justify-content:center;min-height:calc(844px - 196px);text-align:center;padding-bottom:30px}
+  .success .sticker{width:104px;height:104px;border-radius:50%;background:var(--sage);color:var(--cream);display:grid;place-items:center;margin:0 auto 22px;box-shadow:0 10px 0 rgba(79,110,75,.14);animation:pop .45s cubic-bezier(.2,1.2,.3,1) both}
+  @keyframes pop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+  .success h2{font-family:'Fraunces',serif;font-size:31px;line-height:1.05;letter-spacing:-.03em;font-weight:700}
+  .success .lead{font-size:12.5px;font-weight:600;color:var(--muted);margin-top:8px;line-height:1.5}
+  .success .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 16px;margin:22px 0;text-align:left;box-shadow:var(--shadow-card)}
+  .success .card .k{font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+  .success .card .v{font-size:12.5px;font-weight:700;line-height:1.3;margin-top:5px}
+  .success .card .d{font-size:10px;font-weight:700;color:var(--sage-ink);margin-top:6px}
+  .btn-primary{height:54px;border-radius:27px;background:var(--ink);color:var(--cream);font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:9px;box-shadow:0 4px 0 #1B1815}
+  .btn-ghost{height:48px;border-radius:24px;border:1px solid var(--line);background:var(--card);font-size:12.5px;font-weight:800;color:var(--muted);display:flex;align-items:center;justify-content:center}
+  .btn-danger{height:54px;border-radius:27px;background:var(--blush-ink);color:var(--cream);font-size:13.5px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 0 #9C4F48}
+  .warning{background:var(--blush-soft);color:var(--blush-ink);border-radius:14px;padding:12px 14px;font-size:11px;font-weight:700;line-height:1.5}
+  .manage-row{display:flex;align-items:center;gap:10px;width:100%;padding:9px 12px;text-align:left;border-bottom:1px solid var(--line)}
+  .manage-row:last-child{border-bottom:0}
+  .manage-row .mn{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .manage-row .mname{display:block;font-size:12.5px;font-weight:700;line-height:1.15}
+  .manage-row .mmeta{display:block;font-size:9.5px;font-weight:700;color:var(--faint)}
+  .trash{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:var(--blush-ink);background:var(--blush-soft);flex:none}
+  .trash:hover{background:#F2CFC8}
+  .manage-link{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;margin-top:8px;font-size:10.5px;font-weight:800;color:var(--faint)}
+  .stack{display:flex;flex-direction:column;gap:10px}
+
+  .hero{background:var(--mustard-soft);border-radius:24px;padding:16px;position:relative;overflow:hidden}
+  .hero .row{display:flex;align-items:center;gap:14px}
+  .hero .avatar{width:64px;height:64px;background:var(--card);font-size:28px;color:var(--blush-ink)}
+  .hero .row > span:last-child{display:flex;flex-direction:column;gap:3px}
+  .hero .big{display:block;font-family:'Fraunces',serif;font-size:25px;font-weight:600;line-height:1.05;letter-spacing:-.02em}
+  .hero .mini{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-top:3px}
+  .hero .flower{position:absolute;right:16px;top:14px;opacity:.95}
+  .stats{display:flex;gap:6px;margin-top:14px;flex-wrap:wrap}
+  .stat{background:rgba(255,252,246,.82);border-radius:999px;padding:6px 10px;font-size:9.5px;font-weight:800;color:var(--mustard-ink)}
+
+  .domain-block{border:1px solid var(--line);border-radius:18px;background:var(--card);margin-top:10px;overflow:hidden;box-shadow:var(--shadow-card)}
+  .domain-head{display:flex;align-items:center;gap:10px;width:100%;padding:13px 14px;text-align:left}
+  .domain-head .di{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;flex:none}
+  .domain-head .dn{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .domain-head .dt{display:block;font-family:'Fraunces',serif;font-size:15px;font-weight:600;line-height:1.1}
+  .domain-head .dc{display:block;font-size:9.5px;font-weight:700;color:var(--faint);margin-top:2px}
+  .domain-head .chev{color:var(--faint);transition:transform .18s}
+  .domain-block.open .chev{transform:rotate(90deg)}
+  .domain-body{display:none;padding:0 10px 10px}
+  .domain-block.open .domain-body{display:block}
+  .obj-row{display:flex;align-items:center;gap:9px;width:100%;padding:8px;border-radius:12px;text-align:left}
+  .obj-row:hover{background:rgba(47,42,36,.03)}
+  .obj-row .thumb{width:46px;height:46px;border-radius:11px;overflow:hidden;flex:none;border:1px solid var(--line)}
+  .obj-row .oi{flex:1;min-width:0}
+  .obj-row .ot{font-size:11.5px;font-weight:700;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .obj-row .od{font-size:9px;font-weight:700;color:var(--faint);margin-top:3px}
+  .obj-row .oc{width:20px;height:20px;border-radius:50%;background:var(--sage);display:grid;place-items:center;color:var(--cream);flex:none}
+  .dashed{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:48px;margin-top:14px;border:1.5px dashed #D8C7AD;border-radius:16px;font-size:11.5px;font-weight:800;color:var(--muted);background:rgba(255,252,246,.5)}
+  .fab{position:absolute;z-index:30;right:24px;bottom:96px;width:56px;height:56px;border-radius:50%;background:var(--terra);color:var(--cream);display:grid;place-items:center;box-shadow:0 4px 0 var(--terra-dark),0 14px 24px rgba(217,118,91,.24)}
+
+  .prog-row{display:flex;align-items:center;gap:10px;width:100%;padding:11px 8px;border-radius:12px;text-align:left}
+  .prog-row:hover{background:rgba(47,42,36,.03)}
+  .prog-row .pi{flex:1;min-width:0;display:flex;flex-direction:column}
+  .prog-row .pt{display:block;font-size:11.5px;font-weight:700;line-height:1.25}
+  .prog-row .pm{display:flex;align-items:center;gap:6px;margin-top:5px}
+  .lvl{font-size:8px;font-weight:800;padding:2px 6px;border-radius:999px;background:var(--paper);color:var(--faint);border:1px solid var(--line)}
+  .bar{width:54px;height:4px;border-radius:2px;background:var(--line);overflow:hidden}
+  .bar i{display:block;height:100%;border-radius:2px;background:var(--sage)}
+  .pcount{font-size:8.5px;font-weight:800;color:var(--faint)}
+  .chev{color:var(--faint);flex:none}
+
+  .period-card{display:flex;align-items:center;gap:12px;width:100%;padding:14px;border:1px solid var(--line);border-radius:18px;background:var(--card);text-align:left;margin-bottom:9px;box-shadow:var(--shadow-card)}
+  .period-card.active{border-color:#B9CDB0;background:var(--sage-pale);box-shadow:inset 0 0 0 .5px #B9CDB0}
+  .period-card .radio{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;flex:none;color:var(--cream)}
+  .period-card.active .radio{background:var(--sage);border-color:var(--sage)}
+  .period-card .pt{display:block;font-family:'Fraunces',serif;font-size:15px;font-weight:600}
+  .period-card .ps{display:block;font-size:9.5px;font-weight:700;color:var(--faint);margin-top:2px}
+  .period-card .pc{margin-left:auto;font-size:9px;font-weight:800;color:var(--sage-ink);background:var(--sage-soft);padding:5px 8px;border-radius:999px;white-space:nowrap}
+
+  .bilan-preview{background:#fff;border-radius:6px;box-shadow:0 18px 40px rgba(47,42,36,.18);width:342px;height:484px;overflow:hidden;position:relative;margin:0 auto}
+  .bilan-preview .sheet-scale{transform:scale(.5748);transform-origin:top left}
+  .print-hint{font-size:10px;font-weight:600;color:var(--faint);line-height:1.55;text-align:center;margin:12px 0 0}
+  .bilan-actions{position:absolute;z-index:30;left:24px;right:24px;bottom:18px;display:flex;flex-direction:column;gap:8px}
+
+  .overlay{position:absolute;inset:0;z-index:70;display:flex;align-items:flex-end}
+  .backdrop{position:absolute;inset:0;background:rgba(31,27,22,.42);backdrop-filter:blur(2px);animation:fade .2s both}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .sheet-panel{position:relative;width:100%;max-height:88%;overflow-y:auto;background:var(--paper);border-radius:28px 28px 0 0;padding:10px 24px 28px;box-shadow:0 -20px 50px rgba(0,0,0,.18);animation:up .28s cubic-bezier(.2,.8,.2,1) both}
+  @keyframes up{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
+  .handle{width:40px;height:4px;border-radius:2px;background:#D8C7AD;margin:0 auto 16px}
+  .sheet-panel h3{font-family:'Fraunces',serif;font-size:23px;line-height:1.1;letter-spacing:-.025em;font-weight:600;margin:9px 0 10px}
+  .sheet-panel .example{font-size:11.5px;line-height:1.5;font-weight:600;color:var(--muted);background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px 13px}
+  .sheet-panel .label{font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:16px 0 8px}
+  .avatars{display:flex;align-items:center}
+  .avatars .av{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-family:'Fraunces',serif;font-size:11px;font-weight:700;margin-right:-7px;border:2px solid var(--paper)}
+  .avatars .more{font-size:9.5px;font-weight:800;color:var(--faint);margin-left:13px}
+  .sheet-actions{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+  .pick-list{max-height:240px;overflow-y:auto;margin-top:10px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+  .pick-list button{display:flex;align-items:center;gap:9px;width:100%;padding:9px 12px;text-align:left;border-bottom:1px solid var(--line)}
+  .pick-list button:last-child{border-bottom:0}
+  .pick-list button:hover{background:rgba(47,42,36,.03)}
+  .pick-list .n{flex:1;font-size:12px;font-weight:700}
+  .pick-list .s{font-size:9px;font-weight:800;color:var(--faint)}
+  .pick-list .ok{color:var(--sage)}
+
+  .toast{position:absolute;z-index:90;left:30px;right:30px;bottom:104px;padding:12px 16px;border-radius:16px;background:var(--ink);color:var(--cream);font-size:11.5px;font-weight:700;text-align:center;line-height:1.35;opacity:0;transform:translateY(12px);transition:.24s;pointer-events:none;box-shadow:0 14px 30px rgba(0,0,0,.24)}
+  .toast.show{opacity:1;transform:none}
+
+  /* ---------- Feuille A4 ---------- */
+  .sheet{width:595px;min-height:842px;background:#fff;color:var(--ink);padding:46px 48px 38px;font-family:'Nunito',sans-serif;display:flex;flex-direction:column}
+  .sheet-head{display:flex;align-items:center;justify-content:space-between;font-size:8.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+  .sheet-head .school{display:flex;align-items:center;gap:7px}
+  .sheet h2{font-family:'Fraunces',serif;font-size:34px;line-height:1;letter-spacing:-.03em;font-weight:700;margin:20px 0 14px}
+  .sheet-meta{display:flex;align-items:flex-end;justify-content:space-between;gap:20px}
+  .sheet-name{display:block;font-family:'Fraunces',serif;font-size:16px;font-weight:600;line-height:1.2}
+  .sheet-sub{display:block;font-size:9.5px;font-weight:600;color:var(--muted);margin-top:4px}
+  .sheet-badge{background:var(--mustard-soft);color:var(--mustard-ink);font-size:9.5px;font-weight:800;padding:8px 14px;border-radius:999px;white-space:nowrap}
+  .sheet-rule{height:1px;background:var(--line);margin:16px 0 12px}
+  .sheet-intro{font-size:10.5px;font-weight:600;color:var(--muted);display:flex;justify-content:space-between;gap:20px}
+  .sheet-intro span{font-size:8.5px;font-weight:800;color:var(--faint);white-space:nowrap}
+  .sheet-cols{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:20px}
+  .sheet-domain{margin-bottom:15px}
+  .sheet-domain-head{display:flex;align-items:center;justify-content:space-between;font-size:8.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-bottom:7px}
+  .sheet-domain-head .l{display:flex;align-items:center;gap:5px}
+  .sheet-domain-head i{width:5px;height:5px;border-radius:50%;display:block}
+  .sheet-domain-head .c{font-size:7.5px;font-weight:700;color:var(--faint);letter-spacing:0}
+  .sheet-entry{display:flex;gap:8px;margin-bottom:9px;break-inside:avoid}
+  .sheet-thumb{width:46px;height:36px;border-radius:6px;overflow:hidden;flex:none;background:var(--paper)}
+  .sheet-obj{font-size:8.5px;font-weight:700;line-height:1.22}
+  .sheet-date{font-size:7.5px;font-weight:600;color:var(--faint);margin-top:3px;display:flex;align-items:center;gap:4px}
+  .sheet-date i{width:4px;height:4px;border-radius:50%;background:var(--sage);display:block}
+  .sheet-empty{font-size:9px;color:var(--faint);font-weight:600;padding:6px 0}
+  .sheet-footer{margin-top:auto;padding-top:12px;border-top:1px solid var(--line);display:flex;align-items:flex-end;justify-content:space-between;font-size:7.5px;font-weight:600;color:var(--faint)}
+  .sheet-footer .page{display:block;margin-top:4px;font-weight:800}
+  .sign{text-align:right}
+  .sign .line{width:120px;height:1px;background:var(--muted);margin-top:20px}
+  #print-area{display:none}
+  @media print{
+    @page{size:A4;margin:12mm}
+    body{background:#fff}
+    body::before{display:none}
+    .stage,.stage-copy,.device,.toast{display:none !important}
+    #print-area{display:block}
+    #print-area .sheet{zoom:1.18;box-shadow:none;margin:0 auto;min-height:0}
+  }
+
+  @media (max-width:900px){
+    .stage{padding:0; display:block}
+    .stage-copy{display:none}
+    .device{width:100%;height:100dvh;padding:0;border-radius:0;background:var(--paper);box-shadow:none}
+    .app{width:100%;height:100%;border-radius:0}
+    .island{display:none}
+    .screen{padding-top:24px}
+  }
+  @media (max-height:900px) and (min-width:901px){
+    .device{transform:scale(.9);transform-origin:center}
+  }
+  /* Mode QA : garde le cadre téléphone même dans une fenêtre étroite */
+  body.qa .stage{display:flex;align-items:center;justify-content:center;padding:24px;min-height:100vh}
+  body.qa .stage-copy{display:none}
+  body.qa .device{width:410px;height:864px;padding:10px;border-radius:52px;background:linear-gradient(150deg,#3B352D,#211E1A 60%);box-shadow:0 50px 100px rgba(47,42,36,.34),0 10px 24px rgba(47,42,36,.18);transform:none}
+  body.qa .app{width:390px;height:844px;border-radius:42px}
+  body.qa .island{display:block}
+  body.qa .screen{padding-top:46px}
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.001ms !important;transition-duration:.001ms !important}
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+  <aside class="stage-copy">
+    <div class="eyebrow">Prototype cliquable · 06.11.2026</div>
+    <h1>Carnet de réussites</h1>
+    <p class="lede">Le classeur de la classe, dans la poche. On cherche l'élève, on prend la photo, on choisit l'objectif — le dossier se remplit tout seul.</p>
+    <div class="legend">
+      <button data-action="nav" data-screen="class">01 · La classe</button>
+      <button data-action="open-student" data-id="lea">02 · Dossier</button>
+      <button data-action="nav" data-screen="programme">03 · Programme</button>
+      <button data-action="nav" data-screen="bilans">04 · Bilans</button>
+    </div>
+    <p class="note">Données fictives · photos illustrées · rien n'est envoyé en ligne. Le bouton d'impression ouvre la vraie feuille A4.</p>
+    <button class="reset" data-action="reset">Recommencer la démo</button>
+  </aside>
+  <div class="device">
+    <div class="island"></div>
+    <div class="app" id="app"></div>
+    <div class="toast" id="toast"></div>
+  </div>
+</div>
+<div id="print-area"></div>
+
+<script>
+/* ------------------------------------------------------------------ */
+/* Données de démonstration                                            */
+/* ------------------------------------------------------------------ */
+const SEC = {
+  PS:{soft:'var(--blush-soft)',ink:'var(--blush-ink)'},
+  MS:{soft:'var(--mustard-soft)',ink:'var(--mustard-ink)'},
+  GS:{soft:'var(--sage-soft)',ink:'var(--sage-ink)'}
+};
+
+const DOMAINS = [
+  {key:'langage',name:'Langage',long:'Langage oral et écrit',color:'var(--d-langage)',soft:'var(--d-langage-soft)',ink:'var(--d-langage-ink)',icon:'book'},
+  {key:'maths',name:'Maths',long:'Premiers outils mathématiques',color:'var(--d-maths)',soft:'var(--d-maths-soft)',ink:'var(--d-maths-ink)',icon:'shapes'},
+  {key:'corps',name:'Corps',long:'Activités physiques',color:'var(--d-corps)',soft:'var(--d-corps-soft)',ink:'var(--d-corps-ink)',icon:'ball'},
+  {key:'arts',name:'Arts',long:'Activités artistiques',color:'var(--d-arts)',soft:'var(--d-arts-soft)',ink:'var(--d-arts-ink)',icon:'palette'},
+  {key:'temps',name:'Temps',long:'Se repérer dans le temps et l’espace',color:'var(--d-temps)',soft:'var(--d-temps-soft)',ink:'var(--d-temps-ink)',icon:'clock'},
+  {key:'vivant',name:'Vivant',long:'Vivant, matière et objets',color:'var(--d-vivant)',soft:'var(--d-vivant-soft)',ink:'var(--d-vivant-ink)',icon:'leaf'}
+];
+
+const STUDENTS = [
+  {id:'lea',name:'Léa',section:'MS'},{id:'adam',name:'Adam',section:'PS'},
+  {id:'jade',name:'Jade',section:'GS'},{id:'moussa',name:'Moussa',section:'MS'},
+  {id:'ines',name:'Inès',section:'PS'},{id:'noe',name:'Noé',section:'GS'},
+  {id:'lina',name:'Lina',section:'PS'},{id:'gabriel',name:'Gabriel',section:'GS'},
+  {id:'anna',name:'Anna',section:'PS'},{id:'nina',name:'Nina',section:'MS'},
+  {id:'sofia',name:'Sofia',section:'PS'},{id:'marcel',name:'Marcel',section:'MS'},
+  {id:'yanis',name:'Yanis',section:'GS'},{id:'aya',name:'Aya',section:'PS'},
+  {id:'louis',name:'Louis',section:'MS'},{id:'zoe',name:'Zoé',section:'GS'},
+  {id:'ilyes',name:'Ilyes',section:'PS'},{id:'mya',name:'Mya',section:'MS'},
+  {id:'tom',name:'Tom',section:'MS'},{id:'rose',name:'Rose',section:'GS'}
+];
+
+const OBJECTIVES = [
+  /* Langage */
+  {id:'l1',domain:'langage',level:'MS',title:'Raconter une histoire entendue en s’appuyant sur les images',date:'12 oct.',example:'Raconte l’histoire à sa manière en s’appuyant sur les illustrations, sans les inventer.',by:['lea','jade','noe','moussa','nina','gabriel','yanis','rose']},
+  {id:'l2',domain:'langage',level:'MS',title:'Utiliser le « je » pour parler de soi',date:'2 oct.',example:'Parle de ce qu’il a fait pendant le week-end en utilisant « je ».',by:['lea','ines','moussa','lina','nina','louis','mya','tom']},
+  {id:'l3',domain:'langage',level:'MS',title:'Nommer les lettres de son prénom',date:'8 oct.',example:'Montre et nomme les lettres de son prénom, dans l’ordre puis dans le désordre.',by:['lea','jade','noe','gabriel','marcel','nina','rose']},
+  {id:'l4',domain:'langage',level:'MS',title:'Comprendre et exécuter deux consignes simples',date:'26 sept.',example:'Écoute deux consignes et les réalise sans les faire répéter.',by:['adam','jade','moussa','ines','noe','lina','gabriel','anna']},
+  {id:'l5',domain:'langage',level:'PS',title:'Répondre aux questions simples : qui, quoi, où ?',date:'4 oct.',example:'Répond par une phrase courte à une question sur une image.',by:['adam','ines','lina','anna','sofia','aya','ilyes']},
+  {id:'l6',domain:'langage',level:'GS',title:'Reformuler une histoire avec ses propres mots',date:'7 oct.',example:'Raconte l’histoire avec ses mots, en respectant l’ordre des événements.',by:['jade','noe','gabriel','yanis','zoe','rose']},
+  {id:'l7',domain:'langage',level:'GS',title:'Écrire son prénom en cursive',date:'1 oct.',example:'Écrit son prénom en attaché, sans modèle, en respectant le sens du tracé.',by:['jade','noe','yanis']},
+  {id:'l8',domain:'langage',level:'MS',title:'Dire de mémoire une comptine courte',date:'15 sept.',example:'Récite une comptine de trois phrases avec la bonne intonation.',by:['moussa','lina','nina','louis','mya','rose']},
+
+  /* Maths */
+  {id:'m1',domain:'maths',level:'MS',title:'Dire combien il y a d’objets dans une collection de 1 à 5',date:'28 sept.',example:'Compte une collection de 3 à 5 objets et donne le nombre sans recompter.',by:['lea','adam','jade','moussa','noe','lina','gabriel','nina']},
+  {id:'m2',domain:'maths',level:'MS',title:'Reconnaître et nommer le carré, le rond et le triangle',date:'21 sept.',example:'Montre et nomme les trois formes dans un jeu de cartes.',by:['lea','jade','moussa','ines','noe','louis','mya']},
+  {id:'m3',domain:'maths',level:'MS',title:'Poursuivre un rythme de couleurs',date:'15 sept.',example:'Continue un algorithme simple de deux couleurs avec des perles.',by:['lea','adam','jade','moussa','noe','gabriel','nina','tom']},
+  {id:'m4',domain:'maths',level:'PS',title:'Comparer deux collections : plus que, moins que',date:'22 sept.',example:'Montre la collection qui a le plus d’objets, puis celle qui en a le moins.',by:['adam','ines','lina','anna','aya']},
+  {id:'m5',domain:'maths',level:'GS',title:'Décomposer le nombre 5',date:'30 sept.',example:'Trouve deux manières de faire 5 avec des cubes.',by:['jade','noe','gabriel','yanis','zoe']},
+  {id:'m6',domain:'maths',level:'GS',title:'Tracer un cercle et un carré',date:'24 sept.',example:'Trace les formes à main levée en fermant correctement le tracé.',by:['jade','noe','yanis','rose']},
+
+  /* Corps */
+  {id:'c1',domain:'corps',level:'MS',title:'Sauter et se réceptionner sans tomber',date:'11 oct.',example:'Saute depuis un banc et se réceptionne sur les deux pieds.',by:['lea','adam','jade','moussa','ines','noe','lina','gabriel','nina','tom']},
+  {id:'c2',domain:'corps',level:'MS',title:'Lancer un objet loin avec précision',date:'2 oct.',example:'Lance un sac de graines dans une cible placée à deux mètres.',by:['adam','jade','moussa','noe','gabriel','louis','mya']},
+  {id:'c3',domain:'corps',level:'PS',title:'Se déplacer sans bousculer les autres',date:'18 sept.',example:'Traverse le parcours en contournant les obstacles et les camarades.',by:['adam','ines','lina','anna','sofia','aya','ilyes','tom']},
+  {id:'c4',domain:'corps',level:'GS',title:'Courir en changeant de direction',date:'9 oct.',example:'Change de direction au signal sans perdre l’équilibre.',by:['jade','noe','gabriel','yanis','zoe','rose']},
+
+  /* Arts */
+  {id:'a1',domain:'arts',level:'MS',title:'Réaliser une composition en volume',date:'9 oct.',example:'Assemble des objets pour créer une sculpture qui tient debout.',by:['lea','jade','moussa','noe','lina','gabriel','nina','rose']},
+  {id:'a2',domain:'arts',level:'MS',title:'Chanter une comptine en groupe',date:'19 sept.',example:'Chante avec le groupe en suivant le rythme et les paroles.',by:['lea','adam','jade','ines','noe','lina','gabriel','anna','tom']},
+  {id:'a3',domain:'arts',level:'PS',title:'Tenir un pinceau et peindre dans un espace',date:'12 sept.',example:'Tient le pinceau et peint à l’intérieur d’une zone délimitée.',by:['adam','ines','anna','sofia','aya','ilyes']},
+  {id:'a4',domain:'arts',level:'GS',title:'Dessiner un bonhomme structuré',date:'5 oct.',example:'Dessine un bonhomme avec tête, tronc, bras et jambes.',by:['jade','noe','gabriel','yanis','zoe','rose']},
+
+  /* Temps */
+  {id:'t1',domain:'temps',level:'MS',title:'Situer les moments de la journée',date:'5 oct.',example:'Range des images dans l’ordre : matin, midi, après-midi, soir.',by:['lea','adam','jade','moussa','noe','lina','gabriel','nina']},
+  {id:'t2',domain:'temps',level:'MS',title:'Utiliser les mots hier et demain',date:'22 sept.',example:'Raconte ce qu’il a fait hier et ce qu’il fera demain.',by:['lea','jade','moussa','noe','gabriel','louis','mya']},
+  {id:'t3',domain:'temps',level:'PS',title:'Se repérer dans les coins de la classe',date:'14 sept.',example:'Va chercher un objet dans le coin jeu et le rapporte.',by:['adam','ines','lina','anna','sofia','ilyes','tom']},
+  {id:'t4',domain:'temps',level:'GS',title:'Ordonner trois images d’une histoire',date:'3 oct.',example:'Remet trois images dans l’ordre chronologique et explique son choix.',by:['jade','noe','gabriel','yanis','zoe','rose']},
+
+  /* Vivant */
+  {id:'v1',domain:'vivant',level:'MS',title:'Observer les animaux et les végétaux',date:'18 sept.',example:'Décrit ce qu’il observe lors d’une sortie dans la cour.',by:['lea','adam','jade','moussa','ines','noe','lina','gabriel']},
+  {id:'v2',domain:'vivant',level:'MS',title:'Manipuler la matière et les objets',date:'24 sept.',example:'Transvase de l’eau avec différents outils sans renverser.',by:['lea','jade','noe','nina','louis','mya','rose']},
+  {id:'v3',domain:'vivant',level:'MS',title:'Nommer les parties du corps humain',date:'1 oct.',example:'Montre et nomme la tête, les bras, les jambes, le dos.',by:['lea','adam','jade','moussa','ines','noe','gabriel','tom']},
+  {id:'v4',domain:'vivant',level:'PS',title:'Reconnaître les animaux de la ferme',date:'10 sept.',example:'Nomme la vache, le cochon, la poule et le mouton.',by:['adam','ines','lina','anna','sofia','aya']},
+  {id:'v5',domain:'vivant',level:'GS',title:'Trier des objets selon leur matière',date:'29 sept.',example:'Trie des objets en bois, en métal et en plastique.',by:['jade','noe','gabriel','yanis','zoe']}
+];
+
+/* ------------------------------------------------------------------ */
+/* État                                                               */
+/* ------------------------------------------------------------------ */
+const initial = {
+  screen:'class', section:'all', showAll:false,
+  pickerQuery:'', pickerSection:'all',
+  currentStudent:'lea', photoTaken:false, flowFrom:'picker', objectivesBack:'camera', flowNoPhoto:false,
+  selectedObjective:null, lastValidation:null,
+  objectiveDomain:'all', objectiveQuery:'',
+  dossierExpanded:['langage'],
+  programmeLevel:'all', programmeQuery:'', programmeExpanded:['langage'],
+  sheetObjective:null, sheetPicker:false,
+  manageDelete:null, manageAdd:false, newName:'', newSection:'MS',
+  bilanPeriod:1, bilanStudent:'lea'
+};
+let state = {...initial};
+
+/* ------------------------------------------------------------------ */
+/* Helpers                                                            */
+/* ------------------------------------------------------------------ */
+const $ = (s, r=document) => r.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const studentById = id => STUDENTS.find(s => s.id === id) || STUDENTS[0] || {id:'none',name:'—',section:'MS'};
+const domainByKey = k => DOMAINS.find(d => d.key === k);
+const objectiveById = id => OBJECTIVES.find(o => o.id === id);
+const countFor = id => OBJECTIVES.filter(o => o.by.includes(id)).length;
+const validatedFor = id => OBJECTIVES.filter(o => o.by.includes(id));
+const validationsForDomain = (id, d) => validatedFor(id).filter(o => o.domain === d);
+const totalForLevel = lvl => OBJECTIVES.filter(o => o.level === lvl).length;
+
+function icon(name, size=18){
+  const p = {
+    back:'<path d="M15 5L8 12L15 19"/>',
+    camera:'<path d="M4 8.5C4 7.4 4.9 6.5 6 6.5H8L9.2 4.8C9.5 4.3 10 4 10.6 4H13.4C14 4 14.5 4.3 14.8 4.8L16 6.5H18C19.1 6.5 20 7.4 20 8.5V17C20 18.1 19.1 19 18 19H6C4.9 19 4 18.1 4 17V8.5Z"/><circle cx="12" cy="12.5" r="3.2"/>',
+    search:'<circle cx="11" cy="11" r="6"/><path d="M16 16L20 20"/>',
+    check:'<path d="M6 12.5L10 16.5L18 8"/>',
+    arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+    users:'<path d="M16 19v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 4 17.5V19"/><circle cx="10" cy="7.5" r="3.5"/><path d="M20 19v-1.5a3.5 3.5 0 0 0-2.6-3.4M15.5 4.2a3.5 3.5 0 0 1 0 6.6"/>',
+    grid:'<rect x="3" y="3" width="7" height="7" rx="1.6"/><rect x="14" y="3" width="7" height="7" rx="1.6"/><rect x="3" y="14" width="7" height="7" rx="1.6"/><rect x="14" y="14" width="7" height="7" rx="1.6"/>',
+    file:'<path d="M7 3h7l4 4v14H7V3Z"/><path d="M14 3v4h4"/><path d="M10 12h6M10 16h4"/>',
+    chevron:'<path d="M9 6l6 6-6 6"/>',
+    plus:'<path d="M12 5v14M5 12h14"/>',
+    close:'<path d="M6 6l12 12M18 6L6 18"/>',
+    trash:'<path d="M4 7h16M9 7V5h6v2M7 7l1 13h8l1-13M10 11v6M14 11v6"/>',
+    pencil:'<path d="M4 20l4-1 11-11-3-3L5 16l-1 4Z"/><path d="M13.5 6.5l3 3"/>',
+    book:'<path d="M4 5.5C7 4 10 4 12 6c2-2 5-2 8-.5V19c-3-1.5-6-1.5-8 0-2-1.5-5-1.5-8 0V5.5Z"/><path d="M12 6v13"/>',
+    shapes:'<circle cx="8" cy="8" r="4"/><rect x="14" y="4" width="7" height="7" rx="1.6"/><path d="M8 14l4 6H4l4-6Z"/>',
+    ball:'<circle cx="12" cy="12" r="8"/><path d="M5.5 8.5c4 3 9 3 13 0M6 16c3.5-3 8.5-3 12 0"/>',
+    palette:'<path d="M12 3a9 9 0 0 0 0 18h1.2a2 2 0 0 0 0-4H12a2 2 0 0 1 0-4h4a5 5 0 0 0 0-10h-4Z"/><circle cx="7.6" cy="9" r="1.1" fill="currentColor" stroke="none"/><circle cx="10.5" cy="6.4" r="1.1" fill="currentColor" stroke="none"/><circle cx="7.6" cy="13" r="1.1" fill="currentColor" stroke="none"/>',
+    clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/>',
+    leaf:'<path d="M20 4C10 4 4 9 4 16c0 2 1 3 3 4 7 0 13-6 13-16Z"/><path d="M4 20c4-6 8-9 13-12"/>'
+  };
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p[name]||''}</svg>`;
+}
+function flower(size=18){
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="6" r="4.2" fill="#D9765B"/><circle cx="18" cy="12" r="4.2" fill="#E7B65C"/><circle cx="12" cy="18" r="4.2" fill="#6F8F6A"/><circle cx="6" cy="12" r="4.2" fill="#8FB3C7"/><circle cx="12" cy="12" r="2.6" fill="#2F2A24"/></svg>`;
+}
+function domainIcon(d, size=18){
+  return `<span style="color:${d.ink};display:flex">${icon(d.icon,size)}</span>`;
+}
+function thumbSVG(domain, w=48, h=48){
+  const scenes = {
+    langage:`<rect width="48" height="48" fill="#E7EEDF"/><path d="M24 15c-5-3-10-3-14-1v18c4-2 9-2 14 1 5-3 10-3 14-1V14c-4-2-9-2-14 1Z" fill="#FFFCF6"/><path d="M24 15v18" stroke="#6F8F6A" stroke-width="1"/><path d="M14 21h6M14 25h6M28 21h6M28 25h6" stroke="#6F8F6A" stroke-width="1.3" stroke-linecap="round"/>`,
+    maths:`<rect width="48" height="48" fill="#E2EDF1"/><circle cx="14" cy="14" r="4" fill="#D9765B"/><circle cx="27" cy="12" r="4" fill="#6F8F6A"/><circle cx="18" cy="27" r="4" fill="#7FA5B8"/><circle cx="32" cy="26" r="4" fill="#E7B65C"/><rect x="12" y="32" width="8" height="8" rx="2" fill="#7FA5B8"/><path d="M31 33l4 6h-8l4-6Z" fill="#6F8F6A"/>`,
+    corps:`<rect width="48" height="48" fill="#F7DEDA"/><circle cx="24" cy="21" r="10" fill="#7FA5B8"/><path d="M14 21c7 4 13 4 20 0" stroke="#FFFCF6" stroke-width="1.8" fill="none"/><path d="M7 37c11-8 23-8 34 0" stroke="#6F8F6A" stroke-width="1.6" fill="none" stroke-linecap="round"/>`,
+    arts:`<rect width="48" height="48" fill="#FAEBC9"/><rect x="9" y="8" width="30" height="32" rx="2" fill="#FFFCF6" transform="rotate(-4 24 24)"/><circle cx="18" cy="20" r="5" fill="#D9765B"/><circle cx="29" cy="27" r="6" fill="#E7B65C"/><path d="M14 33c6-8 12-8 20-2" stroke="#6F8F6A" stroke-width="3" fill="none" stroke-linecap="round"/>`,
+    temps:`<rect width="48" height="48" fill="#F2E3D7"/><circle cx="24" cy="24" r="13" fill="#FFFCF6"/><circle cx="24" cy="24" r="13" fill="none" stroke="#B98A6E" stroke-width="1.8"/><path d="M24 16v8l5 4" stroke="#2F2A24" stroke-width="1.6" fill="none" stroke-linecap="round"/>`,
+    vivant:`<rect width="48" height="48" fill="#E7EBD8"/><circle cx="36" cy="12" r="5" fill="#E7B65C"/><path d="M24 40c-10-6-14-14-10-21 4-6 11-3 12 2 1-5 8-8 11-2 4 7-1 15-13 21Z" fill="#7E8B57"/><path d="M24 38V22" stroke="#5F6B3D" stroke-width="1.3" stroke-linecap="round"/>`
+  };
+  return `<svg width="${w}" height="${h}" viewBox="0 0 48 48" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${scenes[domain]||scenes.langage}</svg>`;
+}
+function sceneSVG(){
+  return `<svg viewBox="0 0 322 332" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <rect width="322" height="332" fill="#F2E6D2"/>
+    <rect y="252" width="322" height="80" fill="#D8C09C"/>
+    <ellipse cx="160" cy="292" rx="122" ry="30" fill="#E9A6A0" opacity=".32"/>
+    <rect x="26" y="24" width="96" height="76" rx="4" fill="#FFFCF6"/>
+    <rect x="32" y="30" width="40" height="30" fill="#DDE9EE"/><rect x="77" y="30" width="39" height="30" fill="#DDE9EE"/>
+    <rect x="32" y="64" width="40" height="30" fill="#DDE9EE"/><rect x="77" y="64" width="39" height="30" fill="#DDE9EE"/>
+    <circle cx="104" cy="50" r="10" fill="#E7B65C"/>
+    <rect x="108" y="190" width="104" height="58" rx="8" fill="#D9765B"/><circle cx="160" cy="219" r="8" fill="#FFF8EE" opacity=".9"/>
+    <rect x="120" y="142" width="80" height="50" rx="8" fill="#E7B65C"/><circle cx="160" cy="167" r="7" fill="#FFF8EE" opacity=".9"/>
+    <rect x="132" y="100" width="56" height="44" rx="8" fill="#6F8F6A"/><circle cx="160" cy="122" r="6" fill="#FFF8EE" opacity=".9"/>
+    <circle cx="60" cy="222" r="29" fill="#8FB3C7"/><path d="M31 222a29 29 0 0 1 58 0" fill="#FFF8EE" opacity=".55"/>
+    <rect x="226" y="210" width="68" height="38" rx="10" fill="#C99A6A"/><rect x="239" y="192" width="32" height="22" rx="5" fill="#B98555"/>
+    <circle cx="243" cy="250" r="10" fill="#2F2A24"/><circle cx="277" cy="250" r="10" fill="#2F2A24"/>
+    <circle cx="243" cy="250" r="4" fill="#F2E6D2"/><circle cx="277" cy="250" r="4" fill="#F2E6D2"/>
+    <rect x="268" y="140" width="36" height="42" rx="7" fill="#D9765B"/>
+    <path d="M286 140c-2-22-17-33-30-37 6 18 13 28 30 37Z" fill="#6F8F6A"/>
+    <path d="M286 140c4-20 17-29 28-31-4 15-13 26-28 31Z" fill="#6F8F6A"/>
+  </svg>`;
+}
+
+/* ------------------------------------------------------------------ */
+/* Rendu                                                              */
+/* ------------------------------------------------------------------ */
+const app = document.getElementById('app');
+
+function render(animate=false, resetScroll=false){
+  const old = app.querySelector('.screen');
+  const top = old ? old.scrollTop : 0;
+  app.innerHTML = screenHTML() + (showNav() ? navHTML() : '') + overlayHTML();
+  const sc = app.querySelector('.screen');
+  if (sc){
+    sc.scrollTop = resetScroll ? 0 : top;
+    if (animate) sc.classList.add('screen-anim');
+  }
+  updatePrintArea();
+}
+function go(screen, extra={}){
+  state.screen = screen;
+  state.sheetObjective = null;
+  state.sheetPicker = false;
+  state.manageDelete = null;
+  state.manageAdd = false;
+  Object.assign(state, extra);
+  render(true, true);
+}
+function showNav(){
+  return ['class','dossier','manage','programme','bilans'].includes(state.screen);
+}
+function navActive(){
+  return (state.screen === 'dossier' || state.screen === 'manage') ? 'class' : state.screen;
+}
+function navHTML(){
+  const a = navActive();
+  return `<nav class="nav" aria-label="Navigation principale">
+    <button class="${a==='class'?'active':''}" data-action="nav" data-screen="class">${icon('users',18)}<span>Élèves</span></button>
+    <button class="${a==='programme'?'active':''}" data-action="nav" data-screen="programme">${icon('grid',18)}<span>Programme</span></button>
+    <button class="${a==='bilans'?'active':''}" data-action="nav" data-screen="bilans">${icon('file',18)}<span>Bilans</span></button>
+  </nav>`;
+}
+function screenHTML(){
+  switch(state.screen){
+    case 'class': return classScreen();
+    case 'picker': return pickerScreen();
+    case 'camera': return cameraScreen();
+    case 'objectives': return objectivesScreen();
+    case 'success': return successScreen();
+    case 'dossier': return dossierScreen();
+    case 'manage': return manageScreen();
+    case 'programme': return programmeScreen();
+    case 'bilans': return bilansScreen();
+    case 'bilan': return bilanScreen();
+    default: return classScreen();
+  }
+}
+function overlayHTML(){
+  if (state.manageAdd){
+    return `<div class="overlay">
+      <div class="backdrop" data-action="close-manage-sheet"></div>
+      <div class="sheet-panel">
+        <div class="handle"></div>
+        <div class="eyebrow">Nouvel élève</div>
+        <h3>Ajouter un élève</h3>
+        <p class="example">Son dossier sera vide. Tu pourras y ajouter ses premières réussites.</p>
+        <div class="label">Prénom</div>
+        <div class="field"><input id="new-student-name" placeholder="Prénom de l'élève" value="${esc(state.newName)}" autocomplete="off"></div>
+        <div class="label">Section</div>
+        <div class="chips" style="margin:0 0 2px">
+          ${['PS','MS','GS'].map(x=>`<button class="chip ${state.newSection===x?'active':''}" data-action="new-section" data-section="${x}">${x}</button>`).join('')}
+        </div>
+        <div class="sheet-actions">
+          <button class="btn-primary" data-action="confirm-add-student">${icon('plus',17)} Ajouter l'élève</button>
+          <button class="btn-ghost" data-action="close-manage-sheet">Annuler</button>
+        </div>
+      </div>
+    </div>`;
+  }
+  if (state.manageDelete){
+    const s = studentById(state.manageDelete);
+    const n = countFor(s.id);
+    return `<div class="overlay">
+      <div class="backdrop" data-action="close-manage-sheet"></div>
+      <div class="sheet-panel">
+        <div class="handle"></div>
+        <div class="eyebrow" style="color:var(--blush-ink)">Suppression définitive</div>
+        <h3>Supprimer ${esc(s.name)} ?</h3>
+        <div class="warning">${n>0 ? `Son dossier, ses ${n} réussite${n>1?'s':''} et ses photos` : 'Son dossier et ses photos'} seront supprimés définitivement. Cette action est irréversible.</div>
+        <div class="sheet-actions">
+          <button class="btn-danger" data-action="confirm-delete">${icon('trash',16)} Supprimer définitivement</button>
+          <button class="btn-ghost" data-action="close-manage-sheet">Annuler</button>
+        </div>
+      </div>
+    </div>`;
+  }
+  if (!state.sheetObjective) return '';
+  const o = objectiveById(state.sheetObjective);
+  if (!o) return '';
+  const d = domainByKey(o.domain);
+  const students = STUDENTS.filter(s => o.by.includes(s.id));
+  const avatars = students.slice(0,8).map(s => {
+    const sec = SEC[s.section];
+    return `<span class="av" style="background:${sec.soft};color:${sec.ink}" title="${esc(s.name)}">${esc(s.name[0])}</span>`;
+  }).join('');
+  const more = students.length > 8 ? `<span class="more">+${students.length-8}</span>` : '';
+  const picker = state.sheetPicker ? `
+    <div class="pick-list">
+      ${STUDENTS.map(s=>{
+        const done = o.by.includes(s.id);
+        return `<button data-action="sheet-pick" data-id="${s.id}">
+          <span class="avatar" style="width:28px;height:28px;font-size:11px;background:${SEC[s.section].soft};color:${SEC[s.section].ink}">${esc(s.name[0])}</span>
+          <span class="n">${esc(s.name)}</span><span class="s">${s.section}</span>
+          ${done ? `<span class="ok">${icon('check',15)}</span>` : ''}
+        </button>`;
+      }).join('')}
+    </div>` : '';
+  return `<div class="overlay">
+    <div class="backdrop" data-action="close-sheet"></div>
+    <div class="sheet-panel">
+      <div class="handle"></div>
+      <div class="eyebrow" style="color:${d.ink}">${esc(d.long)} · ${o.level}</div>
+      <h3>${esc(o.title)}</h3>
+      <p class="example">${esc(o.example)}</p>
+      <div class="label">Déjà validé par ${students.length} élève${students.length>1?'s':''}</div>
+      <div class="avatars">${avatars}${more}</div>
+      <div class="sheet-actions">
+        <button class="btn-primary" data-action="sheet-validate-picker">${icon('plus',17)} Valider pour un élève</button>
+        ${picker}
+        <button class="btn-ghost" data-action="close-sheet">Fermer</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* --------------------------- Écran classe --------------------------- */
+function classScreen(){
+  const filtered = state.section === 'all' ? STUDENTS : STUDENTS.filter(s => s.section === state.section);
+  const shown = state.showAll ? filtered : filtered.slice(0,6);
+  const rest = filtered.length - shown.length;
+  return `<section class="screen">
+    <div class="brandline">
+      <span class="mark">${flower(19)}</span>
+      <span class="word">Carnet de réussites</span>
+      <span class="avatar-btn">M</span>
+    </div>
+    <h1 class="display">Bonjour, Maîtresse</h1>
+    <p class="sub">Vendredi 6 novembre · ${filtered.length} élève${filtered.length>1?'s':''}${state.section!=='all'?' en '+state.section:''}</p>
+    <div class="chips">
+      ${['all','PS','MS','GS'].map(x=>`<button class="chip ${state.section===x?'active':''}" data-action="filter-section" data-section="${x}">${x==='all'?'Toute la classe':x}</button>`).join('')}
+    </div>
+    <div class="student-grid">
+      ${shown.map((s,i)=>{
+        const sec = SEC[s.section];
+        return `<button class="student-card" style="--i:${i}" data-action="open-student" data-id="${s.id}">
+          <span class="student-top">
+            <span class="avatar" style="background:${sec.soft};color:${sec.ink}">${esc(s.name[0])}</span>
+            <span class="section-pill" style="background:${sec.soft};color:${sec.ink}">${s.section}</span>
+          </span>
+          <span class="student-name">${esc(s.name)}</span>
+          <span class="count"><span class="dot"></span>${countFor(s.id)} réussite${countFor(s.id)>1?'s':''}</span>
+        </button>`;
+      }).join('')}
+    </div>
+    ${shown.length===0 ? `<div class="empty" style="margin-top:12px">Aucun élève dans la classe. Ajoute le premier élève.</div>` : ''}
+    ${rest>0 ? `<button class="text-link" data-action="toggle-all">${rest===1 ? "Voir l'autre élève" : `Voir les ${rest} autres élèves`}</button>` : ''}
+    ${state.showAll && filtered.length>6 ? `<button class="text-link" data-action="toggle-all">Voir moins</button>` : ''}
+    <button class="manage-link" data-action="nav" data-screen="manage">${icon('pencil',14)} Gérer les élèves</button>
+    <button class="cta" data-action="start-flow" ${STUDENTS.length?'':'disabled'}>${icon('camera',20)} Prendre une photo</button>
+  </section>`;
+}
+
+/* --------------------------- Élève (étape 1) ------------------------ */
+function pickerScreen(){
+  return `<section class="screen">
+    <div class="screen-top">
+      <button class="icon-btn" data-action="nav" data-screen="class" aria-label="Retour">${icon('back',17)}</button>
+      <span class="title">Nouvelle réussite</span>
+      <span class="step-pill">1 / 3</span>
+    </div>
+    <h1 class="display sm">Pour qui ?</h1>
+    <p class="sub">Cherche l'élève, puis prends la photo.</p>
+    <div class="field" style="margin-top:16px">
+      ${icon('search',17)}
+      <input id="picker-search" placeholder="Rechercher un élève…" value="${esc(state.pickerQuery)}" autocomplete="off">
+    </div>
+    <div class="chips" style="margin-bottom:0">
+      ${['all','PS','MS','GS'].map(x=>`<button class="chip ${state.pickerSection===x?'active':''}" data-action="filter-picker" data-section="${x}">${x==='all'?'Tous':x}</button>`).join('')}
+    </div>
+    <div class="pick-grid" id="picker-grid">${pickerGridHTML()}</div>
+  </section>`;
+}
+function pickerGridHTML(){
+  const q = state.pickerQuery.trim().toLowerCase();
+  const list = STUDENTS.filter(s =>
+    (state.pickerSection==='all' || s.section===state.pickerSection) &&
+    (!q || s.name.toLowerCase().includes(q))
+  );
+  if (!list.length) return `<div class="empty" style="grid-column:1/-1">Aucun élève trouvé.</div>`;
+  return list.map(s=>{
+    const sec = SEC[s.section];
+    return `<button class="pick-card" data-action="pick-student" data-id="${s.id}">
+      <span class="avatar" style="background:${sec.soft};color:${sec.ink}">${esc(s.name[0])}</span>
+      <span class="pick-name">${esc(s.name)}</span>
+      <span class="pick-sec" style="background:${sec.soft};color:${sec.ink}">${s.section}</span>
+    </button>`;
+  }).join('');
+}
+
+/* --------------------------- Photo (étape 2) ------------------------ */
+function cameraScreen(){
+  const s = studentById(state.currentStudent);
+  const sec = SEC[s.section];
+  return `<section class="screen no-nav">
+    <div class="screen-top">
+      <button class="icon-btn" data-action="back-camera" aria-label="Retour">${icon('back',17)}</button>
+      <span class="title">Nouvelle réussite</span>
+      <span class="step-pill">2 / 3</span>
+    </div>
+    <div class="name-pill">
+      <span class="avatar" style="background:${sec.soft};color:${sec.ink}">${esc(s.name[0])}</span>
+      <span class="info"><span class="nm">${esc(s.name)}</span><span class="meta">${s.section} · ${countFor(s.id)} réussite${countFor(s.id)>1?'s':''}</span></span>
+      <span class="check">${icon('check',13)}</span>
+    </div>
+    <div class="viewfinder ${state.photoTaken?'taken':''}">
+      <div class="scene">${sceneSVG()}</div>
+      <span class="vf-chip"><span class="mini">${esc(s.name[0])}</span>${esc(s.name)} · ${s.section}</span>
+      ${state.photoTaken ? `<span class="taken-badge">${icon('check',12)} Photo prise</span>` : `<span class="focus"></span><span class="vf-hint">Cadre la réussite, puis prends la photo</span>`}
+    </div>
+    <div class="vf-bar">
+      <span>${state.photoTaken ? 'Photo prise à l’instant' : 'Prête à photographier'}</span>
+      ${state.photoTaken ? `<button data-action="retake">Reprendre</button>` : `<button data-action="skip-photo">Valider sans photo</button>`}
+    </div>
+    <div class="info-strip">
+      ${icon('camera',18)}
+      <p>La photo reste sur ton téléphone.<span>Rien n'est envoyé en ligne.</span></p>
+    </div>
+    <button class="cta" data-action="${state.photoTaken?'to-objectives':'take-photo'}">
+      ${state.photoTaken ? `Choisir l'objectif ${icon('arrow',18)}` : `${icon('camera',20)} Prendre la photo`}
+    </button>
+  </section>`;
+}
+
+/* --------------------------- Objectif (étape 3) --------------------- */
+function objectivesScreen(){
+  const s = studentById(state.currentStudent);
+  const sec = SEC[s.section];
+  const noPhoto = !state.photoTaken;
+  const backAction = state.objectivesBack === 'camera' ? 'back-objectives' : 'back-dossier';
+  return `<section class="screen no-nav">
+    <div class="screen-top">
+      <button class="icon-btn" data-action="${backAction}" aria-label="Retour">${icon('back',17)}</button>
+      <span class="title">Choisir l'objectif</span>
+      ${state.objectivesBack==='camera' ? `<span class="step-pill">3 / 3</span>` : `<span class="step-pill" style="background:var(--mustard-soft);color:var(--mustard-ink)">Sans photo</span>`}
+    </div>
+    <div class="recap">
+      ${noPhoto
+        ? `<span class="avatar" style="width:48px;height:48px;font-size:20px;background:${sec.soft};color:${sec.ink}">${esc(s.name[0])}</span>`
+        : `<span class="thumb">${thumbSVG('langage',48,48)}</span>`}
+      <span class="t"><span class="nm">${esc(s.name)} · ${s.section}</span><span class="meta"><span class="dot"></span>${noPhoto ? 'Validation sans photo' : 'Photo ajoutée'}</span></span>
+    </div>
+    ${noPhoto ? `<div class="info-strip" style="margin:0 0 12px;background:var(--mustard-soft);color:var(--mustard-ink)">${icon('file',18)}<p>Tu peux valider sans photo.<span>Tu pourras en ajouter une plus tard depuis le dossier.</span></p></div>` : ''}
+    <div class="field">
+      ${icon('search',17)}
+      <input id="objective-search" placeholder="Rechercher un objectif…" value="${esc(state.objectiveQuery)}" autocomplete="off">
+    </div>
+    <div class="scroller">
+      <button class="chip ${state.objectiveDomain==='all'?'active':''}" data-action="objective-domain" data-domain="all">Tous</button>
+      ${DOMAINS.map(d=>`<button class="chip ${state.objectiveDomain===d.key?'active':''}" data-action="objective-domain" data-domain="${d.key}">${esc(d.name)}</button>`).join('')}
+    </div>
+    <div class="objective-list" id="objective-list">${objectiveListHTML()}</div>
+    <button class="cta" data-action="validate" ${state.selectedObjective?'':'disabled'}>
+      ${icon('check',19)} Valider la réussite
+    </button>
+  </section>`;
+}
+function objectiveListHTML(){
+  const s = studentById(state.currentStudent);
+  const q = state.objectiveQuery.trim().toLowerCase();
+  let list = OBJECTIVES.filter(o => o.level === s.section);
+  if (state.objectiveDomain !== 'all') list = list.filter(o => o.domain === state.objectiveDomain);
+  if (q) list = list.filter(o => o.title.toLowerCase().includes(q) || domainByKey(o.domain).name.toLowerCase().includes(q));
+  list.sort((a,b)=>{
+    const da = a.by.includes(s.id) ? 1 : 0;
+    const db = b.by.includes(s.id) ? 1 : 0;
+    if (da !== db) return da - db;
+    return DOMAINS.findIndex(d=>d.key===a.domain) - DOMAINS.findIndex(d=>d.key===b.domain);
+  });
+  if (!list.length) return `<div class="empty">Aucun objectif ne correspond.</div>`;
+  return list.map(o=>{
+    const done = o.by.includes(s.id);
+    const selected = state.selectedObjective === o.id;
+    return `<button class="objective ${selected?'selected':''} ${done?'done':''}" ${done?'data-action="already"':'data-action="select-objective"'} data-id="${o.id}">
+      <span class="check">${(selected||done)?icon('check',14):''}</span>
+      <span class="txt">
+        <span class="obj-title">${esc(o.title)}</span>
+        <span class="obj-meta">${done ? `Déjà validé · ${o.date}` : selected ? 'Prêt à valider' : `${o.level} · ${esc(domainByKey(o.domain).name)}`}</span>
+      </span>
+    </button>`;
+  }).join('');
+}
+
+/* --------------------------- Succès -------------------------------- */
+function successScreen(){
+  const s = studentById(state.currentStudent);
+  const o = objectiveById(state.selectedObjective) || objectiveById('l1');
+  return `<section class="screen">
+    <div class="success">
+      <div class="sticker">${icon('check',48)}</div>
+      <h2>C'est noté !</h2>
+      <p class="lead">La réussite est ajoutée au dossier de<br><strong>${esc(s.name)}</strong>.</p>
+      <div class="card">
+        <div class="k">${esc(domainByKey(o.domain).long)} · ${o.level}</div>
+        <div class="v">${esc(o.title)}</div>
+        <div class="d">${o.date} · ${state.photoTaken ? 'avec photo' : 'sans photo'}</div>
+      </div>
+      <div class="stack">
+        <button class="btn-primary" data-action="open-student" data-id="${s.id}">${icon('users',18)} Voir le dossier de ${esc(s.name)}</button>
+        <button class="btn-ghost" data-action="nav" data-screen="class">Retour à la classe</button>
+      </div>
+    </div>
+  </section>`;
+}
+
+/* --------------------------- Dossier ------------------------------- */
+function dossierScreen(){
+  const s = studentById(state.currentStudent);
+  const sec = SEC[s.section];
+  const vals = validatedFor(s.id);
+  const count = vals.length;
+  const stats = DOMAINS.map(d=>({d,n:vals.filter(o=>o.domain===d.key).length})).filter(x=>x.n>0).slice(0,3);
+  return `<section class="screen">
+    <div class="screen-top">
+      <button class="icon-btn" data-action="nav" data-screen="class" aria-label="Retour">${icon('back',17)}</button>
+      <span class="title" style="font-size:24px">${esc(s.name)}</span>
+      <button class="step-pill" style="background:var(--card);color:var(--faint);border:1px solid var(--line);margin-left:auto;display:flex;align-items:center;gap:5px" data-action="open-bilan" data-id="${s.id}">${icon('file',14)} Bilan</button>
+    </div>
+    <p class="sub" style="margin-top:-10px">${s.section} · 4 ans · ${count} réussite${count>1?'s':''} cette année</p>
+    <div class="hero" style="margin-top:16px">
+      <span class="flower">${flower(34)}</span>
+      <div class="row">
+        <span class="avatar" style="background:var(--card);color:${sec.ink}">${esc(s.name[0])}</span>
+        <span><span class="big">${count} réussites</span><span class="mini">depuis septembre</span></span>
+      </div>
+      <div class="stats">${stats.map(x=>`<span class="stat">${x.d.name} ${x.n}</span>`).join('') || '<span class="stat">Première réussite à venir</span>'}</div>
+    </div>
+    <div style="margin-top:18px">
+      ${DOMAINS.map(d=>{
+        const list = vals.filter(o=>o.domain===d.key);
+        const open = state.dossierExpanded.includes(d.key);
+        return `<div class="domain-block ${open?'open':''}">
+          <button class="domain-head" data-action="toggle-dossier" data-domain="${d.key}">
+            <span class="di" style="background:${d.soft}">${domainIcon(d,17)}</span>
+            <span class="dn"><span class="dt">${esc(d.name)}</span><span class="dc">${list.length} réussite${list.length>1?'s':''}</span></span>
+            <span class="chev">${icon('chevron',16)}</span>
+          </button>
+          <div class="domain-body">
+            ${list.length ? list.map(o=>`
+              <div class="obj-row">
+                <span class="thumb">${thumbSVG(o.domain,46,46)}</span>
+                <span class="oi"><span class="ot">${esc(o.title)}</span><span class="od">${o.date} · ${o.level}</span></span>
+                <span class="oc">${icon('check',12)}</span>
+              </div>`).join('') : `<div class="empty" style="border:0;padding:12px">Aucune réussite dans ce domaine pour l'instant.</div>`}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+    <button class="dashed" data-action="add-without-photo" data-id="${s.id}">${icon('plus',16)} Ajouter une réussite sans photo</button>
+    <button class="fab" data-action="camera-for" data-id="${s.id}" aria-label="Prendre une photo">${icon('camera',22)}</button>
+  </section>`;
+}
+
+/* --------------------------- Gérer les élèves ---------------------- */
+function manageScreen(){
+  return `<section class="screen">
+    <div class="screen-top">
+      <button class="icon-btn" data-action="nav" data-screen="class" aria-label="Retour">${icon('back',17)}</button>
+      <span class="title">Gérer les élèves</span>
+      <span class="step-pill">${STUDENTS.length} élève${STUDENTS.length>1?'s':''}</span>
+    </div>
+    <p class="sub">Ajoute un élève ou supprime un dossier.</p>
+    <button class="btn-primary" style="width:100%;margin:16px 0 4px" data-action="open-add-student">${icon('plus',18)} Ajouter un élève</button>
+    <div class="eyebrow" style="margin:22px 0 8px">Les élèves de la classe</div>
+    <div class="domain-block" style="margin-top:0">
+      ${STUDENTS.length ? STUDENTS.map(s=>{
+        const sec = SEC[s.section];
+        return `<div class="manage-row">
+          <span class="avatar" style="width:34px;height:34px;font-size:14px;background:${sec.soft};color:${sec.ink}">${esc(s.name[0])}</span>
+          <span class="mn"><span class="mname">${esc(s.name)}</span><span class="mmeta">${s.section} · ${countFor(s.id)} réussite${countFor(s.id)>1?'s':''}</span></span>
+          <button class="trash" data-action="ask-delete" data-id="${s.id}" aria-label="Supprimer ${esc(s.name)}">${icon('trash',16)}</button>
+        </div>`;
+      }).join('') : `<div class="empty" style="border:0">Aucun élève. Ajoute le premier.</div>`}
+    </div>
+    <p class="note" style="font-size:10px;color:var(--faint);line-height:1.5;margin-top:16px">La suppression efface le dossier, les réussites et les photos de l'élève.</p>
+  </section>`;
+}
+
+/* --------------------------- Programme ----------------------------- */
+function programmeScreen(){
+  return `<section class="screen">
+    <h1 class="display sm" style="margin-top:4px">Programme</h1>
+    <p class="sub">Les six domaines du programme 2026, objectif par objectif.</p>
+    <div class="field" style="margin-top:16px">
+      ${icon('search',17)}
+      <input id="programme-search" placeholder="Rechercher un objectif…" value="${esc(state.programmeQuery)}" autocomplete="off">
+    </div>
+    <div class="chips" style="margin-bottom:0">
+      ${['all','PS','MS','GS'].map(x=>`<button class="chip ${state.programmeLevel===x?'active':''}" data-action="programme-level" data-level="${x}">${x==='all'?'Tous niveaux':x}</button>`).join('')}
+    </div>
+    <div id="programme-list" style="margin-top:6px">${programmeListHTML()}</div>
+  </section>`;
+}
+function programmeListHTML(){
+  const q = state.programmeQuery.trim().toLowerCase();
+  if (q){
+    const list = OBJECTIVES.filter(o =>
+      (state.programmeLevel==='all' || o.level===state.programmeLevel) &&
+      (o.title.toLowerCase().includes(q) || domainByKey(o.domain).name.toLowerCase().includes(q))
+    );
+    if (!list.length) return `<div class="empty">Aucun objectif ne correspond.</div>`;
+    return `<div class="domain-block open" style="margin-top:8px">
+      <div class="domain-head"><span class="di" style="background:var(--paper)">${icon('search',17)}</span><span class="dn"><span class="dt">Résultats</span><span class="dc">${list.length} objectif${list.length>1?'s':''}</span></span></div>
+      <div class="domain-body" style="display:block">${list.map(programmeRow).join('')}</div>
+    </div>`;
+  }
+  return DOMAINS.map(d=>{
+    const list = OBJECTIVES.filter(o => o.domain===d.key && (state.programmeLevel==='all' || o.level===state.programmeLevel));
+    if (!list.length) return '';
+    const open = state.programmeExpanded.includes(d.key);
+    const totalValid = list.reduce((n,o)=>n+o.by.length,0);
+    return `<div class="domain-block ${open?'open':''}">
+      <button class="domain-head" data-action="toggle-programme" data-domain="${d.key}">
+        <span class="di" style="background:${d.soft}">${domainIcon(d,17)}</span>
+        <span class="dn"><span class="dt">${esc(d.name)}</span><span class="dc">${list.length} objectif${list.length>1?'s':''} · ${totalValid} validations</span></span>
+        <span class="chev">${icon('chevron',16)}</span>
+      </button>
+      <div class="domain-body">${list.map(programmeRow).join('')}</div>
+    </div>`;
+  }).join('');
+}
+function programmeRow(o){
+  const d = domainByKey(o.domain);
+  const pct = Math.round(o.by.length / STUDENTS.length * 100);
+  return `<button class="prog-row" data-action="open-objective-sheet" data-id="${o.id}">
+    <span class="pi"><span class="pt">${esc(o.title)}</span><span class="pm"><span class="lvl">${o.level}</span><span class="bar"><i style="width:${pct}%;background:${d.color}"></i></span><span class="pcount">${o.by.length}/${STUDENTS.length}</span></span></span>
+    <span class="chev">${icon('chevron',15)}</span>
+  </button>`;
+}
+
+/* --------------------------- Bilans -------------------------------- */
+function bilansScreen(){
+  const s = studentById(state.bilanStudent || 'lea');
+  return `<section class="screen">
+    <h1 class="display sm" style="margin-top:4px">Bilans</h1>
+    <p class="sub">Deux fois par an, une feuille A4 par élève.</p>
+    <div style="margin-top:18px">
+      ${[1,2].map(p=>{
+        const active = state.bilanPeriod===p;
+        return `<button class="period-card ${active?'active':''}" data-action="set-period" data-period="${p}">
+          <span class="radio">${active?icon('check',12):''}</span>
+          <span><span class="pt">Bilan ${p}</span><span class="ps">${p===1?'Septembre → janvier':'Février → juin'}</span></span>
+          <span class="pc">${p===1?'En cours':'À venir'}</span>
+        </button>`;
+      }).join('')}
+    </div>
+    <button class="btn-primary" style="width:100%;margin-top:6px" data-action="open-bilan" data-id="${s.id}">${icon('file',18)} Aperçu de la feuille de ${esc(s.name)}</button>
+    <div class="eyebrow" style="margin:24px 0 8px">Les 20 élèves</div>
+    <div class="domain-block" style="margin-top:0">
+      ${STUDENTS.map(x=>{
+        const sec = SEC[x.section];
+        return `<button class="pick-list-row" style="display:flex;align-items:center;gap:10px;width:100%;padding:9px 12px;text-align:left;border-bottom:1px solid var(--line)" data-action="open-bilan" data-id="${x.id}">
+          <span class="avatar" style="width:30px;height:30px;font-size:12px;background:${sec.soft};color:${sec.ink}">${esc(x.name[0])}</span>
+          <span style="flex:1;font-size:12px;font-weight:700">${esc(x.name)}</span>
+          <span style="font-size:9px;font-weight:800;color:var(--faint)">${x.section} · ${countFor(x.id)} réussites</span>
+          <span class="chev">${icon('chevron',14)}</span>
+        </button>`;
+      }).join('')}
+    </div>
+  </section>`;
+}
+
+/* --------------------------- Feuille bilan ------------------------- */
+function bilanScreen(){
+  const s = studentById(state.bilanStudent || 'lea');
+  return `<section class="screen" style="padding-bottom:150px">
+    <div class="screen-top">
+      <button class="icon-btn" data-action="nav" data-screen="bilans" aria-label="Retour">${icon('back',17)}</button>
+      <span class="title" style="font-size:21px">Bilan de ${esc(s.name)}</span>
+      <span class="step-pill" style="margin-left:auto;background:var(--mustard-soft);color:var(--mustard-ink)">Bilan ${state.bilanPeriod}</span>
+    </div>
+    <div class="bilan-preview"><div class="sheet-scale">${sheetHTML(s,false)}</div></div>
+    <p class="print-hint">La feuille ne contient que les réussites de la période.<br>À l'impression, choisis « Enregistrer en PDF ».</p>
+    <div class="bilan-actions">
+      <button class="btn-primary" data-action="print">${icon('file',18)} Imprimer / PDF</button>
+      <button class="btn-ghost" data-action="nav" data-screen="bilans">Changer de période</button>
+    </div>
+  </section>`;
+}
+function sheetHTML(s, forPrint){
+  const vals = validatedFor(s.id);
+  const period = state.bilanPeriod === 1 ? 'Bilan 1 · septembre → janvier' : 'Bilan 2 · février → juin';
+  const intro = state.bilanPeriod === 1 ? `Ce que ${esc(s.name)} a réussi depuis la rentrée.` : `Ce que ${esc(s.name)} a réussi depuis le premier bilan.`;
+  const column = (keys) => keys.map(k=>{
+    const d = domainByKey(k);
+    const list = vals.filter(o=>o.domain===k);
+    if (!list.length) return '';
+    return `<div class="sheet-domain">
+      <div class="sheet-domain-head" style="color:${d.ink}">
+        <span class="l"><i style="background:${d.color}"></i>${esc(d.name)}</span>
+        <span class="c">${list.length} réussite${list.length>1?'s':''}</span>
+      </div>
+      ${list.map(o=>`<div class="sheet-entry">
+        <span class="sheet-thumb">${thumbSVG(o.domain,46,36)}</span>
+        <span><span class="sheet-obj">${esc(o.title)}</span><span class="sheet-date"><i></i>${o.date}</span></span>
+      </div>`).join('')}
+    </div>`;
+  }).join('');
+  return `<div class="sheet">
+    <div class="sheet-head">
+      <span class="school">${flower(13)} École maternelle des Tilleuls</span>
+      <span>${period} · 2026-2027</span>
+    </div>
+    <h2>Bilan des réussites</h2>
+    <div class="sheet-meta">
+      <span><span class="sheet-name">${esc(s.name)} ${s.section==='GS'?'M.':''}</span><span class="sheet-sub">${s.section} · 4 ans · ${vals.length} réussite${vals.length>1?'s':''}</span></span>
+      <span class="sheet-badge">${state.bilanPeriod===1?'Sept. → janvier':'Fév. → juin'}</span>
+    </div>
+    <div class="sheet-rule"></div>
+    <div class="sheet-intro"><span>${intro}</span><span>1 preuve = 1 réussite</span></div>
+    <div class="sheet-cols">
+      <div>${column(['langage','maths','vivant']) || '<div class="sheet-empty">Aucune réussite sur cette période.</div>'}</div>
+      <div>${column(['temps','arts','corps'])}</div>
+    </div>
+    <div class="sheet-footer">
+      <span>Carnet de réussites · École maternelle des Tilleuls<span class="page">Page 1 / 1</span></span>
+      <span class="sign">Signature des parents<span class="line"></span></span>
+    </div>
+  </div>`;
+}
+function updatePrintArea(){
+  const area = document.getElementById('print-area');
+  if (state.screen === 'bilan'){
+    const s = studentById(state.bilanStudent || 'lea');
+    area.innerHTML = sheetHTML(s,true);
+  } else {
+    area.innerHTML = '';
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Actions                                                            */
+/* ------------------------------------------------------------------ */
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(showToast.timer);
+  showToast.timer = setTimeout(()=>t.classList.remove('show'), 2600);
+}
+function takePhoto(){
+  const v = document.querySelector('.viewfinder');
+  if (!v) return;
+  v.classList.add('flash');
+  setTimeout(()=>{ state.photoTaken = true; render(false); }, 420);
+}
+function addValidation(studentId, objectiveId){
+  const o = objectiveById(objectiveId);
+  if (!o) return;
+  if (!o.by.includes(studentId)){
+    o.by.push(studentId);
+    o.date = '6 nov.';
+  }
+}
+function addStudent(name, section){
+  const id = 's' + Date.now();
+  STUDENTS.push({id, name, section});
+  return id;
+}
+function deleteStudent(id){
+  const i = STUDENTS.findIndex(s => s.id === id);
+  if (i >= 0) STUDENTS.splice(i, 1);
+  OBJECTIVES.forEach(o => { o.by = o.by.filter(x => x !== id); });
+  if (state.currentStudent === id) state.currentStudent = STUDENTS[0] ? STUDENTS[0].id : null;
+  if (state.bilanStudent === id) state.bilanStudent = STUDENTS[0] ? STUDENTS[0].id : null;
+  state.dossierExpanded = [...state.dossierExpanded];
+}
+document.addEventListener('click', (e)=>{
+  const el = e.target.closest('[data-action]');
+  if (!el) return;
+  const a = el.dataset.action;
+  const id = el.dataset.id;
+  switch(a){
+    case 'nav': go(el.dataset.screen); break;
+    case 'filter-section': state.section = el.dataset.section; state.showAll = false; render(false); break;
+    case 'toggle-all': state.showAll = !state.showAll; render(false); break;
+    case 'open-student': state.currentStudent = id; go('dossier'); break;
+    case 'start-flow': state.photoTaken=false; state.selectedObjective=null; state.flowFrom='picker'; go('picker'); break;
+    case 'filter-picker': state.pickerSection = el.dataset.section; render(false); break;
+    case 'pick-student':
+      state.currentStudent = id; state.photoTaken=false; state.selectedObjective=null;
+      state.flowFrom='picker'; state.objectivesBack='camera'; state.flowNoPhoto=false;
+      go('camera');
+      break;
+    case 'back-camera': go(state.flowFrom==='dossier' ? 'dossier' : 'picker'); break;
+    case 'take-photo': takePhoto(); break;
+    case 'retake': state.photoTaken=false; render(false); break;
+    case 'skip-photo': state.photoTaken=false; state.flowNoPhoto=true; state.objectivesBack='dossier'; state.selectedObjective=null; go('objectives'); break;
+    case 'to-objectives': state.flowNoPhoto=false; state.objectivesBack='camera'; state.selectedObjective=null; go('objectives'); break;
+    case 'back-objectives': go('camera'); break;
+    case 'back-dossier': go('dossier'); break;
+    case 'objective-domain': state.objectiveDomain = el.dataset.domain; render(false); break;
+    case 'select-objective':
+      if (state.selectedObjective === id){ state.selectedObjective = null; } else { state.selectedObjective = id; }
+      render(false);
+      break;
+    case 'already': showToast('Cet objectif est déjà validé pour cet élève.'); break;
+    case 'validate': {
+      if (!state.selectedObjective) return;
+      addValidation(state.currentStudent, state.selectedObjective);
+      go('success');
+      break;
+    }
+    case 'toggle-dossier': {
+      const d = el.dataset.domain;
+      state.dossierExpanded = state.dossierExpanded.includes(d) ? state.dossierExpanded.filter(x=>x!==d) : [...state.dossierExpanded,d];
+      render(false);
+      break;
+    }
+    case 'camera-for':
+      state.currentStudent = id; state.photoTaken=false; state.selectedObjective=null;
+      state.flowFrom='dossier'; state.objectivesBack='camera'; state.flowNoPhoto=false;
+      go('camera');
+      break;
+    case 'add-without-photo':
+      state.currentStudent = id; state.photoTaken=false; state.selectedObjective=null;
+      state.flowFrom='dossier'; state.objectivesBack='dossier'; state.flowNoPhoto=true;
+      go('objectives');
+      break;
+    case 'programme-level': state.programmeLevel = el.dataset.level; render(false); break;
+    case 'toggle-programme': {
+      const d = el.dataset.domain;
+      state.programmeExpanded = state.programmeExpanded.includes(d) ? state.programmeExpanded.filter(x=>x!==d) : [...state.programmeExpanded,d];
+      render(false);
+      break;
+    }
+    case 'open-objective-sheet': state.sheetObjective = id; state.sheetPicker=false; render(false); break;
+    case 'close-sheet': state.sheetObjective=null; state.sheetPicker=false; render(false); break;
+    case 'sheet-validate-picker': state.sheetPicker = true; render(false); break;
+    case 'sheet-pick':
+      if (state.sheetObjective){
+        addValidation(id, state.sheetObjective);
+        const s = studentById(id);
+        const o = objectiveById(state.sheetObjective);
+        state.sheetObjective = null; state.sheetPicker = false;
+        render(false);
+        showToast(`Réussite ajoutée à ${s.name} · ${o.title.slice(0,34)}…`);
+      }
+      break;
+    case 'open-add-student':
+      state.manageAdd = true; state.manageDelete = null; state.newName = ''; state.newSection = 'MS'; render(false);
+      break;
+    case 'close-manage-sheet':
+      state.manageAdd = false; state.manageDelete = null; render(false);
+      break;
+    case 'new-section':
+      state.newSection = el.dataset.section;
+      document.querySelectorAll('[data-action="new-section"]').forEach(b => b.classList.toggle('active', b.dataset.section === state.newSection));
+      break;
+    case 'confirm-add-student': {
+      const input = document.getElementById('new-student-name');
+      const name = (input ? input.value : state.newName).trim();
+      if (!name){ showToast('Écris au moins un prénom.'); break; }
+      const clean = name.charAt(0).toUpperCase() + name.slice(1);
+      const id = addStudent(clean, state.newSection);
+      state.manageAdd = false; state.newName = ''; state.section = 'all'; state.showAll = true;
+      if (!state.currentStudent) state.currentStudent = id;
+      if (!state.bilanStudent) state.bilanStudent = id;
+      render(false);
+      showToast(`${clean} ajouté à la classe.`);
+      break;
+    }
+    case 'ask-delete':
+      state.manageDelete = id; state.manageAdd = false; render(false);
+      break;
+    case 'confirm-delete':
+      deleteStudent(state.manageDelete);
+      state.manageDelete = null;
+      render(false);
+      showToast('Élève supprimé.');
+      break;
+    case 'set-period': state.bilanPeriod = Number(el.dataset.period); render(false); break;
+    case 'open-bilan': state.bilanStudent = id; go('bilan'); break;
+    case 'print': updatePrintArea(); window.print(); break;
+    case 'reset': state = {...initial}; go('class'); break;
+  }
+});
+document.addEventListener('input', (e)=>{
+  if (e.target.id === 'objective-search'){
+    state.objectiveQuery = e.target.value;
+    const list = document.getElementById('objective-list');
+    if (list) list.innerHTML = objectiveListHTML();
+  }
+  if (e.target.id === 'programme-search'){
+    state.programmeQuery = e.target.value;
+    const list = document.getElementById('programme-list');
+    if (list) list.innerHTML = programmeListHTML();
+  }
+  if (e.target.id === 'picker-search'){
+    state.pickerQuery = e.target.value;
+    const grid = document.getElementById('picker-grid');
+    if (grid) grid.innerHTML = pickerGridHTML();
+  }
+  if (e.target.id === 'new-student-name'){
+    state.newName = e.target.value;
+  }
+});
+document.addEventListener('keydown', (e)=>{
+  if (e.key === 'Escape' && (state.sheetObjective || state.manageAdd || state.manageDelete)){
+    state.sheetObjective=null; state.sheetPicker=false; state.manageAdd=false; state.manageDelete=null; render(false);
+  }
+  if (e.key === 'Enter' && e.target.id === 'new-student-name'){
+    const b = document.querySelector('[data-action="confirm-add-student"]');
+    if (b) b.click();
+  }
+});
+
+/* ------------------------------------------------------------------ */
+/* Démarrage                                                          */
+/* ------------------------------------------------------------------ */
+(function init(){
+  const p = new URLSearchParams(location.search);
+  if (p.get('qa') === '1') document.body.classList.add('qa');
+  if (p.get('screen')) state.screen = p.get('screen');
+  if (p.get('student')) state.currentStudent = p.get('student');
+  if (p.get('level')) state.programmeLevel = p.get('level');
+  if (p.get('period')) state.bilanPeriod = Number(p.get('period'));
+  if (p.get('photo') === '1') state.photoTaken = true;
+  if (p.get('bilan')) state.bilanStudent = p.get('bilan');
+  if (p.get('sheet')) state.sheetObjective = p.get('sheet');
+  if (p.get('objective')) state.selectedObjective = p.get('objective');
+  if (p.get('add') === '1') state.manageAdd = true;
+  if (p.get('delete')) state.manageDelete = p.get('delete');
+  if (state.screen === 'dossier' && !state.currentStudent) state.currentStudent = 'lea';
+  if (state.screen === 'objectives' && p.get('photo') !== '1') state.flowNoPhoto = true;
+  render(true, true);
+})();
+</script>
+</body>
+</html>
