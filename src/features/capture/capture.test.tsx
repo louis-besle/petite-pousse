@@ -151,7 +151,7 @@ describe('StudentPickerScreen', () => {
     expect(
       screen.queryByRole('button', { name: 'Adam, section MS' }),
     ).not.toBeInTheDocument()
-    expect(lea.id).toBeTruthy()
+    expect(await db.students.get(lea.id)).toEqual(lea)
   })
 
   it('conserve la photo quand on resélectionne le même élève', async () => {
@@ -404,6 +404,61 @@ describe('PhotoScreen', () => {
     expect(router.state.location.pathname).toBe('/capture')
   })
 
+  it('redirige si le brouillon vivant passe à un autre élève', async () => {
+    const lea = await addStudent('Léa', 'MS')
+    const adam = await addStudent('Adam', 'PS')
+    await seedDraft(lea.id)
+
+    const { router } = renderApp({ route: `/capture/${lea.id}/photo` })
+
+    expect(
+      await screen.findByRole('img', { name: 'Photo de réussite de Léa' }),
+    ).toBeInTheDocument()
+
+    // Simule un autre onglet qui réécrit le brouillon courant.
+    await saveCaptureDraft(makeDraft(adam.id, true))
+
+    await waitFor(() => expect(router.state.location.pathname).toBe('/capture'))
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Pour qui ?' }),
+    ).toBeInTheDocument()
+  })
+
+  it('affiche un message de stockage quand l’enregistrement échoue', async () => {
+    const lea = await addStudent('Léa', 'PS')
+    await seedDraft(lea.id, false)
+    compressImageMock.mockResolvedValue(makeCompressedPhoto('atelier'))
+
+    const putSpy = vi
+      .spyOn(db.drafts, 'put')
+      .mockRejectedValue(new Error('QuotaExceededError'))
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+    try {
+      renderApp({ route: `/capture/${lea.id}/photo` })
+      await screen.findByRole('button', { name: 'Prendre la photo' })
+
+      fireEvent.change(photoInput(), {
+        target: {
+          files: [new File(['source'], 'atelier.jpg', { type: 'image/jpeg' })],
+        },
+      })
+
+      expect(
+        await screen.findByText(
+          'Le brouillon n’a pas pu être enregistré. Réessaie.',
+        ),
+      ).toBeInTheDocument()
+      expect(putSpy).toHaveBeenCalled()
+      expect(consoleSpy).toHaveBeenCalled()
+    } finally {
+      putSpy.mockRestore()
+      consoleSpy.mockRestore()
+    }
+
+    expect(await getCaptureDraft()).not.toHaveProperty('full')
+  })
+
   it('affiche la photo, le rappel élève et les actions de reprise', async () => {
     const lea = await addStudent('Léa', 'GS')
     await seedDraft(lea.id)
@@ -428,5 +483,24 @@ describe('PhotoScreen', () => {
     const clickSpy = vi.spyOn(photoInput(), 'click')
     await user.click(retake)
     expect(clickSpy).toHaveBeenCalled()
+  })
+
+  it('« Choisir l’objectif » ouvre l’étape 3', async () => {
+    const lea = await addStudent('Léa', 'GS')
+    await seedDraft(lea.id)
+    const user = userEvent.setup()
+
+    const { router } = renderApp({ route: `/capture/${lea.id}/photo` })
+
+    await user.click(
+      await screen.findByRole('button', { name: /Choisir l’objectif/ }),
+    )
+
+    await waitFor(() =>
+      expect(router.state.location.pathname).toBe('/capture/objective'),
+    )
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Choisir un objectif' }),
+    ).toBeInTheDocument()
   })
 })

@@ -7,7 +7,7 @@ import {
   useCaptureDraft,
 } from '@/db/drafts'
 import { ImageDecodeError } from '@/domain/errors'
-import type { CaptureDraft, Student } from '@/domain/types'
+import type { CaptureDraft, CompressedPhoto, Student } from '@/domain/types'
 import { compressImage } from '@/lib/image'
 import { Avatar } from '@/ui/Avatar'
 import { Button } from '@/ui/Button'
@@ -24,6 +24,17 @@ const DRAFT_ERROR_MESSAGE = 'Le brouillon n’a pas pu être enregistré. Réess
 interface PhotoSnapshot {
   draft: CaptureDraft | null
   student: Student | null
+}
+
+/**
+ * Un brouillon ne peut alimenter l'écran que s'il désigne bien l'élève de la
+ * route. Toute autre ligne est ignorée avant la redirection.
+ */
+function draftForStudent(
+  draft: CaptureDraft | null | undefined,
+  studentId: string,
+): CaptureDraft | undefined {
+  return draft?.studentId === studentId ? draft : undefined
 }
 
 /**
@@ -61,10 +72,20 @@ export function PhotoScreen() {
     }
   }, [studentId])
 
-  const draft = liveDraft ?? snapshot?.draft ?? undefined
+  // La ligne vivante prime, mais uniquement si elle désigne toujours l'élève
+  // de la route. Sinon, on ne l'affiche pas et l'effet ci-dessous redirige.
+  const draft =
+    liveDraft !== undefined
+      ? draftForStudent(liveDraft, studentId)
+      : draftForStudent(snapshot?.draft, studentId)
 
   useEffect(() => {
     if (snapshot === undefined) return
+
+    if (liveDraft !== undefined && liveDraft.studentId !== studentId) {
+      navigate('/capture', { replace: true })
+      return
+    }
 
     const missingDraft = snapshot.draft === null
     const wrongStudent = snapshot.draft?.studentId !== studentId
@@ -73,7 +94,7 @@ export function PhotoScreen() {
     if (missingDraft || wrongStudent || missingStudent) {
       navigate('/capture', { replace: true })
     }
-  }, [snapshot, studentId, navigate])
+  }, [snapshot, liveDraft, studentId, navigate])
 
   const full = draft?.full
 
@@ -103,26 +124,39 @@ export function PhotoScreen() {
 
     setBusy(true)
     try {
-      const compressed = await compressImage(file)
-      const current = await getCaptureDraft()
-
-      if (!current) {
-        showToast('Le brouillon a disparu. Choisis de nouveau l’élève.')
-        navigate('/capture', { replace: true })
+      let compressed: CompressedPhoto
+      try {
+        compressed = await compressImage(file)
+      } catch (error) {
+        showToast(
+          error instanceof ImageDecodeError ? error.message : PHOTO_ERROR_MESSAGE,
+        )
         return
       }
 
-      await saveCaptureDraft({
-        id: 'current',
-        studentId: current.studentId,
-        createdAt: current.createdAt,
-        full: compressed.full,
-        thumb: compressed.thumb,
-        width: compressed.width,
-        height: compressed.height,
-      })
-    } catch (error) {
-      showToast(error instanceof ImageDecodeError ? error.message : PHOTO_ERROR_MESSAGE)
+      try {
+        const current = await getCaptureDraft()
+
+        if (!current || current.studentId !== studentId) {
+          showToast('Le brouillon a changé. Choisis de nouveau l’élève.')
+          navigate('/capture', { replace: true })
+          return
+        }
+
+        await saveCaptureDraft({
+          id: 'current',
+          studentId: current.studentId,
+          createdAt: current.createdAt,
+          full: compressed.full,
+          thumb: compressed.thumb,
+          width: compressed.width,
+          height: compressed.height,
+        })
+      } catch (error) {
+        // Quota IndexedDB, base fermée… : la photo n'est pas enregistrée.
+        console.error('Enregistrement du brouillon impossible.', error)
+        showToast(DRAFT_ERROR_MESSAGE)
+      }
     } finally {
       setBusy(false)
     }
@@ -133,7 +167,7 @@ export function PhotoScreen() {
     try {
       const current = await getCaptureDraft()
 
-      if (!current) {
+      if (!current || current.studentId !== studentId) {
         navigate('/capture', { replace: true })
         return
       }
@@ -146,7 +180,8 @@ export function PhotoScreen() {
         createdAt: current.createdAt,
       })
       navigate('/capture/objective')
-    } catch {
+    } catch (error) {
+      console.error('Enregistrement du brouillon impossible.', error)
       showToast(DRAFT_ERROR_MESSAGE)
     } finally {
       setBusy(false)
