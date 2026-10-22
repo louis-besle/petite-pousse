@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { db } from '@/db/db'
-import { domainById, referential } from '@/domain/referential'
+import { referential } from '@/domain/referential'
 import type { Student, Validation } from '@/domain/types'
 import { formatShortDate } from '@/lib/date'
 import { Button } from '@/ui/Button'
@@ -73,7 +73,12 @@ export function SuccessScreen() {
   }
 
   const { validation, student } = snapshot
-  const domain = domainById(referential, validation.snapshot.domainId)
+  const liveDomain = referential.domains.find(
+    (domain) => domain.id === validation.snapshot.domainId,
+  )
+  // L'instantané fait foi pour les anciennes validations : un domaine retiré
+  // du référentiel courant ne doit jamais faire planter l'écran.
+  const domainLabel = (liveDomain?.longLabel ?? validation.snapshot.domainLabel).toUpperCase()
   const photoLabel = validation.photoId === undefined ? 'sans photo' : 'avec photo'
 
   return (
@@ -92,7 +97,7 @@ export function SuccessScreen() {
 
         <div className={styles.successCard}>
           <p className={styles.successKicker}>
-            {domain.longLabel.toUpperCase()} · {student.section}
+            {domainLabel} · {student.section}
           </p>
           <p className={styles.successObjective}>{validation.snapshot.objectiveLabel}</p>
           <p className={styles.successMeta}>

@@ -7,7 +7,7 @@ import { db } from '@/db/db'
 import { getCaptureDraft, saveCaptureDraft } from '@/db/drafts'
 import { createValidation } from '@/db/validations'
 import { REFERENTIAL_VERSION, referential } from '@/domain/referential'
-import type { CaptureDraft, Objective, Section } from '@/domain/types'
+import type { CaptureDraft, Objective, Section, ValidationSnapshot } from '@/domain/types'
 import { makeStudent } from '@/test/fixtures'
 import { renderApp } from '@/test/render'
 
@@ -76,6 +76,7 @@ describe('ObjectiveScreen', () => {
     expect(
       screen.getByRole('group', { name: 'Élève Léa, section MS' }),
     ).toBeInTheDocument()
+    expect(screen.getByText('Léa · MS')).toBeInTheDocument()
 
     // Par défaut, seuls les objectifs du niveau de l'élève sont listés.
     expect(
@@ -335,6 +336,34 @@ describe('SuccessScreen', () => {
     expect(
       screen.getByRole('button', { name: 'Retour à la classe' }),
     ).toBeInTheDocument()
+  })
+
+  it('affiche le libellé de domaine figé quand le domaine a disparu du référentiel', async () => {
+    const lea = await addStudent('Léa', 'MS')
+    const validation = await createValidation({
+      studentId: lea.id,
+      objective: objective('maths-nombres-05'),
+      ageBand: 'from4',
+      date: '2026-10-12',
+      referentialVersion: REFERENTIAL_VERSION,
+    })
+
+    await db.validations.put({
+      ...validation,
+      snapshot: {
+        ...validation.snapshot,
+        domainId: 'domaine-disparu' as ValidationSnapshot['domainId'],
+        domainLabel: 'Mythologie',
+      },
+    })
+
+    renderApp({ route: `/success/${validation.id}` })
+
+    expect(
+      await screen.findByRole('heading', { level: 1, name: "C'est noté !" }),
+    ).toBeInTheDocument()
+    expect(screen.getByText(/mythologie/i)).toBeInTheDocument()
+    expect(screen.getByText(MATHS_LABEL)).toBeInTheDocument()
   })
 
   it('affiche « sans photo » quand la validation n’a pas de photo', async () => {

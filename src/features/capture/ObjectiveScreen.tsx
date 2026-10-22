@@ -242,7 +242,9 @@ export function ObjectiveScreen() {
           <Avatar name={student.firstName} section={student.section} size="md" />
         </span>
         <span className={styles.recapText}>
-          <span className={styles.recapName}>{student.firstName}</span>
+          <span className={styles.recapName}>
+            {student.firstName} · {student.section}
+          </span>
           <span className={styles.recapMeta}>
             <span className={styles.recapDot} aria-hidden="true" />
             {hasPhoto ? 'Photo ajoutée' : 'Validation sans photo'}
