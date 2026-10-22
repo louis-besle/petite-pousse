@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
-import { defineConfig } from 'vitest/config'
+import { configDefaults, defineConfig } from 'vitest/config'
 
 const packageJson = JSON.parse(
   readFileSync(path.resolve(import.meta.dirname, 'package.json'), 'utf-8'),
@@ -90,5 +90,7 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './src/test/setup.ts',
     globals: true,
+    // Les specs Playwright ne sont pas des tests Vitest.
+    exclude: [...configDefaults.exclude, 'e2e/**'],
   },
 })
