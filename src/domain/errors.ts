@@ -10,3 +10,13 @@ export class AlreadyValidatedError extends Error {
     this.name = 'AlreadyValidatedError'
   }
 }
+
+/** Le navigateur n'a pas pu décoder le fichier image (HEIC, fichier corrompu…). */
+export class ImageDecodeError extends Error {
+  constructor(
+    message = "Cette image n'a pas pu être lue. Reformatez-la en JPEG ou reprenez la photo.",
+  ) {
+    super(message)
+    this.name = 'ImageDecodeError'
+  }
+}
