@@ -1,0 +1,94 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: var(--tap-target);
+  padding: 0 22px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: 0.01em;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform 0.16s ease,
+    background-color 0.16s ease,
+    border-color 0.16s ease,
+    box-shadow 0.16s ease;
+}
+
+/* Terre cuite, texte encre : 4.53:1 (AA). Ne jamais passer le texte en crème,
+   le contraste tomberait à 2.98:1. */
+.button[data-variant='primary'] {
+  background-color: var(--terra);
+  color: var(--ink);
+  box-shadow: 0 3px 0 rgba(47, 42, 36, 0.16);
+}
+
+/* Encre, texte crème : 13.48:1. */
+.button[data-variant='dark'] {
+  background-color: var(--ink);
+  color: var(--cream);
+  box-shadow: 0 3px 0 rgba(47, 42, 36, 0.28);
+}
+
+/* Carte crème, texte atténué : 5.92:1. */
+.button[data-variant='ghost'] {
+  background-color: var(--card);
+  border-color: var(--line);
+  color: var(--muted);
+  box-shadow: var(--shadow-card);
+}
+
+/* Rose profond, texte crème : 5.09:1. `--blush-ink` seul ne donne que 4.06:1,
+   d'où l'assombrissement avec l'encre. */
+.button[data-variant='danger'] {
+  background-color: color-mix(in srgb, var(--blush-ink) 80%, var(--ink));
+  color: var(--cream);
+  box-shadow: 0 3px 0 rgba(47, 42, 36, 0.22);
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.button:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+
+.button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+@media (hover: hover) {
+  .button[data-variant='primary']:hover:not(:disabled) {
+    background-color: color-mix(in srgb, var(--terra) 92%, var(--cream));
+  }
+
+  .button[data-variant='dark']:hover:not(:disabled) {
+    background-color: color-mix(in srgb, var(--ink) 92%, var(--cream));
+  }
+
+  .button[data-variant='ghost']:hover:not(:disabled) {
+    background-color: var(--cream);
+  }
+
+  .button[data-variant='danger']:hover:not(:disabled) {
+    background-color: color-mix(in srgb, var(--blush-ink) 74%, var(--ink));
+  }
+}
+
+.fullWidth {
+  width: 100%;
+}
