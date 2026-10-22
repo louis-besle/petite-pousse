@@ -88,8 +88,7 @@ describe('Sheet', () => {
     expect(onClose).toHaveBeenCalledTimes(1)
   })
 
-  it('rend le focus au déclencheur à la fermeture', async () => {
-    function Harness() {
+  it('rend le focus au déclencheur à la fermeture', async () => {    function Harness() {
       const [open, setOpen] = useState(false)
       return (
         <>
@@ -112,6 +111,46 @@ describe('Sheet', () => {
 
     await user.keyboard('{Escape}')
     await waitFor(() => expect(trigger).toHaveFocus())
+  })
+
+  it('restaure le défilement du corps quand deux feuilles empilées se ferment', async () => {
+    function Harness() {
+      const [firstOpen, setFirstOpen] = useState(true)
+      const [secondOpen, setSecondOpen] = useState(true)
+
+      return (
+        <>
+          <button
+            type="button"
+            onClick={() => {
+              setSecondOpen(false)
+              setFirstOpen(false)
+            }}
+          >
+            Fermer les feuilles
+          </button>
+          <Sheet open={firstOpen} onClose={() => setFirstOpen(false)} title="Feuille A">
+            <p>Première</p>
+          </Sheet>
+          <Sheet
+            open={secondOpen}
+            onClose={() => setSecondOpen(false)}
+            title="Feuille B"
+          >
+            <p>Seconde</p>
+          </Sheet>
+        </>
+      )
+    }
+
+    const user = userEvent.setup()
+    render(<Harness />)
+
+    expect(document.body.style.overflow).toBe('hidden')
+
+    await user.click(screen.getByRole('button', { name: 'Fermer les feuilles' }))
+
+    await waitFor(() => expect(document.body.style.overflow).toBe(''))
   })
 })
 

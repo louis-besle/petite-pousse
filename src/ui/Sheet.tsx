@@ -20,6 +20,14 @@ function focusableElements(panel: HTMLElement): HTMLElement[] {
   )
 }
 
+/**
+ * Verrou de défilement partagé par toutes les feuilles montées. Deux feuilles
+ * empilées (fiche + confirmation) ne doivent pas se rendre le défilement quand
+ * la seconde se démonte avant la première.
+ */
+let bodyScrollLockCount = 0
+let bodyScrollOverflow = ''
+
 export interface SheetProps {
   open: boolean
   onClose: () => void
@@ -72,14 +80,22 @@ export function Sheet({ open, onClose, title, children }: SheetProps) {
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [open, onClose])
 
-  // Empêche le contenu derrière la feuille de défiler.
+  // Empêche le contenu derrière la feuille de défiler. Le compteur de module
+  // évite qu'une feuille empilée restaure « hidden » en se démontant.
   useEffect(() => {
     if (!open) return
 
-    const previousOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
+    if (bodyScrollLockCount === 0) {
+      bodyScrollOverflow = document.body.style.overflow
+      document.body.style.overflow = 'hidden'
+    }
+    bodyScrollLockCount += 1
+
     return () => {
-      document.body.style.overflow = previousOverflow
+      bodyScrollLockCount -= 1
+      if (bodyScrollLockCount === 0) {
+        document.body.style.overflow = bodyScrollOverflow
+      }
     }
   }, [open])
 

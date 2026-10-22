@@ -121,19 +121,19 @@ export function DossierScreen() {
   const { showToast } = useToast()
   const students = useStudents()
   const validations = useValidationsForStudent(studentId)
-  const years = useSchoolYears() ?? []
+  const schoolYears = useSchoolYears()
+  const years = schoolYears ?? []
   const settings = useSettings()
   const [yearChoice, setYearChoice] = useState<string>()
   const [openDomain, setOpenDomain] = useState<string | null>(null)
   const [draftBusy, setDraftBusy] = useState(false)
   const [selectedValidationId, setSelectedValidationId] = useState<string>()
 
-  // Sans année connue, le dossier attend les réglages : il ne doit jamais
-  // afficher « toutes les années » par erreur pendant le chargement.
-  const waitingForYear =
-    yearChoice === undefined && settings === undefined && years.length === 0
+  // Le sélecteur attend la liste réelle : sans elle, sa valeur ne correspondrait
+  // à aucune option alors que le contenu est déjà filtré sur l'année courante.
+  const waitingForYears = schoolYears === undefined
 
-  if (students === undefined || validations === undefined || waitingForYear) {
+  if (students === undefined || validations === undefined || waitingForYears) {
     return (
       <section className={styles.screen}>
         <p className={styles.loading} role="status">
@@ -164,7 +164,34 @@ export function DossierScreen() {
     )
   }
 
-  const selectedYear = yearChoice ?? settings?.currentSchoolYearId ?? years[0]?.id ?? 'all'
+  const currentYearId = settings?.currentSchoolYearId
+  const yearIds = years.map((year) => year.id)
+  // Une année courante absente de la liste reste sélectionnable : le select ne
+  // doit jamais basculer silencieusement sur une autre valeur.
+  if (currentYearId !== undefined && !yearIds.includes(currentYearId)) {
+    yearIds.push(currentYearId)
+  }
+  yearIds.sort((a, b) => b.localeCompare(a))
+
+  const requestedYear = yearChoice ?? currentYearId ?? yearIds[0] ?? 'all'
+  const selectedYear =
+    requestedYear === 'all' || yearIds.includes(requestedYear)
+      ? requestedYear
+      : (yearIds[0] ?? 'all')
+  const isCurrentYear = currentYearId !== undefined && selectedYear === currentYearId
+  const yearSuffix =
+    selectedYear === 'all'
+      ? 'toutes les années'
+      : isCurrentYear
+        ? 'cette année'
+        : `en ${selectedYear}`
+  const summaryMini =
+    selectedYear === 'all'
+      ? 'toutes les années'
+      : isCurrentYear
+        ? 'depuis septembre'
+        : `en ${selectedYear}`
+
   const visibleValidations = validations.filter(
     (validation) => selectedYear === 'all' || validation.schoolYearId === selectedYear,
   )
@@ -245,9 +272,7 @@ export function DossierScreen() {
       </div>
 
       <p className={styles.subtitle}>
-        {`${student.section} · ${successLabel(total)} ${
-          selectedYear === 'all' ? 'toutes années' : 'cette année'
-        }`}
+        {`${student.section} · ${successLabel(total)} ${yearSuffix}`}
       </p>
 
       <div className={styles.yearRow}>
@@ -260,9 +285,9 @@ export function DossierScreen() {
           value={selectedYear}
           onChange={(event) => setYearChoice(event.target.value)}
         >
-          {years.map((year) => (
-            <option key={year.id} value={year.id}>
-              {year.id}
+          {yearIds.map((yearId) => (
+            <option key={yearId} value={yearId}>
+              {yearId}
             </option>
           ))}
           <option value="all">Toutes les années</option>
@@ -281,9 +306,7 @@ export function DossierScreen() {
           <Avatar name={student.firstName} section={student.section} size="lg" />
           <div className={styles.summaryCount}>
             <span className={styles.summaryBig}>{successLabel(total)}</span>
-            <span className={styles.summaryMini}>
-              {selectedYear === 'all' ? 'toutes les années' : 'depuis septembre'}
-            </span>
+            <span className={styles.summaryMini}>{summaryMini}</span>
           </div>
         </div>
         <div className={styles.stats}>

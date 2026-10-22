@@ -5,9 +5,16 @@ import userEvent from '@testing-library/user-event'
 import { db } from '@/db/db'
 import { getCaptureDraft, saveCaptureDraft } from '@/db/drafts'
 import { ensureSeed } from '@/db/seed'
+import { updateSettings } from '@/db/settings'
 import { createValidation } from '@/db/validations'
 import { REFERENTIAL_VERSION, referential } from '@/domain/referential'
-import type { AgeBand, CompressedPhoto, Objective, Section } from '@/domain/types'
+import type {
+  AgeBand,
+  CompressedPhoto,
+  Objective,
+  Photo,
+  Section,
+} from '@/domain/types'
 import { compressImage } from '@/lib/image'
 import { makeStudent } from '@/test/fixtures'
 import { renderApp } from '@/test/render'
@@ -105,7 +112,7 @@ describe('DossierScreen', () => {
       await screen.findByRole('heading', { level: 1, name: 'Léa' }),
     ).toBeInTheDocument()
     expect(router.state.location.pathname).toBe(`/students/${lea.id}`)
-    expect(screen.getByText(/MS · 3 réussites cette année/)).toBeInTheDocument()
+    expect(await screen.findByText(/MS · 3 réussites cette année/)).toBeInTheDocument()
 
     const summary = screen.getByRole('group', { name: 'Résumé du dossier' })
     expect(within(summary).getByText('3 réussites')).toBeInTheDocument()
@@ -156,13 +163,14 @@ describe('DossierScreen', () => {
 
     await waitFor(() => expect(screen.getByText(LANGAGE_2)).toBeInTheDocument())
     expect(screen.queryByText(LANGAGE_1)).not.toBeInTheDocument()
-    expect(screen.getByText(/1 réussite cette année/)).toBeInTheDocument()
+    expect(screen.getByText(/1 réussite en 2025-2026/)).toBeInTheDocument()
     expect(await db.validations.count()).toBe(2)
 
     await user.selectOptions(yearSelect, 'all')
 
     await waitFor(() => expect(screen.getByText(LANGAGE_1)).toBeInTheDocument())
     expect(screen.getByText(LANGAGE_2)).toBeInTheDocument()
+    expect(screen.getByText(/2 réussites toutes les années/)).toBeInTheDocument()
     expect(await db.validations.count()).toBe(2)
   })
 
@@ -206,6 +214,8 @@ describe('DossierScreen', () => {
     await waitFor(async () => expect(await db.photos.count()).toBe(0))
     expect(await screen.findByText('La réussite a été retirée.')).toBeInTheDocument()
     await waitFor(() => expect(screen.queryByText(MATHS)).not.toBeInTheDocument())
+    // Les deux feuilles empilées sont démontées : le corps doit défiler à nouveau.
+    await waitFor(() => expect(document.body.style.overflow).toBe(''))
   })
 
   it('modifie la date et reclasse la réussite dans son année scolaire', async () => {
@@ -267,6 +277,59 @@ describe('DossierScreen', () => {
     expect(
       within(updatedRow).getByRole('img', { name: /Photo de la réussite/ }),
     ).toBeInTheDocument()
+  })
+
+  it('affiche un chargement neutre pendant la lecture de la photo', async () => {
+    const lea = await addStudent('Léa', 'MS')
+    const validation = await addValidation(lea.id, 'lang-vocabulaire-01', '2026-10-12', {
+      photo: true,
+    })
+    const photo =
+      validation.photoId === undefined ? undefined : await db.photos.get(validation.photoId)
+
+    let releasePhoto!: (value: Photo | undefined) => void
+    const pendingPhoto = new Promise<Photo | undefined>((resolve) => {
+      releasePhoto = resolve
+    })
+    const getSpy = vi
+      .spyOn(db.photos, 'get')
+      .mockReturnValue(
+        pendingPhoto as unknown as ReturnType<typeof db.photos.get>,
+      )
+    const user = userEvent.setup()
+
+    try {
+      renderApp({ route: `/students/${lea.id}` })
+
+      await user.click(await screen.findByRole('button', { name: LANGAGE_1_NAME }))
+
+      const sheet = await screen.findByRole('dialog')
+      expect(within(sheet).getByText('Chargement de la photo…')).toBeInTheDocument()
+      expect(within(sheet).queryByText('Observation en classe')).not.toBeInTheDocument()
+
+      releasePhoto(photo)
+
+      expect(
+        await within(sheet).findByRole('img', { name: /Photo de la réussite/ }),
+      ).toBeInTheDocument()
+    } finally {
+      getSpy.mockRestore()
+    }
+  })
+
+  it('garde une année sélectionnée valide même si elle manque de la liste', async () => {
+    const lea = await addStudent('Léa', 'MS')
+    await updateSettings({ currentSchoolYearId: '2030-2031' })
+
+    renderApp({ route: `/students/${lea.id}` })
+
+    const yearSelect = await screen.findByRole('combobox', { name: 'Année scolaire' })
+    await waitFor(() => expect(yearSelect).toHaveValue('2030-2031'))
+
+    await db.schoolYears.delete('2030-2031')
+
+    await waitFor(() => expect(yearSelect).toHaveValue('2030-2031'))
+    expect(screen.getByRole('option', { name: '2030-2031' })).toBeInTheDocument()
   })
 
   it('affiche l’instantané quand l’objectif a disparu du référentiel', async () => {

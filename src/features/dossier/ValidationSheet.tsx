@@ -121,11 +121,16 @@ export function ValidationSheet({ validation, onClose }: ValidationSheetProps) {
           {snapshot.domainLabel} · {AGE_BAND_LABELS[snapshot.ageBand]}
         </p>
 
-        {photoUrl === undefined ? (
+        {validation.photoId === undefined ? (
           <div className={styles.sheetPhotoEmpty}>
             <Icon name="file" size={28} />
             <span className={styles.sheetPhotoEmptyTitle}>Observation en classe</span>
             <span className={styles.sheetPhotoEmptyNote}>sans photo</span>
+          </div>
+        ) : photoUrl === undefined ? (
+          <div className={styles.sheetPhotoLoading} role="status">
+            <Icon name="camera" size={24} />
+            <span>Chargement de la photo…</span>
           </div>
         ) : (
           <img
