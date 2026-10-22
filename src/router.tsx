@@ -1,4 +1,5 @@
 import { createHashRouter, type RouteObject } from 'react-router-dom'
+import { BilansScreen } from '@/features/bilans/BilansScreen'
 import { ClassScreen } from '@/features/class/ClassScreen'
 import { ObjectiveScreen } from '@/features/capture/ObjectiveScreen'
 import { DossierScreen } from '@/features/dossier/DossierScreen'
@@ -35,7 +36,7 @@ export const routes: RouteObject[] = [
       { path: '/students', element: <ManageStudentsScreen /> },
       { path: '/students/:studentId', element: <DossierScreen /> },
       { path: '/programme', element: <ProgrammeScreen /> },
-      { path: '/bilans', element: <ScreenPlaceholder title="Bilans" /> },
+      { path: '/bilans', element: <BilansScreen /> },
       { path: '/bilans/:studentId', element: <ScreenPlaceholder title="Bilan de l’élève" /> },
       { path: '/settings', element: <ScreenPlaceholder title="Réglages" /> },
       { path: '*', element: <ScreenPlaceholder title="Page introuvable" /> },
