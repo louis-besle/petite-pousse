@@ -60,6 +60,22 @@ describe('NavBar', () => {
 })
 
 describe('AppShell', () => {
+  it('donne un titre de page à chaque route', () => {
+    renderShell('/programme')
+
+    expect(document.title).toBe('Programme · Carnet de réussites')
+  })
+
+  it('place le focus sur le contenu après un changement de route', async () => {
+    const user = userEvent.setup()
+    renderShell('/')
+
+    await user.click(screen.getByRole('link', { name: 'Programme' }))
+
+    expect(await screen.findByText('Les six domaines')).toBeInTheDocument()
+    expect(screen.getByRole('main')).toHaveFocus()
+  })
+
   it('rend le contenu dans main#main et un lien d’évitement', async () => {
     const user = userEvent.setup()
     renderShell('/programme')
