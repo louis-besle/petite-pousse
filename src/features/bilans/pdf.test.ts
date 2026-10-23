@@ -1,6 +1,7 @@
 // @vitest-environment node
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
+import { PDFDocument } from 'pdf-lib'
 import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs'
 import { beforeAll, describe, expect, it, vi } from 'vitest'
 import type { BilanEntry, BilanModel } from '@/domain/bilan'
@@ -117,6 +118,15 @@ async function extractPages(bytes: Uint8Array): Promise<ExtractedPage[]> {
 const PDF_TIMEOUT = 30_000
 
 describe('generateBilanPdf', () => {
+  it('renseigne les métadonnées du document PDF', async () => {
+    const bytes = await generateBilanPdf(model([]), META, fonts)
+    const document = await PDFDocument.load(bytes)
+
+    expect(document.getTitle()).toBe('Bilan de Léa M.')
+    expect(document.getAuthor()).toBe('Mme Martin')
+    expect(document.getSubject()).toBe('Bilan des réussites')
+  })
+
   it(
     'produit une feuille A4 avec le titre, l’élève, les intitulés et les dates',
     async () => {

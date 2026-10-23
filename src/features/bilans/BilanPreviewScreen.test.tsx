@@ -92,7 +92,9 @@ describe('BilanPreviewScreen', () => {
     expect(
       screen.getByText('Pagination exacte calculée dans le PDF'),
     ).toBeInTheDocument()
-    expect(screen.getByText(/Le PDF est généré directement/)).toBeInTheDocument()
+    expect(
+      screen.getByText(/L’aperçu à l’écran est la version accessible/),
+    ).toBeInTheDocument()
     expect(screen.queryByText(/Enregistrer en PDF/)).not.toBeInTheDocument()
     expect(screen.getByText('Bilan 1')).toBeInTheDocument()
     expect(screen.getByText(/12 oct\./)).toBeInTheDocument()

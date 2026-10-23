@@ -436,8 +436,10 @@ export async function generateBilanPdf(
 
   document.setTitle(`Bilan de ${studentLabel(model.student)}`)
   document.setSubject('Bilan des réussites')
+  document.setAuthor(meta.teacherName.trim() || meta.schoolName.trim() || 'Carnet de réussites')
   document.setCreator('Carnet de réussites')
   document.setProducer('Carnet de réussites')
+  document.setLanguage('fr-FR')
 
   const images = await embedPhotos(document, model)
   const pages: PDFPage[] = []

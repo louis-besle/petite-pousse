@@ -227,8 +227,9 @@ export function BilanPreviewScreen() {
       <BilanSheet model={model} meta={meta} />
 
       <p className={styles.note}>
-        La feuille ne contient que les réussites de la période. Le PDF est généré
-        directement par le bouton ci-dessous.
+        La feuille ne contient que les réussites de la période. L’aperçu à
+        l’écran est la version accessible ; le PDF, généré par le bouton
+        ci-dessous, est destiné à l’impression.
       </p>
 
       <div className={styles.actions}>
