@@ -1,0 +1,43 @@
+{
+  "version": "2026.0.0",
+  "domains": [
+    {
+      "id": "langage",
+      "label": "Langage",
+      "longLabel": "Le développement et la structuration du langage oral et écrit",
+      "order": 1
+    },
+    {
+      "id": "maths",
+      "label": "Maths",
+      "longLabel": "L'acquisition des premiers outils mathématiques",
+      "order": 2
+    },
+    {
+      "id": "corps",
+      "label": "Corps",
+      "longLabel": "Agir, s'exprimer, comprendre à travers les activités physiques",
+      "order": 3
+    },
+    {
+      "id": "arts",
+      "label": "Arts",
+      "longLabel": "Agir, s'exprimer, comprendre à travers les activités artistiques",
+      "order": 4
+    },
+    {
+      "id": "temps",
+      "label": "Temps",
+      "longLabel": "Se repérer dans le temps et l'espace",
+      "order": 5
+    },
+    {
+      "id": "vivant",
+      "label": "Vivant",
+      "longLabel": "Découvrir le monde du vivant, de la matière et des objets",
+      "order": 6
+    }
+  ],
+  "competencies": [],
+  "objectives": []
+}

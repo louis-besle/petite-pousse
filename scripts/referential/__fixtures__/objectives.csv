@@ -1,0 +1,4 @@
+objective_id,domain_id,competency_id,competency_label,objective_label,age_bands,example_before4,example_from4,example_from5,source_bo,source_page
+obj-test-1,langage,comp-test-langage,Compétence de test en langage,Objectif de test 1,before4|from4,Exemple de test avant 4 ans,Exemple de test à partir de 4 ans,,BO n°19 du 7 mai 2026,12
+obj-test-2,langage,comp-test-langage,Compétence de test en langage,Objectif de test 2,from4|from5,,Exemple de test à partir de 4 ans,Exemple de test à partir de 5 ans,BO n°19 du 7 mai 2026,14
+obj-test-3,maths,comp-test-maths,Compétence de test en maths,Objectif de test 3,from5,,,Exemple de test à partir de 5 ans,BO n°19 du 7 mai 2026,
