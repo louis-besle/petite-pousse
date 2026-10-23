@@ -35,8 +35,11 @@ PDF 6 porte le folio « 5 ». Toutes les valeurs `source_page` du CSV sont des
 | Activités physiques | 22-26 | 21-25 |
 | Activités artistiques | 27-35 | 26-34 |
 | Premiers outils mathématiques | 36-51 | 35-50 |
-| Temps et espace | 52-57 | 51-56 |
-| Vivant, matière et objets | 58-63 | 57-62 |
+| Temps et espace | 53-58 | 52-57 |
+| Vivant, matière et objets | 59-63 | 58-62 |
+
+La page PDF 52 est une page blanche de séparation (folio « 51 » seul) : elle ne
+contient aucun contenu de programme.
 
 Pour un objectif présent dans plusieurs tranches d’âge, `source_page` indique la
 page du tableau où l’objectif apparaît pour la première fois (tranche la plus
@@ -73,7 +76,7 @@ domaine `langage` :
 | `lang-discours` | Produire des discours variés | — |
 | `lang-phonologie` | Acquérir les habiletés phonologiques et le principe alphabétique | Écouter, identifier, discriminer et reproduire des sons ; Manipuler des syllabes orales puis des phonèmes ; Connaitre le nom des lettres ; Connaitre le son des lettres |
 | `lang-diversite` | S’éveiller à la diversité linguistique | Écouter, identifier, discriminer et reproduire des sons |
-| `lang-ecrits` | Écouter et comprendre différentes formes d’écrits | Découvrir les supports de l’écrit ; Comprendre des textes lus par le professeur |
+| `lang-ecrits` | Écouter et comprendre différentes formes d’écrits | Découvrir les supports de l’écrit ; Comprendre des textes lus par le professeur ; Initier un parcours de lecteur et une première culture littéraire |
 | `lang-geste` | Apprendre le geste d’écriture | — |
 | `lang-premiers-ecrits` | Produire de premiers écrits | Passer de l’oral à l’écrit ; Produire des écrits |
 
