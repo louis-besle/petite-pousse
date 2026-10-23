@@ -148,11 +148,19 @@ export function ManageStudentsScreen() {
                   <button
                     type="button"
                     className={styles.rowMain}
-                    aria-label={`Modifier ${student.firstName}`}
                     onClick={() => setFormStudent(student)}
                   >
-                    <Avatar name={student.firstName} section={student.section} size="sm" />
-                    <span className={styles.rowText}>
+                    <span className={styles.srOnly}>
+                      {`Modifier ${student.firstName}, section ${student.section}, ${successLabel(validationCount)}`}
+                    </span>
+                    <span className={styles.rowAvatar} aria-hidden="true">
+                      <Avatar
+                        name={student.firstName}
+                        section={student.section}
+                        size="sm"
+                      />
+                    </span>
+                    <span className={styles.rowText} aria-hidden="true">
                       <span className={styles.rowName}>{student.firstName}</span>
                       <span className={styles.rowMeta}>
                         {successLabel(validationCount)}

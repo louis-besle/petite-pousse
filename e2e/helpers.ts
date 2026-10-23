@@ -3,6 +3,7 @@ import path from 'node:path'
 import { expect, type Page } from '@playwright/test'
 import referentialData from '../src/data/referential.json' with { type: 'json' }
 import { defaultSchoolYear, schoolYearIdForDate } from '../src/domain/schoolYear'
+import type { Validation } from '../src/domain/types'
 
 /** Sections de la maternelle, telles que l'interface les nomme. */
 export type Section = 'PS' | 'MS' | 'GS'
@@ -69,7 +70,9 @@ export async function addStudent(
 
   await expect(dialog).toBeHidden()
   await expect(
-    page.getByRole('button', { name: `Modifier ${name}`, exact: true }),
+    page.getByRole('button', {
+      name: new RegExp(`^Modifier ${escapeRegExp(name)}, section `),
+    }),
   ).toBeVisible()
 }
 
@@ -218,6 +221,7 @@ export type DatabaseTable = StoreName | 'settings' | 'drafts'
 interface DevTable {
   get(id: string): Promise<unknown>
   add(row: unknown): Promise<unknown>
+  bulkAdd(rows: unknown[]): Promise<unknown>
   update(id: string, changes: unknown): Promise<number>
   toArray(): Promise<unknown[]>
   clear(): Promise<void>
@@ -480,5 +484,94 @@ export async function setCurrentSchoolYear(
       }
     },
     yearId,
+  )
+}
+
+/**
+ * Écrit le brouillon de capture d'un élève, sans passer par l'interface.
+ * Sert aux écrans qui exigent un brouillon en place avant leur analyse.
+ */
+export async function seedDraft(page: Page, studentId: string): Promise<void> {
+  await page.evaluate(
+    async (id) => {
+      const database = (window as unknown as { __carnetDb: DevDatabase }).__carnetDb
+
+      await database.transaction('rw', [database.drafts], async () => {
+        await database.drafts.clear()
+        await database.drafts.add({
+          id: 'current',
+          studentId: id,
+          createdAt: new Date().toISOString(),
+        })
+      })
+    },
+    studentId,
+  )
+}
+
+/** Élève semé en masse : mêmes champs que la table `students`. */
+export interface BulkStudentSeed {
+  id: string
+  firstName: string
+  section: Section
+  createdAt: string
+}
+
+/** Photo semée en masse : ses `Blob` sont construits dans la page. */
+export interface BulkPhotoSeed {
+  id: string
+  validationId: string
+  createdAt: string
+}
+
+export interface BulkSeedInput {
+  students: BulkStudentSeed[]
+  validations: Validation[]
+  photos: BulkPhotoSeed[]
+  /** JPEG minimal (1 × 1 px) encodé en base64. */
+  photoBase64: string
+}
+
+/**
+ * Sème en une seule transaction des élèves, leurs réussites et une photo par
+ * réussite. Réservé au garde-fou de performance : le même volume semé par
+ * l'interface (500 captures) rendrait le test impraticable.
+ *
+ * Les `Blob` sont construits dans la page depuis le JPEG base64 : aucun octet
+ * binaire ne traverse la frontière Playwright.
+ */
+export async function seedBulkPhotoValidations(
+  page: Page,
+  input: BulkSeedInput,
+): Promise<void> {
+  await page.evaluate(
+    async (payload) => {
+      const database = (window as unknown as { __carnetDb: DevDatabase }).__carnetDb
+      const bytes = Uint8Array.from(atob(payload.photoBase64), (character) =>
+        character.charCodeAt(0),
+      )
+      const full = new Blob([bytes], { type: 'image/jpeg' })
+      const thumb = new Blob([bytes], { type: 'image/jpeg' })
+
+      await database.transaction(
+        'rw',
+        [database.students, database.validations, database.photos],
+        async () => {
+          await database.students.bulkAdd(payload.students)
+          await database.validations.bulkAdd(payload.validations)
+          await database.photos.bulkAdd(
+            payload.photos.map((photo) => ({
+              ...photo,
+              full,
+              thumb,
+              width: 1,
+              height: 1,
+              mime: 'image/jpeg',
+            })),
+          )
+        },
+      )
+    },
+    input,
   )
 }

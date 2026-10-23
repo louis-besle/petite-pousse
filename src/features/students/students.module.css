@@ -6,6 +6,20 @@
   padding-bottom: 16px;
 }
 
+/* Texte lu par les lecteurs d'écran mais absent de l'affichage. */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* ------------------------------------------------------------------ */
 /* En-tête                                                             */
 /* ------------------------------------------------------------------ */
@@ -86,6 +100,12 @@
   gap: 2px;
   padding-right: 6px;
   border-bottom: 1px solid var(--line);
+}
+
+/* L'avatar est décoratif : la section est annoncée par le texte masqué. */
+.rowAvatar {
+  display: flex;
+  flex: none;
 }
 
 .row:last-child {

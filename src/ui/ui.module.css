@@ -155,6 +155,10 @@
 .input {
   flex: 1;
   min-width: 0;
+  /* La zone cliquable couvre toute la hauteur du champ, pas seulement la
+     ligne de texte : la cible tactile reste >= 44 px sur téléphone. */
+  min-height: var(--tap-target);
+  align-self: stretch;
   padding: 0;
   border: 0;
   background: transparent;

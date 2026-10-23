@@ -140,16 +140,17 @@ export function ClassScreen() {
 
                 return (
                   <li key={student.id}>
-                    <Link
-                      to={`/students/${student.id}`}
-                      className={styles.card}
-                      aria-label={`${student.firstName}, section ${student.section}, ${countLabel}`}
-                    >
-                      <span className={styles.cardTop}>
+                    <Link to={`/students/${student.id}`} className={styles.card}>
+                      <span className={styles.srOnly}>
+                        {`${student.firstName}, section ${student.section}, ${countLabel}`}
+                      </span>
+                      <span className={styles.cardTop} aria-hidden="true">
                         <Avatar name={student.firstName} section={student.section} />
                       </span>
-                      <span className={styles.cardName}>{student.firstName}</span>
-                      <span className={styles.count}>
+                      <span className={styles.cardName} aria-hidden="true">
+                        {student.firstName}
+                      </span>
+                      <span className={styles.count} aria-hidden="true">
                         <span className={styles.dot} aria-hidden="true" />
                         {countLabel}
                       </span>

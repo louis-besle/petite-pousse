@@ -247,19 +247,23 @@ export function BilansScreen() {
                       <Link
                         to={`/bilans/${student.id}?period=${selectedPeriod}&year=${encodeURIComponent(year.id)}`}
                         className={styles.studentRow}
-                        aria-label={`${student.firstName}, section ${student.section}, ${successLabel(
-                          count,
-                        )} pour le bilan ${selectedPeriod}`}
                       >
-                        <Avatar
-                          name={student.firstName}
-                          section={student.section}
-                          size="sm"
-                        />
-                        <span className={styles.studentName}>
+                        <span className={styles.srOnly}>
+                          {`${student.firstName}, section ${student.section}, ${successLabel(
+                            count,
+                          )} pour le bilan ${selectedPeriod}`}
+                        </span>
+                        <span className={styles.rowAvatar} aria-hidden="true">
+                          <Avatar
+                            name={student.firstName}
+                            section={student.section}
+                            size="sm"
+                          />
+                        </span>
+                        <span className={styles.studentName} aria-hidden="true">
                           {student.firstName}
                         </span>
-                        <span className={styles.studentMeta}>
+                        <span className={styles.studentMeta} aria-hidden="true">
                           {student.section} · {successLabel(count)}
                         </span>
                         <span className={styles.rowChevron} aria-hidden="true">

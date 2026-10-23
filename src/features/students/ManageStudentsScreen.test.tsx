@@ -82,7 +82,7 @@ describe('ManageStudentsScreen', () => {
     await user.click(screen.getByRole('button', { name: 'PS' }))
     await user.click(screen.getByRole('button', { name: 'Ajouter l’élève' }))
 
-    const row = await screen.findByRole('button', { name: 'Modifier Noah' })
+    const row = await screen.findByRole('button', { name: /^Modifier Noah,/ })
     expect(within(row).getByText('0 réussite')).toBeInTheDocument()
 
     await waitFor(async () => {
@@ -104,7 +104,7 @@ describe('ManageStudentsScreen', () => {
 
     renderApp({ route: '/students' })
 
-    await user.click(await screen.findByRole('button', { name: 'Modifier Léa' }))
+    await user.click(await screen.findByRole('button', { name: /^Modifier Léa,/ }))
 
     expect(
       screen.getByRole('heading', { level: 2, name: 'Modifier Léa' }),
@@ -117,9 +117,9 @@ describe('ManageStudentsScreen', () => {
     await user.click(screen.getByRole('button', { name: 'GS' }))
     await user.click(screen.getByRole('button', { name: 'Enregistrer' }))
 
-    await screen.findByRole('button', { name: 'Modifier Léa-Marie' })
+    await screen.findByRole('button', { name: /^Modifier Léa-Marie,/ })
     expect(
-      screen.queryByRole('button', { name: 'Modifier Léa' }),
+      screen.queryByRole('button', { name: /^Modifier Léa,/ }),
     ).not.toBeInTheDocument()
 
     await waitFor(async () => {
@@ -161,9 +161,9 @@ describe('ManageStudentsScreen', () => {
     )
 
     await waitFor(() =>
-      expect(screen.queryByRole('button', { name: 'Modifier Léa' })).not.toBeInTheDocument(),
+      expect(screen.queryByRole('button', { name: /^Modifier Léa,/ })).not.toBeInTheDocument(),
     )
-    expect(screen.getByRole('button', { name: 'Modifier Adam' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /^Modifier Adam,/ })).toBeInTheDocument()
 
     await waitFor(async () => {
       expect(await db.students.get(lea.id)).toBeUndefined()
@@ -205,7 +205,7 @@ describe('ManageStudentsScreen', () => {
     )
 
     await waitFor(() => expect(router.state.location.pathname).toBe('/students'))
-    expect(screen.queryByRole('button', { name: 'Modifier Léa' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /^Modifier Léa,/ })).not.toBeInTheDocument()
     expect(await db.students.get(lea.id)).toBeUndefined()
   })
 

@@ -143,19 +143,25 @@ export function StudentPickerScreen() {
                   <button
                     type="button"
                     className={styles.studentCard}
-                    aria-label={`${student.firstName}, section ${student.section}`}
                     aria-busy={savingId === student.id || undefined}
                     disabled={savingId !== undefined}
                     onClick={() => {
                       void chooseStudent(student)
                     }}
                   >
-                    <Avatar
-                      name={student.firstName}
-                      section={student.section}
-                      size="sm"
-                    />
-                    <span className={styles.studentName}>{student.firstName}</span>
+                    <span className={styles.srOnly}>
+                      {`${student.firstName}, section ${student.section}`}
+                    </span>
+                    <span className={styles.studentAvatar} aria-hidden="true">
+                      <Avatar
+                        name={student.firstName}
+                        section={student.section}
+                        size="sm"
+                      />
+                    </span>
+                    <span className={styles.studentName} aria-hidden="true">
+                      {student.firstName}
+                    </span>
                   </button>
                 </li>
               ))}

@@ -22,7 +22,7 @@ test.describe('gestion des élèves', () => {
 
     // Modification du prénom et de la section depuis la liste.
     await gotoRoute(page, '/students')
-    const row = page.getByRole('button', { name: 'Modifier Zoé', exact: true })
+    const row = page.getByRole('button', { name: /^Modifier Zoé, section MS,/ })
     await expect(row).toBeVisible()
     await expect(row).toContainText('1 réussite')
     await row.click()
@@ -38,7 +38,7 @@ test.describe('gestion des élèves', () => {
 
     await expect(page.getByText('Modifications enregistrées.')).toBeVisible()
     await expect(
-      page.getByRole('button', { name: 'Modifier Zoéa', exact: true }),
+      page.getByRole('button', { name: /^Modifier Zoéa, section GS,/ }),
     ).toContainText('1 réussite')
 
     await gotoRoute(page, '/')
@@ -60,7 +60,7 @@ test.describe('gestion des élèves', () => {
 
     await expect(page.getByText('Élève supprimé.')).toBeVisible()
     await expect(
-      page.getByRole('button', { name: 'Modifier Zoéa', exact: true }),
+      page.getByRole('button', { name: /^Modifier Zoéa, section GS,/ }),
     ).toHaveCount(0)
     await expect(page.getByText('0 élève', { exact: true })).toBeVisible()
 
@@ -90,7 +90,7 @@ test.describe('gestion des élèves', () => {
 
     await expect(confirm).toBeHidden()
     await expect(
-      page.getByRole('button', { name: 'Modifier Lina', exact: true }),
+      page.getByRole('button', { name: /^Modifier Lina, section MS,/ }),
     ).toContainText('1 réussite')
     await expect(page.getByText('1 élève', { exact: true })).toBeVisible()
 
