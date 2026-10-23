@@ -89,9 +89,10 @@ canvas {
   padding-left: env(safe-area-inset-left);
 }
 
-/* Focus visible, jamais retiré sans remplacement */
+/* Focus visible, jamais retiré sans remplacement. L'encre offre 13:1 sur le
+   papier, alors que la terre cuite ne donne que 2,9:1. */
 :focus-visible {
-  outline: 2px solid var(--terra);
+  outline: 2px solid var(--ink);
   outline-offset: 2px;
 }
 

@@ -12,9 +12,7 @@
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   background-color: var(--card);
-  background-color: color-mix(in srgb, var(--card) 94%, transparent);
   box-shadow: var(--shadow-float);
-  backdrop-filter: blur(12px);
 }
 
 .link {

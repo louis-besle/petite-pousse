@@ -38,7 +38,7 @@
   margin-left: auto;
   padding: 0 14px;
   flex: none;
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-strong);
   border-radius: var(--radius-pill);
   background-color: var(--card);
   box-shadow: var(--shadow-card);
@@ -97,7 +97,7 @@
   min-height: var(--tap-target);
   margin-left: auto;
   padding: 0 10px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-strong);
   border-radius: var(--radius-pill);
   background-color: var(--card);
   color: var(--ink);
@@ -471,7 +471,7 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background-color: var(--terra);
+  background-color: var(--terra-deep);
   color: var(--cream);
   box-shadow:
     0 4px 0 var(--terra-dark),

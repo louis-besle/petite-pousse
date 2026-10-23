@@ -41,7 +41,7 @@
 /* Carte crème, texte atténué : 5.92:1. */
 .button[data-variant='ghost'] {
   background-color: var(--card);
-  border-color: var(--line);
+  border-color: var(--line-strong);
   color: var(--muted);
   box-shadow: var(--shadow-card);
 }

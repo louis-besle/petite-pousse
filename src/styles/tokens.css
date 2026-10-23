@@ -7,23 +7,26 @@
   --muted: #6b6154;
   --faint: #8a7e6d;
   --line: #eadcc6;
+  /* Bordure des composants interactifs : 3,59:1 sur la carte. */
+  --line-strong: #a08054;
 
   /* Accents */
   --terra: #d9765b;
   --terra-dark: #c46046;
+  --terra-deep: #ad4f36;
   --sage: #6f8f6a;
   --sage-soft: #dce7d6;
   --sage-ink: #4c6a48;
   --sage-pale: #f0f5ea;
   --mustard: #e7b65c;
   --mustard-soft: #faebc9;
-  --mustard-ink: #9a7420;
+  --mustard-ink: #7f5d10;
   --sky: #8fb3c7;
   --sky-soft: #dde9ee;
-  --sky-ink: #527a90;
+  --sky-ink: #41647a;
   --blush: #e9a6a0;
   --blush-soft: #f7deda;
-  --blush-ink: #b8625a;
+  --blush-ink: #9e4a43;
 
   /* Domaines */
   --d-langage: #6f8f6a;
@@ -31,16 +34,16 @@
   --d-langage-ink: #4f6e4b;
   --d-maths: #7fa5b8;
   --d-maths-soft: #e2edf1;
-  --d-maths-ink: #527a90;
+  --d-maths-ink: #3f6277;
   --d-corps: #d9765b;
   --d-corps-soft: #f7deda;
-  --d-corps-ink: #b8625a;
+  --d-corps-ink: #8f3f38;
   --d-arts: #d9a441;
   --d-arts-soft: #faebc9;
-  --d-arts-ink: #96701f;
+  --d-arts-ink: #7f5d10;
   --d-temps: #b98a6e;
   --d-temps-soft: #f2e3d7;
-  --d-temps-ink: #8e644c;
+  --d-temps-ink: #74503a;
   --d-vivant: #7e8b57;
   --d-vivant-soft: #e7ebd8;
   --d-vivant-ink: #5f6b3d;
