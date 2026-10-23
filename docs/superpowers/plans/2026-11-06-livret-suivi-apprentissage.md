@@ -121,7 +121,7 @@ e2e/
 
 ---
 
-### Tâche 1 : Socle Vite + React + TypeScript + tests
+### Task 1 : Socle Vite + React + TypeScript + tests
 
 **Fichiers :**
 - Créer : `package.json`, `index.html`, `vite.config.ts`, `tsconfig.json`, `tsconfig.node.json`, `eslint.config.js`, `src/main.tsx`, `src/App.tsx`, `src/domain/types.ts`, `src/styles/tokens.css`, `src/styles/global.css`, `src/test/setup.ts`, `src/App.test.tsx`.
@@ -189,7 +189,7 @@ git commit -m "chore: scaffold vite react typescript app"
 
 ---
 
-### Tâche 2 : Jetons visuels et composants de base
+### Task 2 : Jetons visuels et composants de base
 
 **Fichiers :**
 - Créer : `src/ui/Button.tsx`, `src/ui/Button.module.css`, `src/ui/IconButton.tsx`, `src/ui/Chip.tsx`, `src/ui/Field.tsx`, `src/ui/Avatar.tsx`, `src/ui/SectionPill.tsx`, `src/ui/FlowerMark.tsx`, `src/ui/icons.tsx`, `src/ui/ui.module.css`.
@@ -232,7 +232,7 @@ git commit -m "feat(ui): add design tokens and base components"
 
 ---
 
-### Tâche 3 : Feuilles modales, toasts et navigation
+### Task 3 : Feuilles modales, toasts et navigation
 
 **Fichiers :**
 - Créer : `src/ui/Sheet.tsx`, `src/ui/ConfirmSheet.tsx`, `src/ui/Toast.tsx`, `src/ui/ToastProvider.tsx`, `src/ui/NavBar.tsx`, `src/ui/AppShell.tsx`.
@@ -273,7 +273,7 @@ git commit -m "feat(ui): add accessible sheets, toasts and navigation"
 
 ---
 
-### Tâche 4 : Routage et squelette des écrans
+### Task 4 : Routage et squelette des écrans
 
 **Fichiers :**
 - Créer : `src/router.tsx`, `src/ui/ScreenPlaceholder.tsx`, `src/test/render.tsx`, `src/router.test.tsx`.
@@ -310,7 +310,7 @@ git commit -m "feat: add hash routing and screen skeleton"
 
 ---
 
-### Tâche 5 : Schéma, construction et validation du référentiel
+### Task 5 : Schéma, construction et validation du référentiel
 
 **Fichiers :**
 - Créer : `src/domain/referential.ts`, `scripts/referential/build.ts`, `scripts/referential/check.ts`, `scripts/referential/__fixtures__/objectives.csv`, `scripts/referential/build.test.ts`.
@@ -353,7 +353,7 @@ git commit -m "feat(referential): add schema, csv builder and validator"
 
 ---
 
-### Tâche 6 : Contenu du référentiel officiel 2026
+### Task 6 : Contenu du référentiel officiel 2026
 
 **Fichiers :**
 - Créer : `scripts/referential/source/README.md`, `scripts/referential/source/objectives.csv`, `scripts/referential/source/VERIFICATION.md`, `src/data/referential.json`.
@@ -393,7 +393,7 @@ git commit -m "data(referential): build official 2026 referential"
 
 ---
 
-### Tâche 7 : Logique d'année scolaire et de bilan
+### Task 7 : Logique d'année scolaire et de bilan
 
 **Fichiers :**
 - Créer : `src/domain/schoolYear.ts`, `src/domain/schoolYear.test.ts`.
@@ -449,7 +449,7 @@ git commit -m "feat(domain): add school year and bilan period logic"
 
 ---
 
-### Tâche 8 : Base IndexedDB et amorçage
+### Task 8 : Base IndexedDB et amorçage
 
 **Fichiers :**
 - Créer : `src/db/db.ts`, `src/db/seed.ts`, `src/db/settings.ts`, `src/test/setup.ts` (compléter), `src/test/fixtures.ts`, `src/db/db.test.ts`.
@@ -510,7 +510,7 @@ git commit -m "feat(db): add indexeddb schema and seed"
 
 ---
 
-### Tâche 9 : Dépôt élèves
+### Task 9 : Dépôt élèves
 
 **Fichiers :**
 - Créer : `src/db/students.ts`, `src/db/students.test.ts`.
@@ -550,7 +550,7 @@ git commit -m "feat(students): add student repository"
 
 ---
 
-### Tâche 10 : Dépôt validations et photos
+### Task 10 : Dépôt validations et photos
 
 **Fichiers :**
 - Créer : `src/db/schoolYears.ts`, `src/db/validations.ts`, `src/db/photos.ts`, `src/db/validations.test.ts`, `src/db/photos.test.ts`, `src/domain/errors.ts`.
@@ -621,7 +621,7 @@ git commit -m "feat(validations): add validation and photo repositories"
 
 ---
 
-### Tâche 11 : Identifiants, dates et compression photo
+### Task 11 : Identifiants, dates et compression photo
 
 **Fichiers :**
 - Créer : `src/lib/id.ts`, `src/lib/date.ts`, `src/lib/image.ts`, `src/lib/image.test.ts`, `src/lib/date.test.ts`.
@@ -660,7 +660,7 @@ git commit -m "feat(photos): add image compression and date helpers"
 
 ---
 
-### Tâche 12 : Écran classe
+### Task 12 : Écran classe
 
 **Fichiers :**
 - Créer : `src/features/class/ClassScreen.tsx`, `src/features/class/ClassScreen.module.css`, `src/features/class/ClassScreen.test.tsx`.
@@ -697,7 +697,7 @@ git commit -m "feat(class): add class roster screen"
 
 ---
 
-### Tâche 13 : Capture — élève et photo avec brouillon persistant
+### Task 13 : Capture — élève et photo avec brouillon persistant
 
 **Fichiers :**
 - Créer : `src/db/drafts.ts`, `src/features/capture/StudentPickerScreen.tsx`, `src/features/capture/PhotoScreen.tsx`, `src/features/capture/capture.module.css`, `src/features/capture/capture.test.tsx`.
@@ -737,7 +737,7 @@ git commit -m "feat(capture): add student picker and photo step"
 
 ---
 
-### Tâche 14 : Capture — objectif et confirmation
+### Task 14 : Capture — objectif et confirmation
 
 **Fichiers :**
 - Créer : `src/features/capture/ObjectiveScreen.tsx`, `src/features/capture/SuccessScreen.tsx`, `src/features/capture/ObjectiveScreen.test.tsx`.
@@ -774,7 +774,7 @@ git commit -m "feat(capture): add objective selection and confirmation"
 
 ---
 
-### Tâche 15 : Dossier élève
+### Task 15 : Dossier élève
 
 **Fichiers :**
 - Créer : `src/features/dossier/DossierScreen.tsx`, `src/features/dossier/ValidationSheet.tsx`, `src/features/dossier/usePhoto.ts`, `src/features/dossier/dossier.module.css`, `src/features/dossier/DossierScreen.test.tsx`.
@@ -811,7 +811,7 @@ git commit -m "feat(dossier): add student dossier and validation details"
 
 ---
 
-### Tâche 16 : Gérer les élèves
+### Task 16 : Gérer les élèves
 
 **Fichiers :**
 - Créer : `src/features/students/ManageStudentsScreen.tsx`, `src/features/students/StudentFormSheet.tsx`, `src/features/students/students.module.css`, `src/features/students/ManageStudentsScreen.test.tsx`.
@@ -848,7 +848,7 @@ git commit -m "feat(students): add student management screens"
 
 ---
 
-### Tâche 17 : Programme et validation rapide
+### Task 17 : Programme et validation rapide
 
 **Fichiers :**
 - Créer : `src/features/programme/ProgrammeScreen.tsx`, `src/features/programme/ObjectiveSheet.tsx`, `src/features/programme/programme.module.css`, `src/features/programme/ProgrammeScreen.test.tsx`.
@@ -885,7 +885,7 @@ git commit -m "feat(programme): add programme browser and quick validation"
 
 ---
 
-### Tâche 18 : Bilans, périodes et date de changement de semestre
+### Task 18 : Bilans, périodes et date de changement de semestre
 
 **Fichiers :**
 - Créer : `src/features/bilans/BilansScreen.tsx`, `src/features/bilans/PeriodEditor.tsx`, `src/features/bilans/bilans.module.css`, `src/features/bilans/BilansScreen.test.tsx`, `src/domain/bilan.ts`.
@@ -948,7 +948,7 @@ git commit -m "feat(bilans): add periods and cutover date editor"
 
 ---
 
-### Tâche 19 : Aperçu A4, PDF et partage
+### Task 19 : Aperçu A4, PDF et partage
 
 **Fichiers :**
 - Créer : `src/features/bilans/BilanPreviewScreen.tsx`, `src/features/bilans/BilanSheet.tsx`, `src/features/bilans/pdf.ts`, `src/lib/share.ts`, `src/features/bilans/pdf.test.ts`, `src/lib/share.test.ts`, `src/assets/fonts/Nunito-Regular.ttf`, `src/assets/fonts/Nunito-Bold.ttf`, `src/assets/fonts/Fraunces-Bold.ttf`, `src/assets/fonts/OFL.txt`.
@@ -995,7 +995,7 @@ git commit -m "feat(bilans): add a4 preview and pdf generation"
 
 ---
 
-### Tâche 20 : Réglages, stockage et passage à l'année suivante
+### Task 20 : Réglages, stockage et passage à l'année suivante
 
 **Fichiers :**
 - Créer : `src/features/settings/SettingsScreen.tsx`, `src/features/settings/StoragePanel.tsx`, `src/features/settings/settings.module.css`, `src/features/settings/SettingsScreen.test.tsx`.
@@ -1032,7 +1032,7 @@ git commit -m "feat(settings): add settings, storage and year rollover"
 
 ---
 
-### Tâche 21 : Sauvegarde ZIP et restauration
+### Task 21 : Sauvegarde ZIP et restauration
 
 **Fichiers :**
 - Créer : `src/features/settings/backup.ts`, `src/features/settings/BackupPanel.tsx`, `src/features/settings/backup.test.ts`, `src/features/settings/BackupPanel.test.tsx`.
@@ -1077,7 +1077,7 @@ git commit -m "feat(backup): add zip export and restore"
 
 ---
 
-### Tâche 22 : PWA installable et hors ligne
+### Task 22 : PWA installable et hors ligne
 
 **Fichiers :**
 - Créer : `public/favicon.svg`, `pwa-assets.config.ts`, `src/ui/InstallHint.tsx`, `src/ui/InstallHint.test.tsx`.
@@ -1113,7 +1113,7 @@ git commit -m "feat(pwa): add installable offline app"
 
 ---
 
-### Tâche 23 : E2E des parcours principaux
+### Task 23 : E2E des parcours principaux
 
 **Fichiers :**
 - Créer : `playwright.config.ts`, `e2e/fixtures/photo.jpg`, `e2e/helpers.ts`, `e2e/capture.spec.ts`, `e2e/students.spec.ts`, `e2e/programme.spec.ts`.
@@ -1153,7 +1153,7 @@ git commit -m "test(e2e): cover capture, students and programme flows"
 
 ---
 
-### Tâche 24 : E2E des bilans, sauvegardes, années et responsive
+### Task 24 : E2E des bilans, sauvegardes, années et responsive
 
 **Fichiers :**
 - Créer : `e2e/bilans.spec.ts`, `e2e/backup.spec.ts`, `e2e/year.spec.ts`, `e2e/responsive.spec.ts`, `e2e/offline.spec.ts`, `playwright.offline.config.ts`.
@@ -1196,7 +1196,7 @@ git commit -m "test(e2e): cover bilans, backup, year rollover and offline"
 
 ---
 
-### Tâche 25 : Accessibilité, performance et CI
+### Task 25 : Accessibilité, performance et CI
 
 **Fichiers :**
 - Créer : `e2e/a11y.spec.ts`, `e2e/performance.spec.ts`, `.github/workflows/ci.yml`.
@@ -1231,7 +1231,7 @@ git commit -m "test: add accessibility, performance and ci checks"
 
 ---
 
-### Tâche 26 : Configuration Vercel et mise en ligne
+### Task 26 : Configuration Vercel et mise en ligne
 
 **Fichiers :**
 - Créer : `vercel.ts`.
