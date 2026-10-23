@@ -8,6 +8,7 @@ doit contenir que des intitulés et des exemples recopiés du texte officiel.
 
 - **BO n°41 du 31 octobre 2024** : programme d’enseignement de l’école maternelle
   pour les domaines du langage et des mathématiques (texte consolidé en 2026).
+  - Notice : <https://www.education.gouv.fr/bo/2024/Hebdo41/MENE2415135A>
 - **BO n°19 du 7 mai 2026**, arrêté du 16 avril 2026 : programme révisé pour les
   quatre autres domaines.
   - Notice : <https://www.education.gouv.fr/bo/2026/Hebdo19/MENE2608627A>
@@ -50,23 +51,44 @@ Provenance par domaine :
 - `langage` et `maths` : BO n°41 du 31 octobre 2024 (version consolidée) ;
 - `corps`, `arts`, `temps`, `vivant` : BO n°19 du 7 mai 2026.
 
-État de la transcription : le domaine `langage` est complet dans ce fichier.
-Les cinq autres domaines seront ajoutés par les étapes suivantes, sans
-renuméroter les identifiants déjà publiés.
+État de la transcription : les six domaines sont complets (398 objectifs,
+37 compétences). Les identifiants déjà publiés n’ont pas été renumérotés.
 
 ## Structure officielle retenue
 
-Le programme est structuré en compétences (titres bleus de niveau 2), elles-mêmes
-subdivisées en sous-thèmes (titres noirs gras de niveau 3). Le CSV ne modélise
-qu’un seul niveau de regroupement : `competency_id` / `competency_label`
-reprennent donc la **compétence officielle de niveau 2**, seul niveau que le
-programme nomme « compétence » (« Le programme … est structuré en compétences
-qui indiquent les enjeux et les finalités d’enseignement »).
+Le programme est structuré en compétences, elles-mêmes subdivisées en
+sous-thèmes (titres noirs gras de niveau 3). Le CSV ne modélise qu’un seul
+niveau de regroupement. Pour le domaine `langage`, les compétences sont les
+titres bleus de niveau 2 (12 pt), seul niveau que le programme nomme
+« compétence » (« Le programme … est structuré en compétences qui indiquent les
+enjeux et les finalités d’enseignement »). Les autres domaines retiennent le
+titre qui groupe réellement les tableaux ; le niveau utilisé est précisé
+ci-dessous.
 
 Les sous-thèmes officiels de niveau 3 ne servent pas de clé de regroupement et
 ne figurent pas dans le CSV (le schéma ne modélise qu’un niveau) : ils sont
-seulement consignés ci-dessous pour la traçabilité de la transcription. Pour le
-domaine `langage` :
+seulement consignés ci-dessous pour la traçabilité de la transcription.
+
+Niveau de titre utilisé comme compétence, par domaine (vérifié sur le PDF
+consolidé) :
+
+| Domaine | Niveau utilisé | Compétences |
+|---|---|---:|
+| `langage` | titres bleus de niveau 2 (12 pt) | 9 |
+| `maths` | titres de section 16 pt | 5 |
+| `corps` | titres bleus de niveau 2 (12 pt) | 4 |
+| `arts` | titres bleus de niveau 2 (12 pt) | 9 |
+| `temps` | 5 titres de niveau 2 (12 pt) + 1 titre de section 16 pt (`temps-reperes`) | 6 |
+| `vivant` | titres bleus de niveau 2 (12 pt) | 4 |
+
+Pour les mathématiques, les titres de niveau 2 (12 pt) sont des subdivisions
+internes (« Exprimer une quantité par un nombre », « Exprimer un rang ou une
+position par un nombre ») : les compétences retenues sont les titres de section
+16 pt. Pour `temps`, le premier bloc de tableaux (repères temporels, moments de
+la journée, marqueurs, saisons) n’a pas de titre de niveau 2 : la compétence
+`temps-reperes` reprend le titre de section « Se repérer dans le temps ».
+
+Pour le domaine `langage` :
 
 | `competency_id` | Intitulé officiel (niveau 2) | Sous-thèmes (niveau 3) |
 |---|---|---|
