@@ -312,18 +312,28 @@ describe('BilansScreen', () => {
   })
 
   it('retombe sur l’année connue la plus récente quand l’année des réglages a disparu', async () => {
-    await setUpYear({
-      id: '2025-2026',
-      start: '2025-09-01',
-      period1End: '2026-01-31',
-      period2End: '2026-06-30',
-    })
     await setUpYear()
 
     renderApp({ route: '/bilans' })
     await screen.findByRole('button', { name: /^Bilan 1/ })
 
-    // Les réglages pointent encore vers 2026-2027, mais la ligne a disparu :
+    // `ensureSeed` (au montage) ajoute l'année réelle du jour. On repart d'une
+    // table vidée puis des deux années de test pour que la cible du repli ne
+    // dépende jamais du calendrier.
+    await db.transaction('rw', db.schoolYears, async () => {
+      await db.schoolYears.clear()
+      await db.schoolYears.put(
+        makeSchoolYear({
+          id: '2025-2026',
+          start: '2025-09-01',
+          period1End: '2026-01-31',
+          period2End: '2026-06-30',
+        }),
+      )
+      await db.schoolYears.put(makeSchoolYear())
+    })
+
+    // Les réglages pointent encore vers 2026-2027, mais la ligne disparaît :
     // l'écran doit se rabattre sur l'année connue, pas rester en chargement.
     await db.schoolYears.delete('2026-2027')
 
