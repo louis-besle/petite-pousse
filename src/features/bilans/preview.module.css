@@ -418,7 +418,7 @@
   background-color: var(--ink);
 }
 
-.page {
+.paginationNote {
   display: block;
   margin-top: 8px;
   color: var(--muted);

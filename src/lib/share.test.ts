@@ -12,11 +12,14 @@ function defineNavigatorMethod(name: 'canShare' | 'share', value: unknown): void
 }
 
 beforeEach(() => {
+  vi.useFakeTimers()
   defineNavigatorMethod('canShare', undefined)
   defineNavigatorMethod('share', undefined)
 })
 
 afterEach(() => {
+  vi.runOnlyPendingTimers()
+  vi.useRealTimers()
   vi.restoreAllMocks()
   defineNavigatorMethod('canShare', undefined)
   defineNavigatorMethod('share', undefined)
@@ -62,6 +65,10 @@ describe('sharePdf', () => {
     expect(share).not.toHaveBeenCalled()
     expect(click).toHaveBeenCalledTimes(1)
     expect(URL.createObjectURL).toHaveBeenCalledTimes(1)
+    // La révocation est différée : iOS Safari annule le téléchargement si
+    // l'URL d'objet disparaît dans la même tâche que le clic.
+    expect(URL.revokeObjectURL).not.toHaveBeenCalled()
+    vi.runAllTimers()
     expect(URL.revokeObjectURL).toHaveBeenCalledTimes(1)
   })
 
@@ -84,7 +91,7 @@ describe('sharePdf', () => {
 })
 
 describe('downloadBlob', () => {
-  it('clique un lien temporaire puis le retire du document', () => {
+  it('clique un lien temporaire, le retire puis révoque l’URL après le clic', () => {
     const click = vi
       .spyOn(HTMLAnchorElement.prototype, 'click')
       .mockImplementation(() => undefined)
@@ -93,6 +100,10 @@ describe('downloadBlob', () => {
 
     expect(click).toHaveBeenCalledTimes(1)
     expect(document.querySelector('a[download]')).not.toBeInTheDocument()
+    expect(URL.revokeObjectURL).not.toHaveBeenCalled()
+
+    vi.runAllTimers()
+    expect(URL.revokeObjectURL).toHaveBeenCalledTimes(1)
   })
 
   it('reste utilisable quand revokeObjectURL n’existe pas', () => {
@@ -111,6 +122,7 @@ describe('downloadBlob', () => {
         downloadBlob(new Blob([PDF_BYTES], { type: 'application/pdf' }), FILENAME),
       ).not.toThrow()
       expect(click).toHaveBeenCalledTimes(1)
+      expect(() => vi.runAllTimers()).not.toThrow()
     } finally {
       Object.defineProperty(URL, 'revokeObjectURL', {
         configurable: true,

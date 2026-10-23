@@ -87,9 +87,11 @@ function successLabel(count: number): string {
 
 /** « Léa » ou « Léa M. » selon que l'initiale est renseignée. */
 function studentLabel(student: Student): string {
-  return student.lastNameInitial === undefined
+  const initial = student.lastNameInitial?.trim()
+
+  return initial === undefined || initial === ''
     ? student.firstName
-    : `${student.firstName} ${student.lastNameInitial}.`
+    : `${student.firstName} ${initial}.`
 }
 
 /** Une ligne de période lisible : « Du 1 sept. 2026 au 31 janv. 2027 ». */

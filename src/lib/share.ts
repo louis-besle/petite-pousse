@@ -19,9 +19,13 @@ export function downloadBlob(blob: Blob, filename: string): void {
     anchor.click()
   } finally {
     anchor.remove()
-    if (typeof URL.revokeObjectURL === 'function') {
-      URL.revokeObjectURL(url)
-    }
+    // iOS Safari peut annuler le téléchargement si l'URL d'objet est révoquée
+    // dans la même tâche que le clic. On laisse la boucle d'événements finir.
+    setTimeout(() => {
+      if (typeof URL.revokeObjectURL === 'function') {
+        URL.revokeObjectURL(url)
+      }
+    }, 0)
   }
 }
 

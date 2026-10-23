@@ -217,8 +217,8 @@ export function BilanPreviewScreen() {
       <BilanSheet model={model} meta={meta} />
 
       <p className={styles.note}>
-        La feuille ne contient que les réussites de la période. À l’impression,
-        choisis « Enregistrer en PDF ».
+        La feuille ne contient que les réussites de la période. Le PDF est généré
+        directement par le bouton ci-dessous.
       </p>
 
       <div className={styles.actions}>

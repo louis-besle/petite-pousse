@@ -24,9 +24,11 @@ function successLabel(count: number): string {
 /** « Léa » ou « Léa M. » selon que l'initiale est renseignée. */
 function studentLabel(model: BilanModel): string {
   const { student } = model
-  return student.lastNameInitial === undefined
+  const initial = student.lastNameInitial?.trim()
+
+  return initial === undefined || initial === ''
     ? student.firstName
-    : `${student.firstName} ${student.lastNameInitial}.`
+    : `${student.firstName} ${initial}.`
 }
 
 /** « 1 sept. 2026 → 31 janv. 2027 ». */
@@ -158,7 +160,9 @@ export function BilanSheet({ model, meta }: BilanSheetProps) {
               <span className={styles.signatureLine} aria-hidden="true" />
             </span>
           </div>
-          <span className={styles.page}>Page 1 / 1</span>
+          <span className={styles.paginationNote}>
+            Pagination exacte calculée dans le PDF
+          </span>
         </footer>
       </article>
     </div>

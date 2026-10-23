@@ -51,7 +51,10 @@ function entry(
   }
 }
 
-function model(groups: Array<{ id: Domain['id']; entries: BilanEntry[] }>): BilanModel {
+function model(
+  groups: Array<{ id: Domain['id']; entries: BilanEntry[] }>,
+  student = makeStudent({ firstName: 'Léa', lastNameInitial: 'M' }),
+): BilanModel {
   const year = makeSchoolYear()
   const domains = groups.map((group) => ({
     domain: domain(group.id),
@@ -59,7 +62,7 @@ function model(groups: Array<{ id: Domain['id']; entries: BilanEntry[] }>): Bila
   }))
 
   return {
-    student: makeStudent({ firstName: 'Léa', lastNameInitial: 'M' }),
+    student,
     year,
     period: 1,
     start: year.start,
@@ -234,6 +237,28 @@ describe('generateBilanPdf', () => {
     },
     PDF_TIMEOUT,
   )
+
+  it(
+    'ignore une initiale de nom vide dans le nom affiché',
+    async () => {
+      const bilan = model(
+        [
+          {
+            id: 'langage',
+            entries: [entry('Raconter une histoire à partir des images', '2026-10-12')],
+          },
+        ],
+        makeStudent({ firstName: 'Léa', lastNameInitial: '' }),
+      )
+
+      const bytes = await generateBilanPdf(bilan, META, fonts)
+      const [page] = await extractPages(bytes)
+
+      expect(page?.text).toContain('Léa')
+      expect(page?.text).not.toContain('Léa .')
+    },
+    PDF_TIMEOUT,
+  )
 })
 
 describe('pdfFileName', () => {
@@ -248,6 +273,14 @@ describe('pdfFileName', () => {
 
     expect(pdfFileName(student, makeSchoolYear(), 2)).toBe(
       'bilan-eloise-d-2-2026-2027.pdf',
+    )
+  })
+
+  it('ignore une initiale vide', () => {
+    const student = makeStudent({ firstName: 'Léa', lastNameInitial: '' })
+
+    expect(pdfFileName(student, makeSchoolYear(), 1)).toBe(
+      'bilan-lea-1-2026-2027.pdf',
     )
   })
 })

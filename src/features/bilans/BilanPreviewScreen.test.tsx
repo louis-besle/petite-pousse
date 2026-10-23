@@ -40,7 +40,9 @@ function objective(id: string): Objective {
   return found
 }
 
-async function setUp(): Promise<{ studentId: string; objectiveLabel: string }> {
+async function setUp(
+  options: { lastNameInitial?: string } = {},
+): Promise<{ studentId: string; objectiveLabel: string }> {
   const year = makeSchoolYear()
   await db.schoolYears.put(year)
   await updateSettings({
@@ -50,7 +52,10 @@ async function setUp(): Promise<{ studentId: string; objectiveLabel: string }> {
     teacherName: 'Mme Martin',
   })
 
-  const student = makeStudent({ firstName: 'Léa', lastNameInitial: 'M' })
+  const student = makeStudent({
+    firstName: 'Léa',
+    lastNameInitial: options.lastNameInitial ?? 'M',
+  })
   await db.students.add(student)
 
   const target = objective('lang-vocabulaire-01')
@@ -83,9 +88,24 @@ describe('BilanPreviewScreen', () => {
     expect(screen.getByText('Bilan des réussites')).toBeInTheDocument()
     expect(screen.getByText(objectiveLabel)).toBeInTheDocument()
     expect(screen.getByText('Signature des parents')).toBeInTheDocument()
-    expect(screen.getByText('Page 1 / 1')).toBeInTheDocument()
+    expect(screen.queryByText('Page 1 / 1')).not.toBeInTheDocument()
+    expect(
+      screen.getByText('Pagination exacte calculée dans le PDF'),
+    ).toBeInTheDocument()
+    expect(screen.getByText(/Le PDF est généré directement/)).toBeInTheDocument()
+    expect(screen.queryByText(/Enregistrer en PDF/)).not.toBeInTheDocument()
     expect(screen.getByText('Bilan 1')).toBeInTheDocument()
     expect(screen.getByText(/12 oct\./)).toBeInTheDocument()
+  })
+
+  it('ignore une initiale de nom vide dans l’aperçu', async () => {
+    const { studentId } = await setUp({ lastNameInitial: '' })
+
+    renderApp({ route: `/bilans/${studentId}?period=1&year=2026-2027` })
+
+    await screen.findByRole('heading', { level: 1, name: 'Bilan de Léa' })
+    expect(screen.getByText('Léa')).toBeInTheDocument()
+    expect(screen.queryByText('Léa .')).not.toBeInTheDocument()
   })
 
   it('bascule de période en mettant à jour la requête', async () => {
