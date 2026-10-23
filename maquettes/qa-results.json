@@ -1,0 +1,22 @@
+{
+  "dossier_titre": "Léa",
+  "dossier_count": "14 réussites",
+  "objectifs_titre": "Choisir l'objectif",
+  "objectifs_no_photo": true,
+  "cta_disabled_avant": true,
+  "selection": "Comprendre et exécuter deux consignes simples",
+  "cta_apres": false,
+  "validation": "C'est noté !",
+  "success_titre": "Comprendre et exécuter deux consignes simples",
+  "retour_dossier": "15 réussites",
+  "programme": "Programme",
+  "sheet_open": "Raconter une histoire entendue en s’appuyant sur les images",
+  "sheet_picker": 20,
+  "sheet_pick": "Réussite ajoutée à Adam · Raconter une histoire entendue en …",
+  "flow_1": "1 / 3",
+  "flow_2": "2 / 3",
+  "flow_photo_etat": "Photo prise",
+  "flow_3": "3 / 3",
+  "flow_objectif": "Comprendre et exécuter deux consignes simples",
+  "flow_validation": "C'est noté !"
+}
