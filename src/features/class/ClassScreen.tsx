@@ -82,8 +82,9 @@ export function ClassScreen() {
         <div className={styles.brandline}>
           <FlowerMark size={19} />
           <span className={styles.brandWord}>Carnet de réussites</span>
-          <Link to="/settings" className={styles.teacherLink} aria-label="Ouvrir les réglages">
-            <span aria-hidden="true">{teacherInitial}</span>
+          <Link to="/settings" className={styles.teacherLink}>
+            <span>{teacherInitial}</span>
+            <span className={styles.srOnly}>Ouvrir les réglages</span>
           </Link>
         </div>
 

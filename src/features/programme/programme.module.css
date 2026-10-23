@@ -58,7 +58,7 @@
   min-height: var(--tap-target);
   margin-left: auto;
   padding: 0 10px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-strong);
   border-radius: var(--radius-pill);
   background-color: var(--card);
   color: var(--ink);
@@ -225,8 +225,6 @@
 }
 
 .rowItem {
-  position: relative;
-  padding: 10px 8px;
   border-radius: 12px;
   transition: background-color 0.16s ease;
 }
@@ -262,15 +260,16 @@
   --domain-color: var(--d-vivant);
 }
 
-/* Bouton transparent qui recouvre la ligne : toute la carte est cliquable
-   sans imbriquer la barre de progression dans un bouton. */
+/* Toute la ligne est un bouton : le libellé, le niveau et le compteur font
+   partie du nom accessible, sans superposition transparente. */
 .rowAction {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
+  display: block;
   width: 100%;
+  padding: 10px 8px;
   border-radius: 12px;
   background-color: transparent;
+  color: inherit;
+  text-align: left;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -524,7 +523,7 @@
   width: 100%;
   min-height: 52px;
   padding: 6px 10px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-strong);
   border-radius: 14px;
   background-color: var(--card);
   text-align: left;

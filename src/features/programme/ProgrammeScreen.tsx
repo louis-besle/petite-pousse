@@ -381,35 +381,36 @@ export function ProgrammeScreen() {
                             <button
                               type="button"
                               className={styles.rowAction}
-                              aria-label={`Ouvrir l’objectif : ${objective.label}`}
                               onClick={() => setSelectedObjectiveId(objective.id)}
-                            />
-                            <span className={styles.rowTop}>
-                              <span className={styles.rowLabel}>{objective.label}</span>
-                              <span className={styles.rowChevron} aria-hidden="true">
-                                <Icon name="chevron" size={14} />
+                            >
+                              <span className={styles.srOnly}>Ouvrir l’objectif : </span>
+                              <span className={styles.rowTop}>
+                                <span className={styles.rowLabel}>{objective.label}</span>
+                                <span className={styles.rowChevron} aria-hidden="true">
+                                  <Icon name="chevron" size={14} />
+                                </span>
                               </span>
-                            </span>
-                            <span className={styles.rowMeta}>
-                              <span className={styles.levelTag}>
-                                {levelLabels(objective)}
-                              </span>
-                              <span
-                                className={styles.bar}
-                                role="progressbar"
-                                aria-valuenow={numerator}
-                                aria-valuemin={0}
-                                aria-valuemax={denominator}
-                                aria-label={`${objective.label} : ${pupilLabel(numerator)} sur ${denominator}`}
-                              >
+                              <span className={styles.rowMeta}>
+                                <span className={styles.levelTag}>
+                                  {levelLabels(objective)}
+                                </span>
                                 <span
-                                  className={styles.barFill}
-                                  style={{ width: `${percent}%` }}
-                                  aria-hidden="true"
-                                />
+                                  className={styles.bar}
+                                  role="progressbar"
+                                  aria-valuenow={numerator}
+                                  aria-valuemin={0}
+                                  aria-valuemax={denominator}
+                                  aria-label={`${objective.label} : ${pupilLabel(numerator)} sur ${denominator}`}
+                                >
+                                  <span
+                                    className={styles.barFill}
+                                    style={{ width: `${percent}%` }}
+                                    aria-hidden="true"
+                                  />
+                                </span>
+                                <span className={styles.count}>{pupilLabel(numerator)}</span>
                               </span>
-                              <span className={styles.count}>{pupilLabel(numerator)}</span>
-                            </span>
+                            </button>
                           </li>
                         )
                       })}
