@@ -1,0 +1,500 @@
+.screen {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 4px;
+  padding-bottom: 12px;
+}
+
+/* ------------------------------------------------------------------ */
+/* En-tête                                                             */
+/* ------------------------------------------------------------------ */
+
+.topBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: var(--tap-target);
+}
+
+.backLink {
+  display: grid;
+  place-items: center;
+  width: var(--tap-target);
+  height: var(--tap-target);
+  flex: none;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background-color: var(--card);
+  box-shadow: var(--shadow-card);
+  color: var(--ink);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 0.16s ease,
+    border-color 0.16s ease;
+}
+
+.backLink:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+@media (hover: hover) {
+  .backLink:hover {
+    border-color: var(--ink);
+    background-color: var(--cream);
+  }
+}
+
+.title {
+  min-width: 0;
+  overflow: hidden;
+  font-size: clamp(24px, 6.5vw, 30px);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.periodPill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  margin-left: auto;
+  padding: 6px 13px;
+  flex: none;
+  border-radius: var(--radius-pill);
+  background-color: var(--mustard-soft);
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.loading {
+  padding: 18px 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.emptyText {
+  max-width: 38ch;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.inlineLink {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  min-height: var(--tap-target);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.inlineLink:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ------------------------------------------------------------------ */
+/* Feuille A4                                                          */
+/* ------------------------------------------------------------------ */
+
+.viewport {
+  width: 100%;
+  padding: 2px 0 8px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.sheet {
+  display: flex;
+  flex-direction: column;
+  width: 595px;
+  min-height: 842px;
+  margin: 0 auto;
+  padding: 42px 48px 28px;
+  border: 1px solid var(--line);
+  background-color: var(--card);
+  box-shadow: 0 14px 30px rgba(47, 42, 36, 0.10);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.sheetHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.sheetIdentity {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sheetTitle {
+  margin-top: 22px;
+  font-family: var(--font-title);
+  font-size: 40px;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.sheetStudent {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.sheetName {
+  font-family: var(--font-title);
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.sheetMeta {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.sheetPeriod {
+  flex: none;
+  max-width: 250px;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  background-color: var(--mustard-soft);
+  color: var(--ink);
+  font-size: 9.5px;
+  font-weight: 800;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.sheetBody {
+  flex: 1 0 auto;
+  margin-top: 18px;
+  columns: 2;
+  column-gap: 26px;
+}
+
+.sheetEmpty {
+  flex: 1;
+  margin-top: 22px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* ------------------------------------------------------------------ */
+/* Domaines et réussites                                               */
+/* ------------------------------------------------------------------ */
+
+.domain {
+  margin-bottom: 16px;
+  break-inside: avoid;
+}
+
+.domainHead {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 16px;
+}
+
+.domainDot {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+  background-color: var(--faint);
+}
+
+.domainDot[data-domain='langage'] {
+  background-color: var(--d-langage);
+}
+
+.domainDot[data-domain='maths'] {
+  background-color: var(--d-maths);
+}
+
+.domainDot[data-domain='corps'] {
+  background-color: var(--d-corps);
+}
+
+.domainDot[data-domain='arts'] {
+  background-color: var(--d-arts);
+}
+
+.domainDot[data-domain='temps'] {
+  background-color: var(--d-temps);
+}
+
+.domainDot[data-domain='vivant'] {
+  background-color: var(--d-vivant);
+}
+
+.domainLabel {
+  font-size: 8.5px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.domainCount {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 8px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.entries {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.entry {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr);
+  gap: 9px;
+  align-items: start;
+  break-inside: avoid;
+}
+
+.thumb,
+.thumbEmpty {
+  width: 46px;
+  height: 36px;
+  border-radius: 6px;
+}
+
+.thumb {
+  object-fit: cover;
+}
+
+.thumbEmpty {
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  background-color: var(--cream);
+  color: var(--muted);
+}
+
+.thumbEmpty[data-domain='langage'] {
+  background-color: var(--d-langage-soft);
+  color: var(--d-langage-ink);
+}
+
+.thumbEmpty[data-domain='maths'] {
+  background-color: var(--d-maths-soft);
+  color: var(--d-maths-ink);
+}
+
+.thumbEmpty[data-domain='corps'] {
+  background-color: var(--d-corps-soft);
+  color: var(--d-corps-ink);
+}
+
+.thumbEmpty[data-domain='arts'] {
+  background-color: var(--d-arts-soft);
+  color: var(--d-arts-ink);
+}
+
+.thumbEmpty[data-domain='temps'] {
+  background-color: var(--d-temps-soft);
+  color: var(--d-temps-ink);
+}
+
+.thumbEmpty[data-domain='vivant'] {
+  background-color: var(--d-vivant-soft);
+  color: var(--d-vivant-ink);
+}
+
+.entryText {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 1px;
+}
+
+.entryLabel {
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.28;
+}
+
+.entryMeta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 8.5px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.entryDot {
+  width: 4px;
+  height: 4px;
+  flex: none;
+  border-radius: 50%;
+  background-color: var(--sage);
+}
+
+/* ------------------------------------------------------------------ */
+/* Pied de feuille                                                     */
+/* ------------------------------------------------------------------ */
+
+.sheetFooter {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.footerRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  color: var(--muted);
+  font-size: 8px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.signature {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.signatureLine {
+  width: 150px;
+  height: 1px;
+  background-color: var(--ink);
+}
+
+.page {
+  display: block;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 8px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+/* ------------------------------------------------------------------ */
+/* Note et actions                                                     */
+/* ------------------------------------------------------------------ */
+
+.note {
+  padding: 0 10px;
+  color: var(--muted);
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.45;
+  text-align: center;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Réduction de la feuille sur téléphone                               */
+/* ------------------------------------------------------------------ */
+
+@media (max-width: 639px) {
+  .sheet {
+    zoom: 0.9;
+  }
+}
+
+@media (max-width: 589px) {
+  .sheet {
+    zoom: 0.84;
+  }
+}
+
+@media (max-width: 549px) {
+  .sheet {
+    zoom: 0.78;
+  }
+}
+
+@media (max-width: 509px) {
+  .sheet {
+    zoom: 0.72;
+  }
+}
+
+@media (max-width: 469px) {
+  .sheet {
+    zoom: 0.65;
+  }
+}
+
+@media (max-width: 429px) {
+  .sheet {
+    zoom: 0.58;
+  }
+}
+
+@media (max-width: 389px) {
+  .sheet {
+    zoom: 0.52;
+  }
+}
+
+@media (max-width: 349px) {
+  .sheet {
+    zoom: 0.46;
+  }
+}

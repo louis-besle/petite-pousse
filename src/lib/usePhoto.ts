@@ -54,7 +54,7 @@ export function usePhoto(photoId?: string): string | undefined {
   return usePhotoUrl(photoId, 'full')
 }
 
-/** URL de la vignette, pour les lignes du dossier. */
+/** URL de la vignette, pour les lignes du dossier et l'aperçu du bilan. */
 export function usePhotoThumb(photoId?: string): string | undefined {
   return usePhotoUrl(photoId, 'thumb')
 }
