@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test'
 import referentialData from '../src/data/referential.json' with { type: 'json' }
+import { schoolYearIdForDate } from '../src/domain/schoolYear'
 import type { AgeBand, Domain, Section, Validation } from '../src/domain/types'
+import { todayIso } from '../src/lib/date'
 import {
   countStored,
   openClass,
@@ -17,7 +19,16 @@ import {
 const STUDENT_COUNT = 20
 const OBJECTIVES_PER_STUDENT = 75
 const VALIDATION_COUNT = STUDENT_COUNT * OBJECTIVES_PER_STUDENT
-const SCHOOL_YEAR_ID = '2026-2027'
+
+/** Date figée, partagée par l'horloge de la page et le calcul de l'année. */
+const FROZEN_NOW = new Date('2026-11-07T10:00:00')
+
+/**
+ * Année semée, dérivée de la date figée comme le fait l'application. Un
+ * changement de calendrier ne peut donc pas semer silencieusement dans une
+ * année que la classe n'affiche pas.
+ */
+const SCHOOL_YEAR_ID = schoolYearIdForDate(todayIso(FROZEN_NOW))
 
 /**
  * Budget CI volontairement large : la machine de CI est lente et partagée.
@@ -158,12 +169,18 @@ test.describe('performance', () => {
     // Semis en masse : 1 500 validations et 1 500 photos en une transaction.
     test.setTimeout(120_000)
 
-    // Horloge figée : l'année amorcée et les compteurs portent sur 2026-2027,
-    // quel que soit le calendrier de la machine de CI.
-    await page.clock.setFixedTime(new Date('2026-11-07T10:00:00'))
+    // Horloge figée : l'année amorcée et les compteurs portent sur l'année
+    // dérivée de FROZEN_NOW, quel que soit le calendrier de la machine de CI.
+    await page.clock.setFixedTime(FROZEN_NOW)
 
     const objectives = buildObjectiveSeeds()
     expect(objectives).toHaveLength(OBJECTIVES_PER_STUDENT)
+    const openDomainObjective = objectives.find(
+      (objective) => objective.domainId === 'langage',
+    )
+    if (openDomainObjective === undefined) {
+      throw new Error('Aucun objectif de langage dans le semis.')
+    }
 
     // Ouvre l'application une première fois pour amorcer réglages et année.
     await openClass(page)
@@ -190,6 +207,11 @@ test.describe('performance', () => {
       name: /^Élève 01, section /,
     })
     await expect(firstCard).toBeVisible()
+
+    // La carte compte les réussites de l'année affichée : preuve que les
+    // 1 500 lignes semées sont bien dans l'année vue par la classe, pas dans
+    // une année que l'écran ignorerait.
+    await expect(firstCard).toContainText(`${OBJECTIVES_PER_STUDENT} réussites`)
     const reloadMs = Date.now() - reloadStartedAt
 
     // Budget CI : < 4 000 ms. Cible téléphone : < 2 000 ms, mesurée à la main
@@ -205,6 +227,16 @@ test.describe('performance', () => {
     await firstCard.click()
     await expect(
       page.getByRole('heading', { level: 1, name: 'Élève 01', exact: true }),
+    ).toBeVisible()
+
+    // Le dossier rend réellement les lignes semées de l'année : résumé complet
+    // et premier objectif de langage visible (domaine ouvert par défaut).
+    const summary = page.getByRole('group', { name: 'Résumé du dossier' })
+    await expect(summary).toContainText(
+      `${OBJECTIVES_PER_STUDENT} réussites`,
+    )
+    await expect(
+      page.getByText(openDomainObjective.label, { exact: true }).first(),
     ).toBeVisible()
     const dossierMs = Date.now() - dossierStartedAt
 

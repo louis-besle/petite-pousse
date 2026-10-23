@@ -19,7 +19,11 @@ export default defineConfig({
   workers: 1,
   forbidOnly: Boolean(process.env.CI),
   retries: 0,
-  reporter: [['list']],
+  // En CI, le rapport HTML alimente l'artefact d'échec ; en local, la liste
+  // reste seule pour ne pas écrire de dossier de rapport à chaque exécution.
+  reporter: process.env.CI
+    ? [['list'], ['html', { open: 'never' }]]
+    : [['list']],
   use: {
     baseURL: 'http://localhost:4173',
     viewport: { width: 390, height: 844 },

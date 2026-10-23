@@ -47,9 +47,9 @@ export function formatLongDate(date: string): string {
 /**
  * Date locale du jour au format `YYYY-MM-DD`. Construite à partir des
  * accesseurs locaux : `toISOString()` bascule de jour selon le fuseau.
+ * Une date peut être fournie pour rendre les calculs déterministes (tests).
  */
-export function todayIso(): string {
-  const now = new Date()
+export function todayIso(now: Date = new Date()): string {
   const year = String(now.getFullYear()).padStart(4, '0')
   const month = String(now.getMonth() + 1).padStart(2, '0')
   const day = String(now.getDate()).padStart(2, '0')
