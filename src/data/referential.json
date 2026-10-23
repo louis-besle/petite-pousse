@@ -83,6 +83,31 @@
       "id": "lang-premiers-ecrits",
       "domainId": "langage",
       "label": "Produire de premiers écrits"
+    },
+    {
+      "id": "maths-nombres",
+      "domainId": "maths",
+      "label": "Découvrir les nombres"
+    },
+    {
+      "id": "maths-problemes",
+      "domainId": "maths",
+      "label": "Utiliser les nombres pour résoudre des problèmes"
+    },
+    {
+      "id": "maths-solides-formes",
+      "domainId": "maths",
+      "label": "Explorer les solides et les formes planes"
+    },
+    {
+      "id": "maths-grandeurs",
+      "domainId": "maths",
+      "label": "Explorer des grandeurs : la longueur, la masse"
+    },
+    {
+      "id": "maths-motifs",
+      "domainId": "maths",
+      "label": "Se familiariser avec les motifs organisés"
     }
   ],
   "objectives": [
@@ -1578,6 +1603,1188 @@
       "source": {
         "bo": "BO n°41 du 31 octobre 2024",
         "page": 21
+      }
+    },
+    {
+      "id": "maths-nombres-01",
+      "competencyId": "maths-nombres",
+      "domainId": "maths",
+      "label": "Comprendre qu’une quantité d’objets ne dépend ni de la nature de ces objets ni de leur organisation spatiale.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Reconnaître puis réaliser des collections d’objets de même cardinal (d’abord deux objets, puis trois, voire quatre) mais de caractéristiques différentes (couleur, fonction et surtout taille)."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 38
+      }
+    },
+    {
+      "id": "maths-nombres-02",
+      "competencyId": "maths-nombres",
+      "domainId": "maths",
+      "label": "Comprendre que : • si on ajoute un objet à une collection, le nombre qui désigne sa quantité est le suivant dans la suite orale des noms des nombres ; • dans la suite orale des noms des nombres, chaque nombre s’obtient en ajoutant un au nombre précédent.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Nommer les nombres correspondant au cardinal d’une collection avant et après l’ajout d’un élément."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 38
+      }
+    },
+    {
+      "id": "maths-nombres-03",
+      "competencyId": "maths-nombres",
+      "domainId": "maths",
+      "label": "Dénombrer une collection d’objets (jusqu’à trois, voire quatre).",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Dénombrer une collection d’objets en les déplaçant un à un pour construire le principe de cardinalité."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 38
+      }
+    },
+    {
+      "id": "maths-nombres-04",
+      "competencyId": "maths-nombres",
+      "domainId": "maths",
+      "label": "Constituer une collection (jusqu’à trois, voire quatre objets) d’un cardinal donné.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Reconnaitre puis réaliser des collections d’objets dont le cardinal est donné par une représentation analogique ou par le nom d’un nombre. Par exemple, l’élève est capable, pour des nombres allant de un à trois, de répondre à la consigne « Mets dans chaque boite autant de jetons qu’il y a de points ou de doigts indiqués sur la boite »."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 38
+      }
+    },
+    {
+      "id": "maths-nombres-05",
+      "competencyId": "maths-nombres",
+      "domainId": "maths",
+      "label": "Comparer des quantités.",
+      "ageBands": [
+        "before4",
+        "from4",
+        "from5"
+      ],
+      "examples": {
+        "before4": "Comparer globalement (sans dénombrer) des cardinaux de deux collections dont les quantités d’objets diffèrent d’un facteur au moins égal à deux et utiliser les locutions « plus que » et « moins que ». Ne pas se limiter aux petites collections. Par exemple, l’élève est capable de comparer six crayons placés dans un pot transparent à deux crayons placés dans un autre.",
+        "from4": "Comparer globalement (sans dénombrer) les cardinaux de deux collections dont les quantités d’objets diffèrent d’un facteur au moins égal à deux et utiliser les locutions « plus que » et « moins que ». Ne pas se limiter aux petites collections.",
+        "from5": "Comparer globalement (sans dénombrer) les cardinaux de deux collections dont les quantités d’objets diffèrent d’un facteur au moins égal à deux et utiliser les locutions « plus que », « moins que », « autant que ». On ne se limite pas aux petites collections."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 39
+      }
+    },
+    {
+      "id": "maths-nombres-06",
+      "competencyId": "maths-nombres",
+      "domainId": "maths",
+      "label": "Composer et décomposer des nombres (deux, trois, voire quatre).",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Réaliser des compositions et des décompositions de nombres avec les doigts des deux mains."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 39
+      }
+    },
+    {
+      "id": "maths-nombres-07",
+      "competencyId": "maths-nombres",
+      "domainId": "maths",
+      "label": "Manipuler et verbaliser des compositions et des décompositions de nombres. Cela permet d’installer le fait que, dans une composition, l’ordre ne compte pas ; ces compositions et décompositions permettent de dénombrer plus efficacement que par le comptage un à un.",
+      "ageBands": [
+        "before4",
+        "from4"
+      ],
+      "examples": {
+        "before4": "Verbaliser les compositions de nombres sous la forme « un et un font deux ; deux et un font trois ; un et deux font trois, etc. ».",
+        "from4": "Verbaliser les compositions de nombres dont le résultat est inférieur ou égal à six. Verbaliser les décompositions des nombres de deux à six."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 39
+      }
+    },
+    {
+      "id": "maths-nombres-08",
+      "competencyId": "maths-nombres",
+      "domainId": "maths",
+      "label": "Associer une quantité, le nom d’un nombre et une écriture chiffrée.",
+      "ageBands": [
+        "before4",
+        "from4",
+        "from5"
+      ],
+      "examples": {
+        "before4": "Représenter par une écriture chiffrée une quantité, une représentation analogique ou le nom d’un nombre et vice versa.",
+        "from4": "Représenter par une écriture chiffrée une quantité, une représentation analogique, le nom d’un nombre et vice versa.",
+        "from5": "Représenter par une écriture chiffrée une quantité, une représentation analogique, le nom d’un nombre et vice versa."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 39
+      }
+    },
+    {
+      "id": "maths-nombres-09",
+      "competencyId": "maths-nombres",
+      "domainId": "maths",
+      "label": "Connaitre la comptine numérique de un à six.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Réciter de façon ordonnée et segmentée la comptine jusqu’à six, en partant de un."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 39
+      }
+    },
+    {
+      "id": "maths-nombres-10",
+      "competencyId": "maths-nombres",
+      "domainId": "maths",
+      "label": "Poursuivre la compréhension qu’une quantité d’objets ne dépend ni de leur nature ni de leur organisation spatiale.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Reconnaître et réaliser des collections d’objets de même cardinal (jusqu’à six) mais de caractéristiques différentes (couleur, fonction et surtout taille)."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 39
+      }
+    },
+    {
+      "id": "maths-nombres-11",
+      "competencyId": "maths-nombres",
+      "domainId": "maths",
+      "label": "Poursuivre la compréhension des faits suivants : • si on ajoute un objet à une collection, le nombre qui désigne sa quantité est le suivant dans la suite orale des noms des nombres ; • dans la suite orale des nombres, chaque nombre s’obtient en ajoutant un au nombre précédent.",
+      "ageBands": [
+        "from4",
+        "from5"
+      ],
+      "examples": {
+        "from4": "Nommer les nombres correspondant au cardinal d’une collection avant et après l’ajout d’un élément.",
+        "from5": "Nommer les nombres correspondant au cardinal d’une collection avant et après l’ajout ou le retrait d’un élément."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 39
+      }
+    },
+    {
+      "id": "maths-nombres-12",
+      "competencyId": "maths-nombres",
+      "domainId": "maths",
+      "label": "Parcourir une collection en passant une et une seule fois par chacun de ses éléments.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Créer un parcours passant une et une seule fois par chaque élément. Par exemple, dans une boite de douze œufs fermée et vide dans laquelle on a percé douze fentes correspondant chacune à un alvéole, l’élève, qui dispose d’un grand nombre de jetons, est capable de mettre un jeton, et un seul, dans chaque fente sans oublier d’alvéole. Ou encore, si un certain nombre de boites d’allumettes fermées sont disposées sur une table et que l’élève dispose d’un grand nombre de jetons, il est capable de mettre un jeton, et un seul, dans chacune d’elles, sans en oublier, et de la refermer. Il peut déplacer les boites d’allumettes au fur et à mesure qu’elles contiennent un jeton."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 39
+      }
+    },
+    {
+      "id": "maths-nombres-13",
+      "competencyId": "maths-nombres",
+      "domainId": "maths",
+      "label": "Dénombrer une collection d’objets (jusqu’à six).",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Utiliser le principe de cardinalité pour dénombrer une collection par énumération."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 40
+      }
+    },
+    {
+      "id": "maths-nombres-14",
+      "competencyId": "maths-nombres",
+      "domainId": "maths",
+      "label": "Constituer une collection d’un cardinal donné (jusqu’à six objets).",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Reconnaitre et réaliser des collections d’objets dont le cardinal est donné par une représentation analogique ou par le nom d’un nombre."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 40
+      }
+    },
+    {
+      "id": "maths-nombres-15",
+      "competencyId": "maths-nombres",
+      "domainId": "maths",
+      "label": "Composer et décomposer des nombres inférieurs ou égaux à six.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Réaliser des compositions et des décompositions de nombres avec les doigts d’une ou des deux mains."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 40
+      }
+    },
+    {
+      "id": "maths-nombres-16",
+      "competencyId": "maths-nombres",
+      "domainId": "maths",
+      "label": "Écrire en chiffres les nombres de un à six.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "S’initier à l’écriture des nombres dans des situations de communication."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 40
+      }
+    },
+    {
+      "id": "maths-nombres-17",
+      "competencyId": "maths-nombres",
+      "domainId": "maths",
+      "label": "Connaitre la comptine numérique de un à douze.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Réciter la comptine numérique de un à douze de façon ordonnée et segmentée."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 40
+      }
+    },
+    {
+      "id": "maths-nombres-18",
+      "competencyId": "maths-nombres",
+      "domainId": "maths",
+      "label": "Poursuivre la compréhension qu’une quantité d’objets ne dépend ni de la nature de ces objets ni de leur organisation spatiale.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Reconnaître et réaliser des collections d’objets de même cardinal (jusqu’à dix, voire au-delà) mais de caractéristiques différentes (couleur, fonction et surtout taille)."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 41
+      }
+    },
+    {
+      "id": "maths-nombres-19",
+      "competencyId": "maths-nombres",
+      "domainId": "maths",
+      "label": "Poursuivre les stratégies de parcours d’une collection en passant une et une seule fois par chacun de ses éléments.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Créer un parcours passant une et une seule fois par chaque élément."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 41
+      }
+    },
+    {
+      "id": "maths-nombres-20",
+      "competencyId": "maths-nombres",
+      "domainId": "maths",
+      "label": "Dénombrer une collection d’objets (jusqu’à dix, voire au-delà).",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Utiliser le principe de cardinalité pour dénombrer une collection par énumération."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 41
+      }
+    },
+    {
+      "id": "maths-nombres-21",
+      "competencyId": "maths-nombres",
+      "domainId": "maths",
+      "label": "Constituer une collection d’un cardinal donné (jusqu’à dix, voire au-delà).",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Reconnaitre et réaliser des collections d’objets dont le cardinal (jusqu’à dix, voire au-delà) est donné par une représentation analogique, par le nom du nombre ou par son écriture chiffrée."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 41
+      }
+    },
+    {
+      "id": "maths-nombres-22",
+      "competencyId": "maths-nombres",
+      "domainId": "maths",
+      "label": "Composer et décomposer des nombres inférieurs ou égaux à dix, voire au-delà.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Exploiter les compositions et les décompositions des nombres jusqu’à dix."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 41
+      }
+    },
+    {
+      "id": "maths-nombres-23",
+      "competencyId": "maths-nombres",
+      "domainId": "maths",
+      "label": "Manipuler et verbaliser des compositions et des décompositions de nombres. Cela permet d’installer le fait que, dans une composition, l’ordre ne compte pas.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Verbaliser les compositions de nombres. Parmi elles, figurent les doubles : « deux et deux font quatre », « deux fois deux font quatre », « trois et trois font six », « deux fois trois font six », « quatre et quatre font huit », « deux fois quatre font huit », « cinq et cinq font dix », « deux fois cinq font dix »."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 42
+      }
+    },
+    {
+      "id": "maths-nombres-24",
+      "competencyId": "maths-nombres",
+      "domainId": "maths",
+      "label": "Surcompter (c’est-à-dire compter de un en un à partir d’un nombre donné).",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Pour ajouter deux nombres, surcompter à partir du plus grand. Exemple de verbalisation par un élève : « Pour ajouter quatre et cinq, je mets cinq dans ma tête et je compte quatre sur mes doigts à partir de cinq : six, sept, huit, neuf. Donc quatre et cinq font neuf »."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 42
+      }
+    },
+    {
+      "id": "maths-nombres-25",
+      "competencyId": "maths-nombres",
+      "domainId": "maths",
+      "label": "Écrire en chiffres les nombres de un à dix.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Écrire des nombres dans des situations de communication."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 42
+      }
+    },
+    {
+      "id": "maths-nombres-26",
+      "competencyId": "maths-nombres",
+      "domainId": "maths",
+      "label": "Connaitre et utiliser la comptine numérique jusqu’à trente.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Réciter la comptine numérique de un à trente de façon ordonnée et segmentée."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 42
+      }
+    },
+    {
+      "id": "maths-nombres-27",
+      "competencyId": "maths-nombres",
+      "domainId": "maths",
+      "label": "Comprendre la notion de rang.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Repérer par perception visuelle le rang d’un objet dans une suite ordonnée de cardinal inférieur ou égal à trois."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 43
+      }
+    },
+    {
+      "id": "maths-nombres-28",
+      "competencyId": "maths-nombres",
+      "domainId": "maths",
+      "label": "Déterminer l’effet d’un déplacement sur une position.",
+      "ageBands": [
+        "from4",
+        "from5"
+      ],
+      "examples": {
+        "from4": "À partir d’une position initiale, déterminer la position résultant d’un avancement ou d’un recul d’une ou de deux unités. Exemple de procédure d’avancement de deux cases à partir du quatre : l’élève part du quatre et surcompte de deux : « cinq, six » en levant un doigt pour chaque nombre du surcomptage tout en avançant le pion d’une case à chaque fois.",
+        "from5": "Verbaliser la procédure permettant de déterminer la position résultant d’un avancement ou d’un recul à partir d’une position initiale."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 43
+      }
+    },
+    {
+      "id": "maths-nombres-29",
+      "competencyId": "maths-nombres",
+      "domainId": "maths",
+      "label": "Se familiariser avec le début de la bande numérique.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Positionner des représentations (constellation de points, doigts, écriture chiffrée) des nombres inférieurs ou égaux à six dans les premières cases de la bande numérique."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 43
+      }
+    },
+    {
+      "id": "maths-nombres-30",
+      "competencyId": "maths-nombres",
+      "domainId": "maths",
+      "label": "Comprendre la notion de rang d’un objet.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Repérer à l’aide d’une procédure de comptage le rang d’un élément d’une suite ordonnée comportant au plus dix éléments."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 43
+      }
+    },
+    {
+      "id": "maths-nombres-31",
+      "competencyId": "maths-nombres",
+      "domainId": "maths",
+      "label": "Comprendre le lien entre un ajout et un avancement et celui entre un retrait et un recul.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Verbaliser la procédure permettant de déterminer la position résultant d’un avancement ou d’un recul à partir d’une position initiale."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 44
+      }
+    },
+    {
+      "id": "maths-nombres-32",
+      "competencyId": "maths-nombres",
+      "domainId": "maths",
+      "label": "Construire la bande numérique jusqu’à dix.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Positionner des représentations (constellation du dé, doigts, écriture chiffrée, représentation verticale de la quantité associée) des nombres inférieurs ou égaux à dix dans les premières cases de la bande numérique."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 44
+      }
+    },
+    {
+      "id": "maths-problemes-01",
+      "competencyId": "maths-problemes",
+      "domainId": "maths",
+      "label": "Recherche du tout ou d’une partie dans un problème de parties-tout.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Utiliser ses doigts pour compter, surcompter ou décompter. Par exemple, si une valise contient deux peluches et que l’enseignant en ajoute une devant l’élève et ferme la valise, l’élève est capable de répondre à la question : « Combien y a-t-il de peluches dans la valise maintenant ? » Par exemple, si dans une boite opaque contenant quatre crayons, l’enseignant en retire deux devant l’élève et ferme la boite, l’élève est capable de répondre à la demande « J’avais quatre crayons dans la boite. J’en ai retiré deux. Combien y a-t-il de crayons dans la boite maintenant ? »."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 45
+      }
+    },
+    {
+      "id": "maths-problemes-02",
+      "competencyId": "maths-problemes",
+      "domainId": "maths",
+      "label": "Rechercher le tout ou une partie dans un problème de parties-tout.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Par exemple, si l’enseignant place une collection d’objets sur une table, l’élève est capable de la dénombrer. Il peut noter cette quantité sous différentes formes pour la mémoriser avant de fermer les yeux pendant que l’enseignant dissimule sous un chapeau une partie de la collection. Il est ensuite capable de trouver la quantité dissimulée sous le chapeau. Ou encore, si l’enseignant déclare « Lilou avait cinq kiwis et elle en a mangé deux, combien de kiwis lui reste-t-il ? », l’élève est capable de verbaliser la réponse sous une forme du type : « Si Lilou avait cinq kiwis et qu’elle en a mangé deux, pour trouver combien de kiwis il lui reste, je recule de deux à partir de cinq : quatre ; trois. Il lui reste trois kiwis ». Ou encore sous une forme du type : « Comme je sais que cinq, c’est deux et trois, il lui reste trois kiwis »."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 45
+      }
+    },
+    {
+      "id": "maths-problemes-03",
+      "competencyId": "maths-problemes",
+      "domainId": "maths",
+      "label": "Trouver une position finale à partir d’une position initiale et d’un déplacement sur une piste du type du jeu de l’oie ou sur la bande numérique.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Par exemple, l’élève est capable de préciser la case d’arrivée à partir d’une case de départ et du résultat d’un lancer de dé sur un jeu de plateau du type du jeu de l’oie avec des contraintes qui imposent de reculer. Le dé peut être à constellations ou chiffré."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 45
+      }
+    },
+    {
+      "id": "maths-problemes-04",
+      "competencyId": "maths-problemes",
+      "domainId": "maths",
+      "label": "Rechercher le tout dans un problème de groupements.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Par exemple, si l’enseignant positionne devant l’élève trois boites opaques contenant chacune deux crayons et qu’il montre successivement le contenu de chacune de ces boites, l’élève est capable de trouver le nombre total de crayons."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 45
+      }
+    },
+    {
+      "id": "maths-problemes-05",
+      "competencyId": "maths-problemes",
+      "domainId": "maths",
+      "label": "Rechercher la valeur d’une part dans un problème de partage équitable.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Par exemple, si l’enseignant déclare « J’ai six gâteaux à partager équitablement entre deux poupées et chacune doit recevoir le plus grand nombre possible de gâteaux », l’élève est capable de trouver le nombre de gâteaux que va recevoir chaque poupée. Du matériel est éventuellement mis à disposition de l’élève pour lui permettre de mettre en scène la situation avant de répondre à la question."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 45
+      }
+    },
+    {
+      "id": "maths-problemes-06",
+      "competencyId": "maths-problemes",
+      "domainId": "maths",
+      "label": "Déterminer le tout ou une partie dans un problème de parties-tout (d’abord deux parties, puis éventuellement trois).",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Par exemple, si l’enseignant met successivement devant l’élève trois cubes rouges, un cube bleu et deux cubes verts dans une boite opaque, l’élève est capable de déterminer le nombre total de cubes dans la boite. Ou encore, si sept oiseaux sont perchés sur une branche et que trois d’entre eux s’envolent, l’élève est capable de déterminer le nombre d’oiseaux qu’il reste. Dans un premier temps l’enseignant modélise la situation à l’aide de matériel symbolique : un fil et des pinces à linge. Dans un second temps il fournit à l’élève une représentation symbolique sur papier. L’élève est alors capable de : barrer trois des symboles représentant les oiseaux envolés et compter ceux qui restent ; décompter de trois à partir de sept ; utiliser la décomposition de sept en quatre et trois."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 46
+      }
+    },
+    {
+      "id": "maths-problemes-07",
+      "competencyId": "maths-problemes",
+      "domainId": "maths",
+      "label": "Déterminer la quantité d’objets ayant été ajoutée ou retirée à une collection à partir de ses quantités initiale et finale.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Par exemple, si lors de la recréation huit élèves veulent un vélo alors que seulement deux vélos sont sortis, l’élève est capable de préciser le nombre de vélos qu’il faut sortir pour que chacun ait un vélo."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 46
+      }
+    },
+    {
+      "id": "maths-problemes-08",
+      "competencyId": "maths-problemes",
+      "domainId": "maths",
+      "label": "Déterminer la position finale (respectivement initiale) à partir de la position initiale (respectivement finale) et d’un déplacement sur une piste du type du jeu de l’oie ou sur la bande numérique.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Utiliser des procédures de calcul (comptage, décomptage, surcomptage) pour résoudre un problème parties-tout. Ainsi, pour calculer la quantité d’objets issue de la réunion d’une collection de trois à une collection de cinq objets, l’élève « met le plus grand nombre dans sa tête » (ici cinq) et surcompte de l’autre nombre (ici trois) en levant les doigts : « six, sept, huit »."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 46
+      }
+    },
+    {
+      "id": "maths-problemes-09",
+      "competencyId": "maths-problemes",
+      "domainId": "maths",
+      "label": "Déterminer le cardinal d’une collection à partir de celui d’une autre collection et de l’écart entre les deux.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Par exemple, l’élève est capable de résoudre le problème suivant, dont l’énoncé est en concordance avec l’opération à effectuer : « Pierre a cinq billes. Julie a trois billes de plus que Pierre. Combien Julie a-t-elle de billes ? » Il est également capable de résoudre le problème suivant, dont l’énoncé est en discordance avec l’opération à effectuer : « Pierre a cinq billes. Il a trois billes de moins que Julie. Combien Julie a-t-elle de billes ? »"
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 46
+      }
+    },
+    {
+      "id": "maths-problemes-10",
+      "competencyId": "maths-problemes",
+      "domainId": "maths",
+      "label": "Déterminer le tout dans un problème de groupement d’objets.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Par exemple, si quatre assiettes sont placées sur une table et qu’une grande collection de gâteaux (symbolisés par des jetons) est placée sur une autre table éloignée, l’élève est capable d’aller chercher en un seul voyage la quantité exacte de gâteaux pour qu’il y ait deux gâteaux dans chaque assiette."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 46
+      }
+    },
+    {
+      "id": "maths-problemes-11",
+      "competencyId": "maths-problemes",
+      "domainId": "maths",
+      "label": "Déterminer la valeur d’une part dans un problème de partage équitable (avec éventuellement un reste).",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Par exemple, si deux poupées sont positionnées devant une table et que l’enseignant déclare « Je veux partager dix gâteaux entre mes deux poupées pour que chacune reçoive le même nombre de gâteaux », l’élève, qui dispose de dix jetons symbolisant les gâteaux, est capable de déterminer combien de gâteaux va recevoir chaque poupée. Ou encore, l’élève, qui dispose de dix images, est capable de demander le nombre d’enveloppes nécessaires pour ranger deux images par enveloppe."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 46
+      }
+    },
+    {
+      "id": "maths-solides-formes-01",
+      "competencyId": "maths-solides-formes",
+      "domainId": "maths",
+      "label": "Reconnaitre, trier et classer des objets selon leur forme.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Classer selon leur forme des objets qui diffèrent aussi par d’autres critères."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 47
+      }
+    },
+    {
+      "id": "maths-solides-formes-02",
+      "competencyId": "maths-solides-formes",
+      "domainId": "maths",
+      "label": "Percevoir l’invariance de la forme d’un objet par rapport aux déplacements qu’il peut subir.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Reconnaitre visuellement et tactilement des objets de même forme qu’un objet donné."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 48
+      }
+    },
+    {
+      "id": "maths-solides-formes-03",
+      "competencyId": "maths-solides-formes",
+      "domainId": "maths",
+      "label": "Reproduire des assemblages de solides ou de formes planes.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "À partir d’un modèle, reproduire un assemblage à l’échelle d’au plus quatre éléments (puzzle, pavage, assemblage de solides)."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 48
+      }
+    },
+    {
+      "id": "maths-solides-formes-04",
+      "competencyId": "maths-solides-formes",
+      "domainId": "maths",
+      "label": "Reconnaitre et classer des solides (cube, boule, pyramide à base carrée, cylindre) et des formes géométriques planes (triangle, carré, disque).",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Classer des solides et des formes planes."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 48
+      }
+    },
+    {
+      "id": "maths-solides-formes-05",
+      "competencyId": "maths-solides-formes",
+      "domainId": "maths",
+      "label": "Reproduire des assemblages de solides ou de formes planes (au maximum cinq).",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Reproduire un modèle (puzzle, pavage, assemblage de solides) comportant jusqu’à cinq éléments."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 48
+      }
+    },
+    {
+      "id": "maths-solides-formes-06",
+      "competencyId": "maths-solides-formes",
+      "domainId": "maths",
+      "label": "Décrire quelques solides simples : cube, pavé, boule, pyramides à base carrée ou triangulaire, cylindre, cône.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Décrire avec des mots simples les solides pour les différencier les uns des autres. Par exemple, l’élève est capable de préciser oralement la nature et le nombre de faces nécessaires à la réalisation d’un cube, d’une pyramide."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 48
+      }
+    },
+    {
+      "id": "maths-solides-formes-07",
+      "competencyId": "maths-solides-formes",
+      "domainId": "maths",
+      "label": "Reconnaitre, trier et classer des formes géométriques planes, indépendamment d’autres critères comme la couleur, la taille, l’orientation.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Trier et classer des formes géométriques."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 48
+      }
+    },
+    {
+      "id": "maths-solides-formes-08",
+      "competencyId": "maths-solides-formes",
+      "domainId": "maths",
+      "label": "Décrire et nommer quelques figures géométriques simples : carré, rectangle, triangle, disque.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Décrire et nommer quelques formes géométriques planes (carré, rectangle, triangle, disque) présentées dans toutes les orientations et dans les configurations les plus générales (rectangle ou carré dont les côtés ne sont ni horizontaux ni verticaux, triangle non équilatéral et dont aucun côté n’est horizontal)."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 48
+      }
+    },
+    {
+      "id": "maths-solides-formes-09",
+      "competencyId": "maths-solides-formes",
+      "domainId": "maths",
+      "label": "Reproduire des assemblages de solides (au maximum cinq) et de formes planes (au maximum huit).",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Reproduire un modèle (puzzle, pavage, assemblage de solides) non nécessairement à l’échelle."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 48
+      }
+    },
+    {
+      "id": "maths-solides-formes-10",
+      "competencyId": "maths-solides-formes",
+      "domainId": "maths",
+      "label": "S’approprier la règle comme outil de tracé.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Utiliser la règle pour effectuer des tracés."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 48
+      }
+    },
+    {
+      "id": "maths-grandeurs-01",
+      "competencyId": "maths-grandeurs",
+      "domainId": "maths",
+      "label": "Reconnaitre un objet de même longueur qu’un objet donné.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Percevoir visuellement qu’un objet est plus long qu’un autre lorsque leurs longueurs sont très différentes."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 49
+      }
+    },
+    {
+      "id": "maths-grandeurs-02",
+      "competencyId": "maths-grandeurs",
+      "domainId": "maths",
+      "label": "Comparer des objets selon leur longueur.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Déplacer un objet pour le mettre à la même origine qu’un autre afin de comparer leur longueur lorsqu’elles diffèrent de peu. Par exemple, l’élève est capable de superposer trois briques par ordre décroissant de longueur afin de construire un escalier et de répartir des briques en trois groupes selon leur longueur."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 49
+      }
+    },
+    {
+      "id": "maths-grandeurs-03",
+      "competencyId": "maths-grandeurs",
+      "domainId": "maths",
+      "label": "Comparer directement des longueurs d’objets rectilignes et verbaliser le résultat.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Déplacer des objets pour les mettre à la même origine que l’un d’eux afin de comparer leur longueur lorsqu’elles diffèrent de peu."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 49
+      }
+    },
+    {
+      "id": "maths-grandeurs-04",
+      "competencyId": "maths-grandeurs",
+      "domainId": "maths",
+      "label": "Classer des objets rectilignes selon leur longueur.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Percevoir visuellement le classement (en trois groupes) de plusieurs objets selon leur longueur lorsque celles-ci sont très différentes."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 49
+      }
+    },
+    {
+      "id": "maths-grandeurs-05",
+      "competencyId": "maths-grandeurs",
+      "domainId": "maths",
+      "label": "Ordonner des objets rectilignes selon leur longueur et verbaliser le résultat.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Par exemple, l’élève est capable de classer selon leur longueur quatre bandes de papier différant à la fois par leur longueur et par leur couleur et de verbaliser le résultat. Ou encore, l’élève est capable de superposer six briques par ordre décroissant de taille afin de construire un escalier."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 49
+      }
+    },
+    {
+      "id": "maths-grandeurs-06",
+      "competencyId": "maths-grandeurs",
+      "domainId": "maths",
+      "label": "Comparer les masses de deux objets.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Soupeser des objets pour les classer selon leur masse lorsque celles-ci sont très différentes. Veiller à comparer des objets de masses volumiques différentes afin de différencier masse et volume. Par exemple, l’élève est capable de comparer les masses d’une balle de tennis et d’une boule de pétanque, d’un sachet rempli de coton et d’un sachet de même volume rempli de sable."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 49
+      }
+    },
+    {
+      "id": "maths-grandeurs-07",
+      "competencyId": "maths-grandeurs",
+      "domainId": "maths",
+      "label": "Comparer indirectement des longueurs d’objets rectilignes.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Utiliser une bande témoin pour y reporter différentes longueurs afin de les comparer."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 49
+      }
+    },
+    {
+      "id": "maths-grandeurs-08",
+      "competencyId": "maths-grandeurs",
+      "domainId": "maths",
+      "label": "Ordonner des objets rectilignes selon leur longueur (au maximum cinq).",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Utiliser une bande témoin pour y reporter différentes longueurs afin de les ordonner."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 49
+      }
+    },
+    {
+      "id": "maths-grandeurs-09",
+      "competencyId": "maths-grandeurs",
+      "domainId": "maths",
+      "label": "Produire un objet rectiligne de même longueur qu’un objet donné.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Utiliser une bande témoin pour y reporter différentes longueurs afin de les ordonner."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 49
+      }
+    },
+    {
+      "id": "maths-grandeurs-10",
+      "competencyId": "maths-grandeurs",
+      "domainId": "maths",
+      "label": "Ordonner les masses de trois objets. Verbaliser les résultats.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Utiliser une balance de type Roberval pour comparer des masses."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 49
+      }
+    },
+    {
+      "id": "maths-grandeurs-11",
+      "competencyId": "maths-grandeurs",
+      "domainId": "maths",
+      "label": "Reconnaitre l’égalité de deux masses et verbaliser le résultat.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Réaliser l’équilibre sur une balance de type Roberval."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 49
+      }
+    },
+    {
+      "id": "maths-motifs-01",
+      "competencyId": "maths-motifs",
+      "domainId": "maths",
+      "label": "Mémoriser un motif répétitif très simple.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Reproduire de mémoire un motif répétitif présentant une alternance."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 50
+      }
+    },
+    {
+      "id": "maths-motifs-02",
+      "competencyId": "maths-motifs",
+      "domainId": "maths",
+      "label": "Reproduire un motif répétitif à l’identique.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Recopier à l’identique un motif répétitif composé de quelques éléments."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 50
+      }
+    },
+    {
+      "id": "maths-motifs-03",
+      "competencyId": "maths-motifs",
+      "domainId": "maths",
+      "label": "Mémoriser un motif répétitif simple.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Reproduire de mémoire un motif répétitif simple."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 51
+      }
+    },
+    {
+      "id": "maths-motifs-04",
+      "competencyId": "maths-motifs",
+      "domainId": "maths",
+      "label": "Reconnaitre un motif répétitif à ses régularités.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Identifier parmi plusieurs configurations celles qui contiennent un motif répétitif."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 51
+      }
+    },
+    {
+      "id": "maths-motifs-05",
+      "competencyId": "maths-motifs",
+      "domainId": "maths",
+      "label": "Décrire oralement des motifs répétitifs simples de différentes natures, sans nécessairement recourir au vocabulaire spécialisé.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Verbaliser les éléments d’un motif répétitif simple visuel, sonore ou gestuel."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 51
+      }
+    },
+    {
+      "id": "maths-motifs-06",
+      "competencyId": "maths-motifs",
+      "domainId": "maths",
+      "label": "Prolonger l’amorce d’un motif répétitif et verbaliser la règle de prolongement utilisée.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Prolonger l’amorce d’un motif répétitif visuel, sonore ou gestuel en verbalisant sa structure. Par exemple, l’élève est capable de reproduire de mémoire, après l’avoir observée, une tour de neuf briques avec alternance d’une brique bleue et de deux briques jaunes. Ou encore, l’élève est capable de trouver l’intrus dans le motif suivant :  Ou encore, l’élève est capable de décrire le motif suivant et de le compléter en y ajoutant l’élément manquant : ★⚫⚫★⚫⚫★?⚫★ Ou encore, l’élève est capable de prolonger les motifs suivants et d’expliquer leur règle de prolongement : ★⚫★⚫ ★⚫⚫★⚫⚫"
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 51
+      }
+    },
+    {
+      "id": "maths-motifs-07",
+      "competencyId": "maths-motifs",
+      "domainId": "maths",
+      "label": "Repérer et décrire oralement la structure d’un motif évolutif (par exemple relevant de la transcription formelle ABAABBAAABBB).",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Verbaliser les éléments d’un motif évolutif simple en utilisant un lexique plus élaboré (notamment géométrique). Par exemple, « un carré, un disque, deux carrés, deux disques et on recommence en ajoutant un à chaque fois »."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 51
+      }
+    },
+    {
+      "id": "maths-motifs-08",
+      "competencyId": "maths-motifs",
+      "domainId": "maths",
+      "label": "Identifier la structure d’un motif répétitif ou évolutif indépendamment des éléments physiques qui le composent.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Transcrire un motif visuel simple en utilisant des symboles différents de ceux qui le composent."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 51
+      }
+    },
+    {
+      "id": "maths-motifs-09",
+      "competencyId": "maths-motifs",
+      "domainId": "maths",
+      "label": "Créer des motifs de différentes natures.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Créer un motif (visuel, sonore ou gestuel) et le décrire afin qu’un autre élève soit capable de le reproduire."
+      },
+      "source": {
+        "bo": "BO n°41 du 31 octobre 2024",
+        "page": 51
       }
     }
   ]
