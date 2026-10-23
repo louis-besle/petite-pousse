@@ -22,9 +22,10 @@ référentiel généré `src/data/referential.json` (version `2026.1.0`).
 Les `source_page` sont des **numéros de page du PDF** (page PDF 6 = folio « 5 »).
 La page PDF 52 est blanche (folio « 51 » seul), ce qui a été confirmé sur le PDF.
 
-## Échantillon de 20 objectifs
+## Échantillon stratifié de 20 objectifs
 
-Sélection couvrant les six domaines, les trois tranches d’âge et 20 compétences
+Il s’agit d’un **échantillon stratifié** — et non d’un tirage aléatoire —
+couvrant les six domaines, les trois tranches d’âge et 20 compétences
 distinctes. Chaque objectif a été localisé à sa `source_page`, puis comparé au
 texte du PDF après normalisation des seuls artefacts de mise en page : espaces et
 sauts de ligne, césures (`au - delà` → `au-delà`), apostrophes typographiques,

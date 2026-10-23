@@ -19,10 +19,9 @@ doit contenir que des intitulés et des exemples recopiés du texte officiel.
   <https://eduscol.education.gouv.fr/sites/default/files/document/programme-cycle-1-consolide-127565.pdf>
   (63 pages).
 
-Le PDF consolidé n’est **pas commité** : il est volumineux et reste dans le
-dossier de travail local `.superpowers/sdd/…/tools/` (dossier ignoré par git).
-Seul ce dossier `source/` est versionné. Les colonnes `source_bo` et
-`source_page` permettent de retrouver chaque ligne dans le PDF officiel.
+Le PDF consolidé n’est **pas commité** (fichier volumineux). Il peut être
+téléchargé à l’URL Éduscol ci-dessus ; les colonnes `source_bo` et `source_page`
+permettent de retrouver chaque ligne dans ce PDF officiel.
 
 ## Pages du PDF consolidé
 
@@ -144,11 +143,11 @@ est donc éditoriale, mais l’exemple n’est jamais réécrit :
 
 - `domain_id` : identifiant officiel du domaine (`langage`, `corps`, `arts`,
   `maths`, `temps`, `vivant`).
-- `competency_id` : `lang-<slug>` pour le domaine langage, où `<slug>` est un
-  slug ASCII stable du titre de compétence (`vocabulaire`, `syntaxe`,
-  `articulation`, `discours`, `phonologie`, `diversite`, `ecrits`, `geste`,
-  `premiers-ecrits`). Les identifiants des autres domaines suivront le même
-  schéma `<domaine>-<slug>`.
+- `competency_id` : `<préfixe domaine>-<slug>`, où `<slug>` est un slug ASCII
+  stable du titre de compétence. Les six préfixes utilisés sont `lang`, `corps`,
+  `arts`, `maths`, `temps` et `vivant` (par exemple `lang-vocabulaire`,
+  `corps-manipuler`, `arts-graphisme`, `maths-nombres`, `temps-reperes`,
+  `vivant-animaux-vegetaux`).
 - `objective_id` : `<préfixe domaine>-<slug compétence>-<numéro sur deux
   chiffres>`, par exemple `lang-vocabulaire-01` ou `lang-phonologie-14`. Les
   numéros suivent l’ordre d’apparition dans le programme, commencent à `01` et
@@ -179,21 +178,16 @@ npm run referential:build   # CSV -> src/data/referential.json
 npm run referential:check   # schéma + comptes indicatifs par tranche
 ```
 
-`referential:check` affiche des avertissements tant que tous les domaines ne sont
-pas remplis : les cibles 114/140/162 sont des garde-fous, jamais des objectifs à
-inventer.
+`referential:check` n’affiche un avertissement que si le total d’une tranche
+s’écarte de plus de 10 % des cibles 114/140/162. Ces cibles sont des garde-fous,
+jamais des objectifs à atteindre ni à inventer.
 
-## Défauts connus des outils d’extraction
+## Méthode de transcription
 
-Le texte extrait automatiquement (`tools/`) est une aide, pas une vérité :
-
-- le script `split-domains.mjs` ne découpe pas les pages (le motif de split
-  attend quatre `=` au lieu de cinq) ; il faut recouper `consolide-lines.txt`
-  avec un motif corrigé avant de lire `lines-<domaine>.txt` ;
-- les titres détectés peuvent être faux (`Points de vigilance`, `Introduction`) ;
-- des mots peuvent manquer aux changements de page ou de colonne, et les
-  césures doivent être recollées ;
-- les objectifs et les exemples sont extraits en deux listes séparées.
-
-Chaque ligne du CSV a donc été vérifiée sur le PDF (texte et rendu) : tableaux
-extraits avec leurs cellules, puis relecture des pages du domaine.
+La transcription est faite page par page : le texte de chaque page est extrait
+avec ses coordonnées de colonnes, puis chaque ligne du CSV est relue sur le PDF
+(texte et rendu). Les objectifs et les exemples forment deux colonnes
+indépendantes : leur association est donc éditoriale (voir la règle ci-dessus),
+jamais une correspondance officielle un à un. Les scripts d’extraction locaux ne
+sont que des aides de travail ; les URL officielles ci-dessus suffisent pour
+reproduire la vérification.
