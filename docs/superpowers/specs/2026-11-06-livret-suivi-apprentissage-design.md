@@ -257,7 +257,7 @@ Accessibles par l'avatar de l'enseignante (rond « M ») ou depuis « Gérer les
 - Export ZIP complet (toutes les années) : `data.json`, le référentiel utilisé et les photos, écrit en streaming avec barre de progression.
 - Import : validation du schéma et de la version, résumé (élèves, années, photos), confirmation de remplacement complet. C'est aussi le mécanisme de transfert entre appareils.
 - Au-delà de 300 Mo, l'app prévient et recommande de garder l'écran allumé. Un export par année et une fusion de sauvegardes arrivent en v1.1.
-- Rappel de sauvegarde si la dernière date de sauvegarde a plus de 30 jours ou après 50 nouvelles validations.
+- Rappel de sauvegarde si la dernière date de sauvegarde a plus de 30 jours ou après 50 nouvelles validations (compteur enregistré lors de la dernière sauvegarde).
 - Aucune synchronisation automatique : chaque appareil a sa propre base.
 - Aucun envoi réseau au fonctionnement. Les polices sont auto-hébergées.
 
@@ -342,6 +342,7 @@ interface Settings {
   teacherName: string;
   currentSchoolYearId: string;
   lastBackupAt?: string;
+  lastBackupValidationCount: number;
   referentialVersion: string;
   schemaVersion: number;
 }
