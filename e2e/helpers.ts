@@ -7,6 +7,12 @@ export type Section = 'PS' | 'MS' | 'GS'
 /** Photo de test : aplats colorés, aucune personne, aucun texte. */
 export const PHOTO_FIXTURE = path.resolve(process.cwd(), 'e2e/fixtures/photo.jpg')
 
+/** Nom stable de la base IndexedDB de l'application. */
+const DB_NAME = 'carnet-de-reussites'
+
+/** Tables de la base dont un test peut compter les lignes. */
+export type StoreName = 'students' | 'validations' | 'photos' | 'schoolYears'
+
 /** Échappe une chaîne pour l'utiliser dans un `RegExp` construit dynamiquement. */
 function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
@@ -119,4 +125,57 @@ export async function openDossier(page: Page, name: string): Promise<void> {
   await expect(
     page.getByRole('heading', { level: 1, name, exact: true }),
   ).toBeVisible()
+}
+
+/**
+ * Compte les lignes d'une table de la base applicative, depuis la page.
+ *
+ * La base est ouverte sans version : on ne veut jamais déclencher de mise à
+ * niveau ni créer de magasin. La transaction est en lecture seule et la
+ * connexion est refermée dans tous les cas. Seuls des nombres traversent la
+ * frontière Playwright (aucun Blob, aucun objet de l'application).
+ */
+export async function countStored(page: Page, store: StoreName): Promise<number> {
+  return page.evaluate(
+    ({ dbName, storeName }) =>
+      new Promise<number>((resolve, reject) => {
+        const request = indexedDB.open(dbName)
+
+        request.onerror = () => {
+          reject(request.error ?? new Error(`Ouverture de ${dbName} impossible`))
+        }
+
+        request.onupgradeneeded = () => {
+          // La base doit déjà exister : on annule plutôt que de la créer vide.
+          request.transaction?.abort()
+          reject(new Error(`La base ${dbName} n'existe pas`))
+        }
+
+        request.onsuccess = () => {
+          const database = request.result
+
+          try {
+            const transaction = database.transaction(storeName, 'readonly')
+            const countRequest = transaction.objectStore(storeName).count()
+
+            countRequest.onerror = () => {
+              database.close()
+              reject(
+                countRequest.error ??
+                  new Error(`Comptage de ${storeName} impossible`),
+              )
+            }
+
+            countRequest.onsuccess = () => {
+              database.close()
+              resolve(countRequest.result)
+            }
+          } catch (error) {
+            database.close()
+            reject(error instanceof Error ? error : new Error(String(error)))
+          }
+        }
+      }),
+    { dbName: DB_NAME, storeName: store },
+  )
 }

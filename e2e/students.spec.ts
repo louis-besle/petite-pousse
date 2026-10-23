@@ -1,5 +1,11 @@
 import { expect, test } from '@playwright/test'
-import { addStudent, captureWithPhoto, gotoRoute, openDossier } from './helpers'
+import {
+  addStudent,
+  captureWithPhoto,
+  countStored,
+  gotoRoute,
+  openDossier,
+} from './helpers'
 
 test.describe('gestion des élèves', () => {
   test('ajout, modification puis suppression en cascade avec la réussite et sa photo', async ({
@@ -7,6 +13,12 @@ test.describe('gestion des élèves', () => {
   }) => {
     await addStudent(page, 'Zoé', 'MS')
     await captureWithPhoto(page, 'Zoé', 'Chanter en exprimant')
+
+    // La réussite et sa photo sont réellement en base avant l'édition.
+    // (`schoolYears` est semé par l'application : on ne l'affirme pas.)
+    expect(await countStored(page, 'students')).toBe(1)
+    expect(await countStored(page, 'validations')).toBe(1)
+    expect(await countStored(page, 'photos')).toBe(1)
 
     // Modification du prénom et de la section depuis la liste.
     await gotoRoute(page, '/students')
@@ -51,6 +63,12 @@ test.describe('gestion des élèves', () => {
       page.getByRole('button', { name: 'Modifier Zoéa', exact: true }),
     ).toHaveCount(0)
     await expect(page.getByText('0 élève', { exact: true })).toBeVisible()
+
+    // La cascade a vidé les trois tables, pas seulement la ligne élève :
+    // aucune validation ni photo orpheline ne subsiste.
+    expect(await countStored(page, 'students')).toBe(0)
+    expect(await countStored(page, 'validations')).toBe(0)
+    expect(await countStored(page, 'photos')).toBe(0)
 
     // Aucun fantôme : la classe est vide et la réussite a disparu avec l'élève.
     await gotoRoute(page, '/')
