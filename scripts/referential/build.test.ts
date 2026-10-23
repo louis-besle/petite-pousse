@@ -22,9 +22,9 @@ describe('buildReferentialFromCsv', () => {
 
     expect(referential.domains.map((domain) => domain.id)).toEqual([
       'langage',
-      'maths',
       'corps',
       'arts',
+      'maths',
       'temps',
       'vivant',
     ])
@@ -101,6 +101,21 @@ describe('buildReferentialFromCsv', () => {
     const badBand = fixtureCsv.replace('before4|from4', 'before4|from6')
 
     expect(() => buildReferentialFromCsv(badBand)).toThrow(/unknown age band/i)
+  })
+
+  it('rejette une tranche d’âge dupliquée', () => {
+    const duplicatedBand = fixtureCsv.replace('before4|from4', 'before4|before4')
+
+    expect(() => buildReferentialFromCsv(duplicatedBand)).toThrow(/duplicate age band/i)
+  })
+
+  it('rejette un exemple renseigné pour une tranche non déclarée', () => {
+    const undeclaredExample = fixtureCsv.replace(
+      ',from4|from5,,Exemple de test à partir de 4 ans',
+      ',from4|from5,Exemple non déclaré,Exemple de test à partir de 4 ans',
+    )
+
+    expect(() => buildReferentialFromCsv(undeclaredExample)).toThrow(/example_before4/)
   })
 
   it('signale les colonnes manquantes', () => {

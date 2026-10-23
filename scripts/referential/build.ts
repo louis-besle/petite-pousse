@@ -67,12 +67,21 @@ function parseAgeBands(row: CsvRow, objectiveId: string, line: number): AgeBand[
     throw new Error(`Line ${line}: objective "${objectiveId}" declares no age band`)
   }
 
+  const seenAgeBands = new Set<string>()
+
   return rawAgeBands.map((ageBand) => {
     if (!(AGE_BANDS as readonly string[]).includes(ageBand)) {
       throw new Error(
         `Line ${line}: unknown age band "${ageBand}" for objective "${objectiveId}". Expected one of: ${AGE_BANDS.join(', ')}`,
       )
     }
+
+    if (seenAgeBands.has(ageBand)) {
+      throw new Error(
+        `Line ${line}: duplicate age band "${ageBand}" for objective "${objectiveId}"`,
+      )
+    }
+    seenAgeBands.add(ageBand)
 
     return ageBand as AgeBand
   })
@@ -96,6 +105,20 @@ function parseExamples(
     }
 
     examples[ageBand] = example
+  }
+
+  for (const ageBand of AGE_BANDS) {
+    if (ageBands.includes(ageBand)) {
+      continue
+    }
+
+    const undeclaredExample = (row[`example_${ageBand}`] ?? '').trim()
+
+    if (undeclaredExample !== '') {
+      throw new Error(
+        `Line ${line}: example_${ageBand} is filled for objective "${objectiveId}" but age band "${ageBand}" is not declared in age_bands`,
+      )
+    }
   }
 
   return examples

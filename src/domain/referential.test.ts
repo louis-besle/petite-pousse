@@ -44,9 +44,9 @@ describe('referential', () => {
     expect(referential.objectives).toEqual([])
     expect(referential.domains.map((domain) => domain.id)).toEqual([
       'langage',
-      'maths',
       'corps',
       'arts',
+      'maths',
       'temps',
       'vivant',
     ])
@@ -112,7 +112,7 @@ describe('domainById', () => {
     expect(domainById(referential, 'maths')).toMatchObject({
       id: 'maths',
       label: 'Maths',
-      order: 2,
+      order: 4,
     })
   })
 

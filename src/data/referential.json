@@ -8,21 +8,21 @@
       "order": 1
     },
     {
-      "id": "maths",
-      "label": "Maths",
-      "longLabel": "L'acquisition des premiers outils mathématiques",
-      "order": 2
-    },
-    {
       "id": "corps",
       "label": "Corps",
       "longLabel": "Agir, s'exprimer, comprendre à travers les activités physiques",
-      "order": 3
+      "order": 2
     },
     {
       "id": "arts",
       "label": "Arts",
       "longLabel": "Agir, s'exprimer, comprendre à travers les activités artistiques",
+      "order": 3
+    },
+    {
+      "id": "maths",
+      "label": "Maths",
+      "longLabel": "L'acquisition des premiers outils mathématiques",
       "order": 4
     },
     {

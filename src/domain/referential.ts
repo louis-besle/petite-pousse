@@ -4,7 +4,7 @@ import type { AgeBand, Competency, Domain, Objective, Section } from './types'
 
 export const REFERENTIAL_VERSION = '2026.0.0'
 
-export const DOMAIN_IDS = ['langage', 'maths', 'corps', 'arts', 'temps', 'vivant'] as const
+export const DOMAIN_IDS = ['langage', 'corps', 'arts', 'maths', 'temps', 'vivant'] as const
 export const AGE_BANDS = ['before4', 'from4', 'from5'] as const
 
 /**
@@ -19,21 +19,21 @@ export const DOMAINS: Domain[] = [
     order: 1,
   },
   {
-    id: 'maths',
-    label: 'Maths',
-    longLabel: "L'acquisition des premiers outils mathématiques",
-    order: 2,
-  },
-  {
     id: 'corps',
     label: 'Corps',
     longLabel: "Agir, s'exprimer, comprendre à travers les activités physiques",
-    order: 3,
+    order: 2,
   },
   {
     id: 'arts',
     label: 'Arts',
     longLabel: "Agir, s'exprimer, comprendre à travers les activités artistiques",
+    order: 3,
+  },
+  {
+    id: 'maths',
+    label: 'Maths',
+    longLabel: "L'acquisition des premiers outils mathématiques",
     order: 4,
   },
   {
@@ -52,7 +52,6 @@ export const DOMAINS: Domain[] = [
 
 export interface Referential {
   version: string
-  generatedAt?: string
   domains: Domain[]
   competencies: Competency[]
   objectives: Objective[]
@@ -90,7 +89,6 @@ const objectiveSchema = z.object({
 
 const referentialBaseSchema = z.object({
   version: z.string().min(1),
-  generatedAt: z.string().min(1).optional(),
   domains: z.array(domainSchema).min(1),
   competencies: z.array(competencySchema),
   objectives: z.array(objectiveSchema),
