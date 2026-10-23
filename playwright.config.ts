@@ -5,7 +5,9 @@ import { defineConfig } from '@playwright/test'
  *
  * Un seul projet Chromium, au format téléphone (390 × 844) : les navigateurs
  * WebKit et Firefox ne sont pas installés sur la machine de développement.
- * `offline.spec.ts` est ignoré tant que son parcours n'est pas écrit.
+ * `offline.spec.ts` est exclu de cette configuration : il exige un build de
+ * production et tourne via `playwright.offline.config.ts`
+ * (`npm run test:e2e:offline`).
  */
 export default defineConfig({
   testDir: './e2e',

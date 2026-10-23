@@ -11,6 +11,24 @@ test.describe('bilans', () => {
     async ({ page }) => {
       test.setTimeout(180_000)
 
+      // Date figée au 7 novembre 2026 : la période par défaut est le bilan 1 et
+      // l'année courante amorcée est 2026-2027, indépendamment du calendrier de
+      // la machine. Seule `Date` est figée, pas les timers.
+      await page.clock.setFixedTime(new Date('2026-11-07T10:00:00'))
+
+      // Le PDF doit toujours prendre la branche téléchargement : on retire Web
+      // Share pour que le test ne dépende pas du navigateur hôte.
+      await page.addInitScript(() => {
+        Object.defineProperty(navigator, 'canShare', {
+          configurable: true,
+          value: undefined,
+        })
+        Object.defineProperty(navigator, 'share', {
+          configurable: true,
+          value: undefined,
+        })
+      })
+
       await addStudent(page, 'Léa', 'MS')
       await openClass(page)
 
@@ -37,6 +55,12 @@ test.describe('bilans', () => {
       const period1 = page.getByRole('button', { name: /^Bilan 1/ })
       const period2 = page.getByRole('button', { name: /^Bilan 2/ })
       await expect(period1).toBeVisible()
+      // Année amorcée et période par défaut, sans dépendre de la date réelle.
+      await expect(
+        page.getByRole('combobox', { name: 'Année scolaire' }),
+      ).toHaveValue('2026-2027')
+      await expect(period1).toHaveAttribute('aria-pressed', 'true')
+      await expect(period2).toHaveAttribute('aria-pressed', 'false')
       await expect(period1).toContainText('1 réussite')
       await expect(period2).toContainText('1 réussite')
 

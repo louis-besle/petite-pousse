@@ -12,6 +12,13 @@ import {
 } from './helpers'
 
 test.describe('sauvegardes', () => {
+  test.beforeEach(async ({ page }) => {
+    // Date figée au 12 octobre 2026 : les réussites semées tombent dans l'année
+    // amorcée (2026-2027) quel que soit le jour d'exécution. Seule `Date` est
+    // figée, jamais les timers.
+    await page.clock.setFixedTime(new Date('2026-10-12T10:00:00'))
+  })
+
   test('exporte, vide puis restaure le dossier avec sa photo', async ({ page }) => {
     await addStudent(page, 'Léa', 'MS')
     await openClass(page)
@@ -116,8 +123,27 @@ test.describe('sauvegardes', () => {
     await addStudent(page, 'Noah', 'MS')
     await openClass(page)
 
-    const before = await readDb(page, 'students')
-    expect(before).toHaveLength(1)
+    const students = await readDb(page, 'students')
+    expect(students).toHaveLength(1)
+    const studentId = String(students[0]?.id)
+
+    // Une réussite avec photo : les trois tables de données ont du contenu et
+    // une écriture parasite serait détectée.
+    await seedValidation(page, {
+      studentId,
+      objectiveId: 'lang-vocabulaire-01',
+      date: '2026-10-12',
+      withPhoto: true,
+    })
+
+    const before = {
+      students: await readDb(page, 'students'),
+      validations: await readDb(page, 'validations'),
+      photos: await readDb(page, 'photos'),
+    }
+    expect(before.students).toHaveLength(1)
+    expect(before.validations).toHaveLength(1)
+    expect(before.photos).toHaveLength(1)
 
     await gotoRoute(page, '/settings')
     await expect(page.getByRole('heading', { level: 2, name: 'Sauvegarde' })).toBeVisible()
@@ -135,10 +161,12 @@ test.describe('sauvegardes', () => {
       page.getByText(/pas une sauvegarde|illisible ou endommagé/i),
     ).toBeVisible()
 
-    // Aucune feuille de restauration : la base n'a pas bougé.
+    // Aucune feuille de restauration : les trois tables sont identiques.
     await expect(
       page.getByRole('dialog', { name: 'Restaurer cette sauvegarde ?' }),
     ).toHaveCount(0)
-    expect(await readDb(page, 'students')).toHaveLength(1)
+    expect(await readDb(page, 'students')).toEqual(before.students)
+    expect(await readDb(page, 'validations')).toEqual(before.validations)
+    expect(await readDb(page, 'photos')).toEqual(before.photos)
   })
 })

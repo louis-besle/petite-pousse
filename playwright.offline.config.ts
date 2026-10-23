@@ -31,7 +31,9 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'npm run build && npm run preview -- --port 4174',
+    // `--strictPort` : un 4174 déjà pris doit échouer franchement au lieu de
+    // servir silencieusement le port suivant.
+    command: 'npm run build && npm run preview -- --port 4174 --strictPort',
     url: 'http://localhost:4174',
     reuseExistingServer: false,
     timeout: 240_000,
