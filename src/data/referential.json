@@ -128,6 +128,51 @@
       "id": "corps-cooperation",
       "domainId": "corps",
       "label": "Coopérer, s’opposer, respecter"
+    },
+    {
+      "id": "arts-dessiner",
+      "domainId": "arts",
+      "label": "Dessiner"
+    },
+    {
+      "id": "arts-graphisme",
+      "domainId": "arts",
+      "label": "S’exercer au graphisme artistique"
+    },
+    {
+      "id": "arts-compositions",
+      "domainId": "arts",
+      "label": "Réaliser des compositions planes ou en volume"
+    },
+    {
+      "id": "arts-images",
+      "domainId": "arts",
+      "label": "Observer, comprendre et transformer des images"
+    },
+    {
+      "id": "arts-voix",
+      "domainId": "arts",
+      "label": "Jouer avec sa voix et acquérir un répertoire de comptines et de chansons"
+    },
+    {
+      "id": "arts-instruments",
+      "domainId": "arts",
+      "label": "Explorer des instruments, utiliser les sonorités du corps"
+    },
+    {
+      "id": "arts-ecoute",
+      "domainId": "arts",
+      "label": "Affiner son écoute"
+    },
+    {
+      "id": "arts-pratiquer",
+      "domainId": "arts",
+      "label": "Pratiquer"
+    },
+    {
+      "id": "arts-spectateur",
+      "domainId": "arts",
+      "label": "Fréquenter et devenir spectateur et spectatrice"
     }
   ],
   "objectives": [
@@ -3429,6 +3474,1222 @@
       "source": {
         "bo": "BO n°19 du 7 mai 2026",
         "page": 26
+      }
+    },
+    {
+      "id": "arts-dessiner-01",
+      "competencyId": "arts-dessiner",
+      "domainId": "arts",
+      "label": "S’exercer au dessin pour développer son habileté motrice.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Dessiner avec des fusains, des craies grasses, des feutres sur des papiers de grand format sur un plan vertical, en commençant par des gestes amples."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 28
+      }
+    },
+    {
+      "id": "arts-dessiner-02",
+      "competencyId": "arts-dessiner",
+      "domainId": "arts",
+      "label": "S’exercer progressivement au dessin avec une intention de représentation.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Représenter par le dessin le doudou de la classe ou un membre de sa famille."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 28
+      }
+    },
+    {
+      "id": "arts-dessiner-03",
+      "competencyId": "arts-dessiner",
+      "domainId": "arts",
+      "label": "Expérimenter la diversité des outils, des supports, des matériaux et faire des choix.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Dessiner un bonhomme ou un animal en utilisant différents outils, supports et médiums et observer les effets produits."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 28
+      }
+    },
+    {
+      "id": "arts-dessiner-04",
+      "competencyId": "arts-dessiner",
+      "domainId": "arts",
+      "label": "S’exercer au dessin avec une intention de représentation.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Dessiner les fruits de l’espace « épicerie », les vêtements des poupées, etc."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 28
+      }
+    },
+    {
+      "id": "arts-dessiner-05",
+      "competencyId": "arts-dessiner",
+      "domainId": "arts",
+      "label": "Dessiner pour représenter sur la base d’un modèle.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Lors d’une sortie au musée, dessiner une statue sous forme de croquis."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 28
+      }
+    },
+    {
+      "id": "arts-dessiner-06",
+      "competencyId": "arts-dessiner",
+      "domainId": "arts",
+      "label": "Dessiner pour représenter un personnage ou un évènement fictif.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Représenter un personnage de conte ou de littérature de jeunesse (La sorcière de la rue Mouffetard de Pierre Gripari) avec une contrainte liée au matériel, aux outils ou au support."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 28
+      }
+    },
+    {
+      "id": "arts-dessiner-07",
+      "competencyId": "arts-dessiner",
+      "domainId": "arts",
+      "label": "Participer à la réalisation d’une œuvre collective à partir d’une consigne ou d’un problème à résoudre.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Sur un support de grand format, dessiner collectivement le village ou le quartier à partir de photographies prises lors d’une sortie."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 28
+      }
+    },
+    {
+      "id": "arts-dessiner-08",
+      "competencyId": "arts-dessiner",
+      "domainId": "arts",
+      "label": "Utiliser le vocabulaire spécifique au dessin.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Présenter et décrire son dessin lors d’un temps collectif en utilisant le lexique approprié (couleurs, nuances, outils, matériaux, etc.)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 28
+      }
+    },
+    {
+      "id": "arts-graphisme-01",
+      "competencyId": "arts-graphisme",
+      "domainId": "arts",
+      "label": "Explorer des gestes et commencer à les associer à des types de tracés précis.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Découvrir les traces produites par un geste particulier sur une feuille enduite de peinture ou dans du sable (caresser, tapoter, frotter, griffer, etc.)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 29
+      }
+    },
+    {
+      "id": "arts-graphisme-02",
+      "competencyId": "arts-graphisme",
+      "domainId": "arts",
+      "label": "Repérer des motifs graphiques issus de son environnement proche.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Reproduire des motifs graphiques simples (cercles, boucles, lignes, croix, etc.) à l’appui de photographies prises dans l’école."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 29
+      }
+    },
+    {
+      "id": "arts-graphisme-03",
+      "competencyId": "arts-graphisme",
+      "domainId": "arts",
+      "label": "Découvrir des expressions graphiques dans des œuvres d’art.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Découvrir les lignes avec Sol Lewitt, Agnès Martin, Piet Mondrian ou Bridget Riley, les cercles avec Sonia Delaunay ou Ronnie Tjampitjinpa, les boucles avec Hilma Af Klint, les spirales avec Andy Goldsworthy, etc."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 29
+      }
+    },
+    {
+      "id": "arts-graphisme-04",
+      "competencyId": "arts-graphisme",
+      "domainId": "arts",
+      "label": "Exercer et développer sa motricité fine.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Utiliser quotidiennement dans le cadre d’activités libres ou guidées, le répertoire graphique de la classe pour s’entrainer à reproduire différents motifs (boucles, spirales, formes géométriques, etc.)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 29
+      }
+    },
+    {
+      "id": "arts-graphisme-05",
+      "competencyId": "arts-graphisme",
+      "domainId": "arts",
+      "label": "Repérer des motifs graphiques issus de son environnement.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Dans l’école ou lors d’une sortie dans le village ou le quartier, identifier et reproduire des motifs que les professeurs photographient pour enrichir le répertoire graphique de la classe."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 29
+      }
+    },
+    {
+      "id": "arts-graphisme-06",
+      "competencyId": "arts-graphisme",
+      "domainId": "arts",
+      "label": "Reproduire et créer des motifs de plus en plus élaborés.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Choisir et reproduire des motifs issus de répertoires culturels (œuvres d’art, motifs sur des poteries, mosaïques, tissus, broderie, etc.)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 29
+      }
+    },
+    {
+      "id": "arts-graphisme-07",
+      "competencyId": "arts-graphisme",
+      "domainId": "arts",
+      "label": "Transformer ou détourner des motifs du répertoire de la classe pour observer les effets produits.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Réaliser une fresque à partir de motifs graphiques choisis, agrandis ou réduits."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 29
+      }
+    },
+    {
+      "id": "arts-graphisme-08",
+      "competencyId": "arts-graphisme",
+      "domainId": "arts",
+      "label": "Créer de nouveaux motifs.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Choisir les outils adaptés pour faire varier la largeur et le relief du tracé (dans une plaque d’argile, sur une feuille humidifiée, sur du papier de verre, etc.)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 29
+      }
+    },
+    {
+      "id": "arts-graphisme-09",
+      "competencyId": "arts-graphisme",
+      "domainId": "arts",
+      "label": "Réaliser une composition à partir de plusieurs contraintes.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Réaliser une affiche pour un évènement au sein de l’école en utilisant trois motifs, deux outils différents, en temps limité et à plusieurs."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 29
+      }
+    },
+    {
+      "id": "arts-compositions-01",
+      "competencyId": "arts-compositions",
+      "domainId": "arts",
+      "label": "Explorer l’usage des outils et observer leurs effets sur le geste.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Découvrir l’usage de la spatule, du rouleau, du pochoir, du tamis, de la brosse à dents, etc."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 30
+      }
+    },
+    {
+      "id": "arts-compositions-02",
+      "competencyId": "arts-compositions",
+      "domainId": "arts",
+      "label": "Utiliser différents médiums et observer leurs effets sur les couleurs, les formes et les volumes.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Réaliser une composition sur un support de grand format placé au sol avec différents médiums (gouaches, encres, terre, sable, pastels, sanguines, crayons de papier, etc.)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 30
+      }
+    },
+    {
+      "id": "arts-compositions-03",
+      "competencyId": "arts-compositions",
+      "domainId": "arts",
+      "label": "Expérimenter la résistance de certains matériaux.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Expérimenter différentes actions avec les matériaux mis à disposition (déchirer, mouiller, écraser, aplatir etc.)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 30
+      }
+    },
+    {
+      "id": "arts-compositions-04",
+      "competencyId": "arts-compositions",
+      "domainId": "arts",
+      "label": "Réaliser individuellement ou collectivement une production plastique en volume.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Construire collectivement une maison pour une poupée avec des boites en carton qui ont été peintes."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 30
+      }
+    },
+    {
+      "id": "arts-compositions-05",
+      "competencyId": "arts-compositions",
+      "domainId": "arts",
+      "label": "S’approprier les constituants plastiques (couleurs, formes, matières, rythmes, etc.).",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Explorer les nuances d’une couleur à partir de mélanges ou en fonction de la couleur du support et de l’exposition à la lumière."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 30
+      }
+    },
+    {
+      "id": "arts-compositions-06",
+      "competencyId": "arts-compositions",
+      "domainId": "arts",
+      "label": "Réaliser une composition en deux ou trois dimensions en fonction d’un projet individuel ou collectif.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Fabriquer un mobile avec des papiers pliés pour une exposition sous le préau de l’école."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 30
+      }
+    },
+    {
+      "id": "arts-compositions-07",
+      "competencyId": "arts-compositions",
+      "domainId": "arts",
+      "label": "Découvrir différentes formes d’expression artistique.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Réaliser collectivement l’illustration de la couverture d’une histoire inventée sur le thème de la mer après en avoir observé quelques représentations (La grande vague de Kanagawa de Katsushika Hokusai, Le port de Lorient de Berthe Morisot, , Blue sea with rocks de Georgia O’Keeffe, Mountains and Sea de Helen Frankenthaler, etc.)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 30
+      }
+    },
+    {
+      "id": "arts-compositions-08",
+      "competencyId": "arts-compositions",
+      "domainId": "arts",
+      "label": "Réaliser des compositions plastiques, seul ou en petit groupe, en choisissant et combinant des matériaux et en réinvestissant des techniques et des procédés.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Réaliser en petit groupe des totems à partir des matériaux et des outils mis à disposition pour construire les décors d’un spectacle."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 30
+      }
+    },
+    {
+      "id": "arts-compositions-09",
+      "competencyId": "arts-compositions",
+      "domainId": "arts",
+      "label": "Se familiariser avec différentes formes d’expression artistique.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Explorer les possibilités de détournement d’objets du quotidien dans une démarche de création (un ready-made de Marcel Duchamp, Le déjeuner en fourrure de Meret Oppenheim, Tête de taureau de Pablo Picasso, La Mariée de Niki de Saint-Phalle, Faire des cartes de France d’Annette Messager, etc.)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 30
+      }
+    },
+    {
+      "id": "arts-images-01",
+      "competencyId": "arts-images",
+      "domainId": "arts",
+      "label": "Apprendre à regarder avec attention et à identifier des éléments visuels.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Dans des collections d’images, identifier un objet ou un animal représenté de différentes manières et comparer ses représentations."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 31
+      }
+    },
+    {
+      "id": "arts-images-02",
+      "competencyId": "arts-images",
+      "domainId": "arts",
+      "label": "Découvrir quelques éléments constitutifs d’une illustration.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Décrire les illustrations d’un album de la littérature de jeunesse (personnages, couleurs, motifs, etc.)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 31
+      }
+    },
+    {
+      "id": "arts-images-03",
+      "competencyId": "arts-images",
+      "domainId": "arts",
+      "label": "Différencier une image fixe d’une image animée.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "S’initier à l’animation image par image (stop-motion)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 31
+      }
+    },
+    {
+      "id": "arts-images-04",
+      "competencyId": "arts-images",
+      "domainId": "arts",
+      "label": "Fabriquer des images à partir d’images existantes.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Composer une nouvelle image en assemblant des éléments issus d’autres images (détourner, découper, plier, coller, assembler, etc.)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 31
+      }
+    },
+    {
+      "id": "arts-images-05",
+      "competencyId": "arts-images",
+      "domainId": "arts",
+      "label": "Identifier et nommer des éléments graphiques d’une illustration.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Décrire une illustration d’un album de la littérature de jeunesse (couleurs, technique graphique, illustration pleine page ou encadrée, etc.)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 31
+      }
+    },
+    {
+      "id": "arts-images-06",
+      "competencyId": "arts-images",
+      "domainId": "arts",
+      "label": "Différencier des types d’images (portrait, paysage, nature morte, etc.).",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Trier et classer des images représentant des paysages en fonction d’un critère choisi par l’élève et expliquer ses choix en utilisant un lexique adapté."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 31
+      }
+    },
+    {
+      "id": "arts-images-07",
+      "competencyId": "arts-images",
+      "domainId": "arts",
+      "label": "Identifier et nommer des éléments esthétiques d’une illustration.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Décrire la composition d’une œuvre photographique ou plastique et comprendre son organisation en utilisant un vocabulaire de plus en plus précis."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 31
+      }
+    },
+    {
+      "id": "arts-voix-01",
+      "competencyId": "arts-voix",
+      "domainId": "arts",
+      "label": "Dépasser les usages courants de la voix.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Jouer avec sa voix pour reproduire des bruits d’animaux, d’objets et des onomatopées à partir d’images."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 32
+      }
+    },
+    {
+      "id": "arts-voix-02",
+      "competencyId": "arts-voix",
+      "domainId": "arts",
+      "label": "Chanter en se faisant comprendre des autres.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Dire ou chanter en articulant correctement le texte de manière audible pour faire deviner le titre de la comptine ou de la chanson."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 32
+      }
+    },
+    {
+      "id": "arts-voix-03",
+      "competencyId": "arts-voix",
+      "domainId": "arts",
+      "label": "Dire ou chanter au moins cinq comptines.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Dire ou chanter une comptine, en même temps que les professeurs et en reproduisant la gestuelle (Toc, toc, toc Monsieur Pouce ; Petit escargot)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 32
+      }
+    },
+    {
+      "id": "arts-voix-04",
+      "competencyId": "arts-voix",
+      "domainId": "arts",
+      "label": "Découvrir et explorer la richesse de sa voix.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Reproduire avec sa voix, par imitation, des sons brefs, tenus, graves, aigus et avec des variations de volume."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 32
+      }
+    },
+    {
+      "id": "arts-voix-05",
+      "competencyId": "arts-voix",
+      "domainId": "arts",
+      "label": "Chanter en exprimant une émotion.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Chanter avec une voix douce, lentement ou rapidement pour exprimer la joie, la tristesse, etc."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 32
+      }
+    },
+    {
+      "id": "arts-voix-06",
+      "competencyId": "arts-voix",
+      "domainId": "arts",
+      "label": "Dire ou chanter au moins huit comptines ou chants, en réinvestissant les comptines apprises l’année précédente.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Dire ou chanter de mémoire une comptine ou un chant en variant le volume ou le timbre de sa voix, de manière de plus en plus autonome (Promenons-nous dans les bois ; Un éléphant qui se balançait)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 32
+      }
+    },
+    {
+      "id": "arts-voix-07",
+      "competencyId": "arts-voix",
+      "domainId": "arts",
+      "label": "Développer et affirmer son inventivité avec sa voix.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Imiter avec sa voix un son produit par un instrument."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 32
+      }
+    },
+    {
+      "id": "arts-voix-08",
+      "competencyId": "arts-voix",
+      "domainId": "arts",
+      "label": "Trouver sa place dans un collectif chantant.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Chanter avec les autres, en respectant le tempo et les nuances et avec une intention."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 32
+      }
+    },
+    {
+      "id": "arts-voix-09",
+      "competencyId": "arts-voix",
+      "domainId": "arts",
+      "label": "Dire ou chanter au moins dix comptines ou chants, en réinvestissant ceux appris les années antérieures.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Chanter de mémoire devant les autres et sans l’aide des professeurs (Ah ! Les crocodiles ; Voici le mois de mai !)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 32
+      }
+    },
+    {
+      "id": "arts-instruments-01",
+      "competencyId": "arts-instruments",
+      "domainId": "arts",
+      "label": "Explorer les possibilités sonores de son corps, d’objets et d’instruments.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Explorer différentes actions pour faire sonner quelques petits instruments à percussion : taper, secouer, gratter, frotter, etc."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 32
+      }
+    },
+    {
+      "id": "arts-instruments-02",
+      "competencyId": "arts-instruments",
+      "domainId": "arts",
+      "label": "Découvrir les possibilités expressives de son corps, d’objets et d’instruments.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Découvrir les possibilités sonores de son corps : « Nous claquons la langue. Elle tape des pieds. »"
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 32
+      }
+    },
+    {
+      "id": "arts-instruments-03",
+      "competencyId": "arts-instruments",
+      "domainId": "arts",
+      "label": "Observer et commenter ce que font les camarades de classe pour produire des sons avec leur corps, des objets et des instruments.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Décrire l’action associée à l’objet et au geste : « Il frappe la bouteille vide avec la cuillère. », « Elle secoue les maracas. »"
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 33
+      }
+    },
+    {
+      "id": "arts-instruments-04",
+      "competencyId": "arts-instruments",
+      "domainId": "arts",
+      "label": "Produire des sons à partir de son corps, d’objets et d’instruments.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Reproduire un rythme avec des claves, en alternance avec les professeurs."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 33
+      }
+    },
+    {
+      "id": "arts-instruments-05",
+      "competencyId": "arts-instruments",
+      "domainId": "arts",
+      "label": "Adapter son geste pour produire un son en fonction d’une consigne.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Frotter, froisser et déchirer des papiers de toutes sortes pour explorer et comparer les différents sons produits."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 33
+      }
+    },
+    {
+      "id": "arts-instruments-06",
+      "competencyId": "arts-instruments",
+      "domainId": "arts",
+      "label": "Reproduire un rythme simple collectivement.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Écouter et reproduire avec des triangles, ou en frappant dans ses mains, le rythme proposé par un élève au sein d’un petit groupe."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 33
+      }
+    },
+    {
+      "id": "arts-instruments-07",
+      "competencyId": "arts-instruments",
+      "domainId": "arts",
+      "label": "Explorer le lien entre le son et le geste.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Produire le plus de sons différents avec un même instrument à percussion : doux avec la paume de la main, fort avec une mailloche, etc."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 33
+      }
+    },
+    {
+      "id": "arts-instruments-08",
+      "competencyId": "arts-instruments",
+      "domainId": "arts",
+      "label": "Créer un paysage sonore en répondant à une consigne simple avec son corps, des objets ou des instruments.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Reproduire le bruit d’un orage ou la pluie, en groupe de trois à quatre élèves et avec de petits instruments."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 33
+      }
+    },
+    {
+      "id": "arts-instruments-09",
+      "competencyId": "arts-instruments",
+      "domainId": "arts",
+      "label": "Créer collectivement une production musicale.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Créer l’illustration sonore d’une histoire inventée collectivement en classe pour la présenter aux parents."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 33
+      }
+    },
+    {
+      "id": "arts-ecoute-01",
+      "competencyId": "arts-ecoute",
+      "domainId": "arts",
+      "label": "Traduire la musique entendue en mouvements.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Se déplacer librement à l’écoute du « Coucou au fond des bois », du Carnaval des animaux de Camille Saint-Saëns."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 33
+      }
+    },
+    {
+      "id": "arts-ecoute-02",
+      "competencyId": "arts-ecoute",
+      "domainId": "arts",
+      "label": "Développer une posture d’écoute.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Reconnaitre, à l’écoute seulement, les sons du quotidien de l’école (une porte qui claque, un trousseau de clés, des pas dans le couloir, etc.)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 33
+      }
+    },
+    {
+      "id": "arts-ecoute-03",
+      "competencyId": "arts-ecoute",
+      "domainId": "arts",
+      "label": "Traduire la musique entendue en mouvements et en mots.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Se déplacer en imitant la démarche de l’animal à partir de « L’éléphant » du Carnaval des animaux de Camille de Saint-Saëns, D’un matin de printemps de Lili Boulanger, puis décrire oralement ses mouvements."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 33
+      }
+    },
+    {
+      "id": "arts-ecoute-04",
+      "competencyId": "arts-ecoute",
+      "domainId": "arts",
+      "label": "Exprimer ses émotions après l’écoute d’un extrait musical.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Partager son ressenti en groupe, après avoir écouté des extraits d’Émilie jolie de Philippe Chatel et de La Flute enchantée de Mozart."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 33
+      }
+    },
+    {
+      "id": "arts-ecoute-05",
+      "competencyId": "arts-ecoute",
+      "domainId": "arts",
+      "label": "Découvrir au moins deux œuvres musicales patrimoniales.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Après plusieurs écoutes successives d’extraits de Pierre et le loup de Serge Prokofiev ou de Piccolo, Saxo et compagnie d’André Popp, associer un instrument entendu à un personnage de l’histoire."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 33
+      }
+    },
+    {
+      "id": "arts-ecoute-06",
+      "competencyId": "arts-ecoute",
+      "domainId": "arts",
+      "label": "Traduire la musique entendue en dessin.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Dessiner des sons joués par le professeur dissimulé derrière un panneau (un point pour un coup de tambour, des traits pour un triangle, une ligne courbe pour une flute à coulisse, etc.)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 34
+      }
+    },
+    {
+      "id": "arts-ecoute-07",
+      "competencyId": "arts-ecoute",
+      "domainId": "arts",
+      "label": "Écouter une œuvre musicale patrimoniale pour repérer des éléments musicaux significatifs.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Après plusieurs écoutes d’un extrait musical, décrire le rythme (lent, rapide), reproduire un motif mélodique en chantant, identifier les voix, les nuances, etc."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 34
+      }
+    },
+    {
+      "id": "arts-ecoute-08",
+      "competencyId": "arts-ecoute",
+      "domainId": "arts",
+      "label": "Connaitre au moins trois œuvres musicales patrimoniales.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Écouter des contes musicaux, des opéras, des musiques du monde appartenant à différents styles, cultures et époques pour décrire les voix, identifier les instruments, etc."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 34
+      }
+    },
+    {
+      "id": "arts-pratiquer-01",
+      "competencyId": "arts-pratiquer",
+      "domainId": "arts",
+      "label": "Découvrir différentes façons d’exprimer ses émotions par le corps.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Reproduire des gestes ou des mimiques proposés par les professeurs puis par des camarades pour exprimer la joie, la tristesse, etc."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 34
+      }
+    },
+    {
+      "id": "arts-pratiquer-02",
+      "competencyId": "arts-pratiquer",
+      "domainId": "arts",
+      "label": "Découvrir des rôles simples.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Jouer les personnages d’une histoire racontée et lue en classe."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 34
+      }
+    },
+    {
+      "id": "arts-pratiquer-03",
+      "competencyId": "arts-pratiquer",
+      "domainId": "arts",
+      "label": "Découvrir le jeu dans une mise en scène collective.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Jouer librement avec des foulards, des cerceaux, des briques en mousse puis imiter un camarade désigné par le professeur."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 34
+      }
+    },
+    {
+      "id": "arts-pratiquer-04",
+      "competencyId": "arts-pratiquer",
+      "domainId": "arts",
+      "label": "Se familiariser avec l’expression des émotions par le corps et la voix.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Exprimer de différentes manières la colère, en référence à une histoire racontée ou à des illustrations présentées par les professeurs."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 34
+      }
+    },
+    {
+      "id": "arts-pratiquer-05",
+      "competencyId": "arts-pratiquer",
+      "domainId": "arts",
+      "label": "Se familiariser avec des rôles simples.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Faire semblant d’être un animal ou un personnage en lien avec la littérature, les contes et les comptines du répertoire de la classe."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 34
+      }
+    },
+    {
+      "id": "arts-pratiquer-06",
+      "competencyId": "arts-pratiquer",
+      "domainId": "arts",
+      "label": "Se familiariser avec le jeu dans une mise en scène collective.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Jouer ensemble en détournant l’usage habituel des objets : le cerceau devient la maison, le foulard la queue du loup, etc."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 34
+      }
+    },
+    {
+      "id": "arts-pratiquer-07",
+      "competencyId": "arts-pratiquer",
+      "domainId": "arts",
+      "label": "Explorer des enchainements d’émotions par le corps et la voix.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Passer du rire à la peur ou à la surprise en répondant aux consignes du professeur ou d’un camarade, avec ou sans référence à un support travaillé."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 35
+      }
+    },
+    {
+      "id": "arts-pratiquer-08",
+      "competencyId": "arts-pratiquer",
+      "domainId": "arts",
+      "label": "Explorer des rôles simples.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Commencer à jouer des personnages simples ou archétypaux en utilisant son corps et sa voix (le loup, la sorcière, l’ogre, etc.)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 35
+      }
+    },
+    {
+      "id": "arts-pratiquer-09",
+      "competencyId": "arts-pratiquer",
+      "domainId": "arts",
+      "label": "Explorer le jeu dans une mise en scène collective.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Jouer ensemble les personnages d’une histoire en improvisant et en utilisant des objets en tant qu’éléments du décor : une chaise devient un refuge, un tapis devient une rivière, etc."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 35
+      }
+    },
+    {
+      "id": "arts-spectateur-01",
+      "competencyId": "arts-spectateur",
+      "domainId": "arts",
+      "label": "Découvrir des œuvres adaptées.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Écouter de premières histoires théâtralisées très courtes et adaptées (théâtre pour les tout-petits, théâtre de marionnettes, etc.)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 35
+      }
+    },
+    {
+      "id": "arts-spectateur-02",
+      "competencyId": "arts-spectateur",
+      "domainId": "arts",
+      "label": "Découvrir l’espace scénique.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Assister dans la mesure du possible à une représentation de danse contemporaine d’une durée adaptée au sein de l’école ou d’une structure culturelle locale."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 35
+      }
+    },
+    {
+      "id": "arts-spectateur-03",
+      "competencyId": "arts-spectateur",
+      "domainId": "arts",
+      "label": "Se familiariser avec l’espace scénique.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Après avoir assisté à une représentation, évoquer les personnages, les lieux, les décors, les costumes, etc."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 35
+      }
+    },
+    {
+      "id": "arts-spectateur-04",
+      "competencyId": "arts-spectateur",
+      "domainId": "arts",
+      "label": "Se familiariser avec des œuvres adaptées.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Dire ce que l’on a aimé ou pas dans un spectacle, ce qui a fait peur ou fait rire, et écouter ce que disent les camarades."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 35
+      }
+    },
+    {
+      "id": "arts-spectateur-05",
+      "competencyId": "arts-spectateur",
+      "domainId": "arts",
+      "label": "Rencontrer des artistes.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Participer à des interventions menées par des comédiens et comédiennes, clowns, jongleurs et jongleuses, danseurs et danseuses, mimes, etc."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 35
+      }
+    },
+    {
+      "id": "arts-spectateur-06",
+      "competencyId": "arts-spectateur",
+      "domainId": "arts",
+      "label": "Explorer l’espace scénique.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Jouer dans un espace scénique devant des camarades spectateurs et spectatrices en utilisant les coulisses."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 35
+      }
+    },
+    {
+      "id": "arts-spectateur-07",
+      "competencyId": "arts-spectateur",
+      "domainId": "arts",
+      "label": "Explorer des œuvres adaptées.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Être spectateur et spectatrice de différents genres théâtraux : le mime, le théâtre d’ombres, le théâtre d’objets, les contes théâtralisés ou divers types de marionnettes (marottes, marionnettes empoignées, à tringles, sur table, etc.)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 35
+      }
+    },
+    {
+      "id": "arts-spectateur-08",
+      "competencyId": "arts-spectateur",
+      "domainId": "arts",
+      "label": "Rencontrer des artistes et des professionnels.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Visiter des espaces dédiés au spectacle vivant et échanger autant que possible avec les professionnels et les artistes sur leur métier, à l’occasion d’un spectacle."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 35
       }
     }
   ]
