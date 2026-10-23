@@ -86,14 +86,11 @@ export function BilansScreen() {
   const currentYearId = settings?.currentSchoolYearId
   const years = schoolYears ?? []
   const yearIds = years.map((year) => year.id)
-  // Une année courante absente de la liste reste sélectionnable : le select ne
-  // doit jamais basculer silencieusement sur une autre valeur.
-  if (currentYearId !== undefined && !yearIds.includes(currentYearId)) {
-    yearIds.push(currentYearId)
-  }
   yearIds.sort((a, b) => b.localeCompare(a))
 
-  const requestedYear = yearChoice ?? currentYearId ?? yearIds[0]
+  // Si l'année des réglages n'existe plus dans la base, on retombe sur l'année
+  // connue la plus récente au lieu de rester bloqué sur le chargement.
+  const requestedYear = yearChoice ?? currentYearId
   const selectedYearId =
     requestedYear !== undefined && yearIds.includes(requestedYear)
       ? requestedYear
@@ -106,8 +103,7 @@ export function BilansScreen() {
     settings === undefined ||
     schoolYears === undefined ||
     students === undefined ||
-    year === undefined ||
-    validations === undefined
+    year === undefined
   ) {
     return (
       <section className={styles.screen}>
@@ -126,7 +122,10 @@ export function BilansScreen() {
       period,
       start: range.start,
       end: range.end,
-      count: countValidationsInPeriod(validations, year, period),
+      count:
+        validations === undefined
+          ? 0
+          : countValidationsInPeriod(validations, year, period),
       status: statusFor(year, range.start, range.end, today, currentYearId),
     }
   })
@@ -137,7 +136,7 @@ export function BilansScreen() {
 
   // Compteurs de la période sélectionnée, regroupés en une seule passe.
   const counts = new Map<string, number>()
-  for (const validation of validations) {
+  for (const validation of validations ?? []) {
     if (validation.date < selectedRange.start || validation.date > selectedRange.end) {
       continue
     }
@@ -172,101 +171,117 @@ export function BilansScreen() {
         </select>
       </div>
 
-      <div className={styles.periods} role="group" aria-label="Périodes des bilans">
-        {periods.map((item) => {
-          const selected = item.period === selectedPeriod
-
-          return (
-            <button
-              key={item.period}
-              type="button"
-              className={styles.periodCard}
-              aria-pressed={selected}
-              onClick={() => setPeriodChoice(item.period)}
-            >
-              <span className={styles.periodMarker} aria-hidden="true">
-                {selected ? <Icon name="check" size={14} /> : null}
-              </span>
-              <span className={styles.periodText}>
-                <span className={styles.periodTitle}>Bilan {item.period}</span>
-                <span className={styles.periodRange}>
-                  {formatRange(item.start, item.end)}
-                </span>
-                <span className={styles.periodCount}>
-                  {successLabel(item.count)}
-                </span>
-              </span>
-              <span className={styles.statusPill} data-tone={item.status.tone}>
-                {item.status.label}
-              </span>
-            </button>
-          )
-        })}
-      </div>
-
-      <button
-        type="button"
-        className={styles.cutoverButton}
-        onClick={() => setEditingCutover(true)}
-      >
-        <Icon name="pencil" size={14} />
-        Modifier la date de changement
-      </button>
-
-      {students.length === 0 ? (
-        <div className={styles.empty}>
-          <p className={styles.emptyTitle}>Aucun élève dans la classe</p>
-          <p className={styles.emptyText}>
-            Ajoute les enfants de ta classe pour préparer leurs bilans.
-          </p>
-          <Link to="/students" className={styles.emptyLink}>
-            Ajouter un élève
-          </Link>
-        </div>
+      {validations === undefined ? (
+        <p className={styles.loading} role="status">
+          Chargement des bilans…
+        </p>
       ) : (
         <>
-          <p className={styles.eyebrow}>{studentCountLabel(students.length)}</p>
-
-          <ul className={styles.list}>
-            {students.map((student) => {
-              const count = counts.get(student.id) ?? 0
+          <div
+            className={styles.periods}
+            role="group"
+            aria-label="Périodes des bilans"
+          >
+            {periods.map((item) => {
+              const selected = item.period === selectedPeriod
 
               return (
-                <li key={student.id}>
-                  <Link
-                    to={`/bilans/${student.id}?period=${selectedPeriod}&year=${encodeURIComponent(year.id)}`}
-                    className={styles.studentRow}
-                    aria-label={`${student.firstName}, section ${student.section}, ${successLabel(
-                      count,
-                    )} pour le bilan ${selectedPeriod}`}
-                  >
-                    <Avatar
-                      name={student.firstName}
-                      section={student.section}
-                      size="sm"
-                    />
-                    <span className={styles.studentName}>{student.firstName}</span>
-                    <span className={styles.studentMeta}>
-                      {student.section} · {successLabel(count)}
+                <button
+                  key={item.period}
+                  type="button"
+                  className={styles.periodCard}
+                  aria-pressed={selected}
+                  onClick={() => setPeriodChoice(item.period)}
+                >
+                  <span className={styles.periodMarker} aria-hidden="true">
+                    {selected ? <Icon name="check" size={14} /> : null}
+                  </span>
+                  <span className={styles.periodText}>
+                    <span className={styles.periodTitle}>Bilan {item.period}</span>
+                    <span className={styles.periodRange}>
+                      {formatRange(item.start, item.end)}
                     </span>
-                    <span className={styles.rowChevron} aria-hidden="true">
-                      <Icon name="chevron" size={15} />
+                    <span className={styles.periodCount}>
+                      {successLabel(item.count)}
                     </span>
-                  </Link>
-                </li>
+                  </span>
+                  <span className={styles.statusPill} data-tone={item.status.tone}>
+                    {item.status.label}
+                  </span>
+                </button>
               )
             })}
-          </ul>
+          </div>
+
+          <button
+            type="button"
+            className={styles.cutoverButton}
+            onClick={() => setEditingCutover(true)}
+          >
+            <Icon name="pencil" size={14} />
+            Modifier la date de changement
+          </button>
+
+          {students.length === 0 ? (
+            <div className={styles.empty}>
+              <p className={styles.emptyTitle}>Aucun élève dans la classe</p>
+              <p className={styles.emptyText}>
+                Ajoute les enfants de ta classe pour préparer leurs bilans.
+              </p>
+              <Link to="/students" className={styles.emptyLink}>
+                Ajouter un élève
+              </Link>
+            </div>
+          ) : (
+            <>
+              <p className={styles.eyebrow}>
+                {studentCountLabel(students.length)}
+              </p>
+
+              <ul className={styles.list}>
+                {students.map((student) => {
+                  const count = counts.get(student.id) ?? 0
+
+                  return (
+                    <li key={student.id}>
+                      <Link
+                        to={`/bilans/${student.id}?period=${selectedPeriod}&year=${encodeURIComponent(year.id)}`}
+                        className={styles.studentRow}
+                        aria-label={`${student.firstName}, section ${student.section}, ${successLabel(
+                          count,
+                        )} pour le bilan ${selectedPeriod}`}
+                      >
+                        <Avatar
+                          name={student.firstName}
+                          section={student.section}
+                          size="sm"
+                        />
+                        <span className={styles.studentName}>
+                          {student.firstName}
+                        </span>
+                        <span className={styles.studentMeta}>
+                          {student.section} · {successLabel(count)}
+                        </span>
+                        <span className={styles.rowChevron} aria-hidden="true">
+                          <Icon name="chevron" size={15} />
+                        </span>
+                      </Link>
+                    </li>
+                  )
+                })}
+              </ul>
+            </>
+          )}
+
+          {editingCutover ? (
+            <PeriodEditor
+              year={year}
+              validations={validations}
+              onClose={() => setEditingCutover(false)}
+            />
+          ) : null}
         </>
       )}
-
-      {editingCutover ? (
-        <PeriodEditor
-          year={year}
-          validations={validations}
-          onClose={() => setEditingCutover(false)}
-        />
-      ) : null}
     </section>
   )
 }

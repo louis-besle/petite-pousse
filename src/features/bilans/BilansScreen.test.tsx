@@ -128,6 +128,10 @@ describe('BilansScreen', () => {
 
     const { dialog, input } = await openCutoverEditor(user)
     expect(input).toHaveValue('2027-01-31')
+    // La date n'a pas changé : aucun récapitulatif de déplacement.
+    expect(
+      within(dialog).queryByText(/réussite.*de bilan/),
+    ).not.toBeInTheDocument()
 
     fireEvent.change(input, { target: { value: '2027-01-15' } })
     expect(within(dialog).getByText('1 réussite change de bilan')).toBeInTheDocument()
@@ -200,15 +204,22 @@ describe('BilansScreen', () => {
     // Avant la rentrée.
     fireEvent.change(input, { target: { value: '2026-08-31' } })
     const error = within(dialog).getByRole('alert')
-    expect(error).toHaveTextContent(/entre le 1 septembre 2026 et le 30 juin 2027/i)
+    expect(error).toHaveTextContent(/entre le 1er septembre 2026 et le 30 juin 2027/i)
     expect(input).toHaveAttribute('aria-invalid', 'true')
     expect(input).toHaveAttribute('aria-describedby', expect.stringContaining(error.id))
     expect(save).toBeDisabled()
+    // Hors bornes : aucune ligne de récapitulatif, seulement l'erreur.
+    expect(
+      within(dialog).queryByText(/réussite.*de bilan/),
+    ).not.toBeInTheDocument()
 
     // Borne haute exclue.
     fireEvent.change(input, { target: { value: '2027-06-30' } })
     expect(within(dialog).getByRole('alert')).toBeInTheDocument()
     expect(save).toBeDisabled()
+    expect(
+      within(dialog).queryByText(/réussite.*de bilan/),
+    ).not.toBeInTheDocument()
 
     const stored = await db.schoolYears.get('2026-2027')
     expect(stored?.period1End).toBe('2027-01-31')
@@ -286,6 +297,11 @@ describe('BilansScreen', () => {
     renderApp({ route: '/bilans' })
     await screen.findByRole('button', { name: /^Bilan 1/ })
 
+    // La période par défaut dépend de la date du jour : on fixe le bilan 1
+    // avant de vérifier les liens, sans dépendre du calendrier réel.
+    const user = userEvent.setup()
+    await user.click(periodCard(1))
+
     const rows = screen.getAllByRole('link', { name: /^(Adam|Zoé)/ })
     expect(rows.map((row) => row.getAttribute('href'))).toEqual([
       `/bilans/${adam.id}?period=1&year=2026-2027`,
@@ -293,6 +309,31 @@ describe('BilansScreen', () => {
     ])
     expect(within(studentRow('Adam')).getByText('PS · 0 réussite')).toBeInTheDocument()
     expect(within(studentRow('Zoé')).getByText('GS · 0 réussite')).toBeInTheDocument()
+  })
+
+  it('retombe sur l’année connue la plus récente quand l’année des réglages a disparu', async () => {
+    await setUpYear({
+      id: '2025-2026',
+      start: '2025-09-01',
+      period1End: '2026-01-31',
+      period2End: '2026-06-30',
+    })
+    await setUpYear()
+
+    renderApp({ route: '/bilans' })
+    await screen.findByRole('button', { name: /^Bilan 1/ })
+
+    // Les réglages pointent encore vers 2026-2027, mais la ligne a disparu :
+    // l'écran doit se rabattre sur l'année connue, pas rester en chargement.
+    await db.schoolYears.delete('2026-2027')
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('combobox', { name: 'Année scolaire' }),
+      ).toHaveValue('2025-2026')
+      expect(periodCard(1)).toHaveTextContent('1 sept. 2025 → 31 janv. 2026')
+    })
+    expect(screen.queryByText('Chargement des bilans…')).not.toBeInTheDocument()
   })
 
   it('affiche un état vide quand la classe n’a aucun élève', async () => {

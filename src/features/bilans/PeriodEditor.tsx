@@ -21,6 +21,12 @@ function isDateString(value: string): boolean {
   return isValid(parsed) && format(parsed, 'yyyy-MM-dd') === value
 }
 
+/** « 1 septembre 2026 » → « 1er septembre 2026 ». */
+function dayLabel(date: string): string {
+  const formatted = formatLongDate(date)
+  return formatted.startsWith('1 ') ? `1er${formatted.slice(1)}` : formatted
+}
+
 /** « 1 réussite change de bilan », « 2 réussites changent de bilan ». */
 function movedLabel(count: number): string {
   return `${count} réussite${count > 1 ? 's' : ''} change${count > 1 ? 'nt' : ''} de bilan`
@@ -58,13 +64,16 @@ export function PeriodEditor({ year, validations, onClose }: PeriodEditorProps) 
       ? INVALID_DATE_MESSAGE
       : inBounds
         ? undefined
-        : `La date doit être comprise entre le ${formatLongDate(year.start)} et le ${formatLongDate(year.period2End)} (bornes exclues).`
+        : `La date doit être comprise entre le ${dayLabel(year.start)} et le ${dayLabel(year.period2End)} (bornes exclues).`
 
-  const moved = validDate
+  // Le récapitulatif n'a de sens que pour une date valide, dans les bornes et
+  // différente de la date déjà enregistrée.
+  const showRecap = validDate && inBounds && value !== oldDate
+  const moved = showRecap
     ? countValidationsMovedByCutover(validations, oldDate, value)
     : 0
   const canSave = inBounds && !saving
-  const describedBy = [recapId, error === undefined ? undefined : errorId]
+  const describedBy = [showRecap ? recapId : undefined, error === undefined ? undefined : errorId]
     .filter(Boolean)
     .join(' ')
 
@@ -89,8 +98,9 @@ export function PeriodEditor({ year, validations, onClose }: PeriodEditorProps) 
     <Sheet open title="Modifier la date de changement" onClose={onClose}>
       <form className={styles.form} onSubmit={(event) => void handleSubmit(event)}>
         <p className={styles.formHint}>
-          Le bilan 1 s’arrête le jour choisi. Le bilan 2 commence le lendemain et
-          court jusqu’au {formatLongDate(year.period2End)}.
+          Le bilan 1 commence le {dayLabel(year.start)} et s’arrête le jour choisi.
+          Le bilan 2 commence le lendemain et court jusqu’au{' '}
+          {dayLabel(year.period2End)}.
         </p>
 
         <div className={styles.formField}>
@@ -114,9 +124,11 @@ export function PeriodEditor({ year, validations, onClose }: PeriodEditorProps) 
           </p>
         )}
 
-        <p id={recapId} className={styles.recap}>
-          {movedLabel(moved)}
-        </p>
+        {showRecap ? (
+          <p id={recapId} className={styles.recap}>
+            {movedLabel(moved)}
+          </p>
+        ) : null}
 
         <div className={styles.formActions}>
           <Button type="submit" variant="dark" fullWidth disabled={!canSave}>
