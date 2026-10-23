@@ -6,7 +6,7 @@ Application locale de suivi des compétences pour une classe de maternelle (PS, 
 
 Application terminée et en ligne : <https://carnet-de-reussites.vercel.app>
 
-PWA installable et utilisable hors ligne, couverte par 296 tests unitaires et des parcours E2E (capture, dossiers, bilans, sauvegarde, accessibilité, performance, rechargement hors ligne).
+PWA installable et utilisable hors ligne, couverte par 312 tests unitaires et des parcours E2E (capture, dossiers, bilans, sauvegarde, accessibilité, performance, rechargement hors ligne).
 
 ## Données et confidentialité
 
@@ -30,8 +30,15 @@ Le déploiement est un build statique Vite, configuré par `vercel.ts` (framewor
 
 Le projet Vercel est relié au dépôt GitHub : chaque push sur `main` déploie automatiquement la production, et les autres branches créent des déploiements de prévisualisation. Si nécessaire, un déploiement manuel reste possible avec `npx vercel@latest deploy --prod --project carnet-de-reussites`.
 
+## Accessibilité
+
+L’application est auditée selon WCAG 2.1/2.2 AA et le RGAA 4.1.2. Le rapport complet et la matrice des 106 critères sont dans `docs/accessibility/`.
+
+Verdict actuel : **partiellement conforme**. Les écrans et feuilles ne présentent aucune violation axe A/AA, mais le PDF n’est pas balisé (l’aperçu HTML A4 est la version accessible) et la matrice de tests avec lecteurs d’écran reste à compléter.
+
 ## Contenu
 
+- `docs/accessibility/` : audit WCAG/RGAA et matrice des critères.
 - `docs/superpowers/specs/` : document de conception.
 - `maquettes/` : prototype HTML cliquable, captures d'écran et exemple de bilan imprimé.
 
