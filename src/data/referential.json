@@ -108,6 +108,26 @@
       "id": "maths-motifs",
       "domainId": "maths",
       "label": "Se familiariser avec les motifs organisés"
+    },
+    {
+      "id": "corps-manipuler",
+      "domainId": "corps",
+      "label": "Manipuler, courir, sauter, lancer, s’orienter"
+    },
+    {
+      "id": "corps-equilibres",
+      "domainId": "corps",
+      "label": "Tourner, se suspendre, se renverser, grimper, rouler, glisser, nager"
+    },
+    {
+      "id": "corps-expression",
+      "domainId": "corps",
+      "label": "Explorer, s’exprimer, danser, observer"
+    },
+    {
+      "id": "corps-cooperation",
+      "domainId": "corps",
+      "label": "Coopérer, s’opposer, respecter"
     }
   ],
   "objectives": [
@@ -2785,6 +2805,630 @@
       "source": {
         "bo": "BO n°41 du 31 octobre 2024",
         "page": 51
+      }
+    },
+    {
+      "id": "corps-manipuler-01",
+      "competencyId": "corps-manipuler",
+      "domainId": "corps",
+      "label": "Manipuler et lancer des objets avec des intentions motrices différentes.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Attraper, lancer par-dessus, par en dessous, faire glisser, faire rouler au sol différents objets (balles, anneaux, cerceaux, etc.)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 23
+      }
+    },
+    {
+      "id": "corps-manipuler-02",
+      "competencyId": "corps-manipuler",
+      "domainId": "corps",
+      "label": "Courir de manière variée et coordonnée.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Courir en slalomant entre des objets."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 23
+      }
+    },
+    {
+      "id": "corps-manipuler-03",
+      "competencyId": "corps-manipuler",
+      "domainId": "corps",
+      "label": "Sauter sans élan un obstacle.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Sauter sans élan un obstacle horizontal matérialisé par une latte (une rivière)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 23
+      }
+    },
+    {
+      "id": "corps-manipuler-04",
+      "competencyId": "corps-manipuler",
+      "domainId": "corps",
+      "label": "Se situer dans un espace proche et connu en utilisant des indices présents dans l’environnement.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Trouver au moins deux éléments remarquables (banc, arbres, poteaux, etc.) dans la cour de récréation, repérables sur la photographie prise lors de la première séance."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 23
+      }
+    },
+    {
+      "id": "corps-manipuler-05",
+      "competencyId": "corps-manipuler",
+      "domainId": "corps",
+      "label": "Lancer loin de manière coordonnée.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Lancer différents objets par-dessus un fil, un banc, en étant assis, debout, etc."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 23
+      }
+    },
+    {
+      "id": "corps-manipuler-06",
+      "competencyId": "corps-manipuler",
+      "domainId": "corps",
+      "label": "Courir vite en ligne droite sur une distance ou une durée courte.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Courir vite d’un point de départ à un point d’arrivée en restant dans son espace de course matérialisé par des cordelettes."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 23
+      }
+    },
+    {
+      "id": "corps-manipuler-07",
+      "competencyId": "corps-manipuler",
+      "domainId": "corps",
+      "label": "Sauter sans élan plusieurs obstacles.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Enchainer des sauts sur un pied, sur deux pieds dans des cerceaux, au-dessus d’obstacles verticaux ou franchir plusieurs obstacles horizontaux (tapis, cordelettes, lattes, plots, etc.)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 23
+      }
+    },
+    {
+      "id": "corps-manipuler-08",
+      "competencyId": "corps-manipuler",
+      "domainId": "corps",
+      "label": "Se situer dans un espace élargi et connu grâce à des indices prélevés dans l’environnement.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Trouver trois éléments remarquables et repérables sur des photographies prises par les professeurs dans l’école, en l’absence des élèves ou lors d’une séance précédente."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 23
+      }
+    },
+    {
+      "id": "corps-manipuler-09",
+      "competencyId": "corps-manipuler",
+      "domainId": "corps",
+      "label": "Lancer loin et avec précision différents objets.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Lancer une balle lestée, un anneau, un cerceau, un petit javelot avec élan (quelques pas de déplacement), pour atteindre une zone de plus en plus éloignée."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 23
+      }
+    },
+    {
+      "id": "corps-manipuler-10",
+      "competencyId": "corps-manipuler",
+      "domainId": "corps",
+      "label": "Courir de plus en plus longtemps sans s’arrêter.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Courir en limitant les arrêts sur une durée d’effort matérialisée par un support musical ou un sablier."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 23
+      }
+    },
+    {
+      "id": "corps-manipuler-11",
+      "competencyId": "corps-manipuler",
+      "domainId": "corps",
+      "label": "Courir vite et franchir un obstacle sur une distance courte.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Courir vite et franchir une rivière matérialisée avec des lattes sans ralentir."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 23
+      }
+    },
+    {
+      "id": "corps-manipuler-12",
+      "competencyId": "corps-manipuler",
+      "domainId": "corps",
+      "label": "Coordonner ses actions et ses déplacements pour lancer et pour sauter haut ou loin.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Courir puis sauter haut ou loin après une impulsion sur un pied pour franchir un obstacle et se réceptionner sur deux pieds."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 23
+      }
+    },
+    {
+      "id": "corps-manipuler-13",
+      "competencyId": "corps-manipuler",
+      "domainId": "corps",
+      "label": "Se situer dans un milieu moins connu grâce à des indices prélevés dans l’environnement.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Trouver au moins cinq éléments remarquables et repérables sur plusieurs photographies prises par les professeurs dans un lieu extérieur à l’école (cour de récréation, terrain de sport, stade, parc…), en l’absence des élèves ou lors d’une séance précédente."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 23
+      }
+    },
+    {
+      "id": "corps-equilibres-01",
+      "competencyId": "corps-equilibres",
+      "domainId": "corps",
+      "label": "Développer de nouveaux équilibres par des modes de déplacement variés.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Tourner, descendre, grimper, se déplacer à quatre pattes, avec les mains, les pieds, sur le ventre, sur le dos, etc."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 24
+      }
+    },
+    {
+      "id": "corps-equilibres-02",
+      "competencyId": "corps-equilibres",
+      "domainId": "corps",
+      "label": "Développer de nouveaux équilibres dans des environnements de pratiques inhabituels et sécurisés.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Pédaler, rouler (tricycle, patinette et draisienne) en se propulsant avec un pied ou avec deux pieds."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 24
+      }
+    },
+    {
+      "id": "corps-equilibres-03",
+      "competencyId": "corps-equilibres",
+      "domainId": "corps",
+      "label": "Développer de nouveaux équilibres par des déplacements impliquant une perte de repères habituels.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Marcher à reculons, se suspendre par les bras, tourner, se balancer, etc."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 24
+      }
+    },
+    {
+      "id": "corps-equilibres-04",
+      "competencyId": "corps-equilibres",
+      "domainId": "corps",
+      "label": "Comprendre l’intérêt des règles de sécurité dans des activités et environnements inhabituels.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Attendre l’autorisation des professeurs avant de s’engager dans un parcours pour sa sécurité et celle des autres."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 24
+      }
+    },
+    {
+      "id": "corps-equilibres-05",
+      "competencyId": "corps-equilibres",
+      "domainId": "corps",
+      "label": "Construire de nouveaux équilibres par des déplacements impliquant une combinaison d’actions.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Sauter puis se déplacer en quadrupédie, se suspendre, se balancer et se lâcher, etc."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 24
+      }
+    },
+    {
+      "id": "corps-equilibres-06",
+      "competencyId": "corps-equilibres",
+      "domainId": "corps",
+      "label": "Explorer le milieu aquatique et développer une nouvelle locomotion dans l’eau.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Entrer et sortir seul de l’eau, se déplacer avec les épaules immergées, immerger complètement la tête pendant plusieurs secondes."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 24
+      }
+    },
+    {
+      "id": "corps-equilibres-07",
+      "competencyId": "corps-equilibres",
+      "domainId": "corps",
+      "label": "Respecter les règles de sécurité pour soi et pour les autres.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Aider ses camarades avec les professeurs pour assurer leur sécurité (guide et parade)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 24
+      }
+    },
+    {
+      "id": "corps-expression-01",
+      "competencyId": "corps-expression",
+      "domainId": "corps",
+      "label": "Découvrir et explorer le mouvement comme vecteur d’expression.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Marcher à pas feutrés, ramper, s’immobiliser, mobiliser une partie du corps, tourner avec un carton ou un foulard, produire des mouvements lents, rapides, saccadés, etc."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 25
+      }
+    },
+    {
+      "id": "corps-expression-02",
+      "competencyId": "corps-expression",
+      "domainId": "corps",
+      "label": "Oser s’exprimer avec son corps seul et avec les autres en répondant à une consigne simple.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Coordonner ses gestes et ses déplacements avec ceux des autres, lors de rondes et jeux chantés."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 25
+      }
+    },
+    {
+      "id": "corps-expression-03",
+      "competencyId": "corps-expression",
+      "domainId": "corps",
+      "label": "Observer pour produire et reproduire un ou plusieurs mouvements avec une intention d’expression.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Mimer un animal, un personnage de fiction, etc."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 25
+      }
+    },
+    {
+      "id": "corps-expression-04",
+      "competencyId": "corps-expression",
+      "domainId": "corps",
+      "label": "Découvrir et explorer le geste dansé.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Reproduire certains gestes dansés (ramper sur le sol, tracer des vagues dans l’espace avec les bras, lancer un foulard en l’air puis frapper dans les mains avant de le rattraper, etc.)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 25
+      }
+    },
+    {
+      "id": "corps-expression-05",
+      "competencyId": "corps-expression",
+      "domainId": "corps",
+      "label": "Découvrir l’espace scénique.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Évoluer en occupant les différents espaces de la scène identifiée par les professeurs."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 25
+      }
+    },
+    {
+      "id": "corps-expression-06",
+      "competencyId": "corps-expression",
+      "domainId": "corps",
+      "label": "Développer une posture de spectateur et de spectatrice actifs.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Observer de courts extraits de chorégraphies filmées qui illustrent la diversité des danses et des cultures et exprimer verbalement ses émotions."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 25
+      }
+    },
+    {
+      "id": "corps-expression-07",
+      "competencyId": "corps-expression",
+      "domainId": "corps",
+      "label": "Enrichir le geste dansé par de nouvelles coordinations motrices, issues également des arts du cirque.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Danser « grand » (le corps étiré) ou danser « petit » (le corps resserré), jongler avec deux foulards, s’équilibrer sur un rolla bolla, etc."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 25
+      }
+    },
+    {
+      "id": "corps-expression-08",
+      "competencyId": "corps-expression",
+      "domainId": "corps",
+      "label": "Explorer l’ensemble de l’espace scénique en variant les inducteurs (objets, mondes sonores, modes de déplacements, etc.) pour créer des effets.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Reproduire un mouvement très lent ou très rapide, de façon continue, fluide, discontinue, saccadée sur une musique en utilisant l’espace scénique."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 25
+      }
+    },
+    {
+      "id": "corps-expression-09",
+      "competencyId": "corps-expression",
+      "domainId": "corps",
+      "label": "Danser, seul ou à plusieurs, en créant et en reproduisant un ou plusieurs gestes et déplacements.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Danser en miroir, en parallèle, en contact, en prenant appui sur son partenaire, etc."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 25
+      }
+    },
+    {
+      "id": "corps-expression-10",
+      "competencyId": "corps-expression",
+      "domainId": "corps",
+      "label": "Adopter une posture de spectateur et de spectatrice actifs.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Observer ses camarades danser puis exprimer verbalement une émotion et formuler un conseil pour les faire progresser."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 25
+      }
+    },
+    {
+      "id": "corps-cooperation-01",
+      "competencyId": "corps-cooperation",
+      "domainId": "corps",
+      "label": "Comprendre et s’approprier un rôle dans les formes de jeu les plus simples.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Vider et transporter des objets d’une zone à l’autre : porter, lancer, faire rouler, pousser, tirer, etc. (jeu Les déménageurs)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 26
+      }
+    },
+    {
+      "id": "corps-cooperation-02",
+      "competencyId": "corps-cooperation",
+      "domainId": "corps",
+      "label": "Explorer différents jeux moteurs vécus en interindividuel ou en collectif.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Poursuivre ou esquiver des adversaires dans l’aire de jeu (jeu Minuit dans la bergerie)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 26
+      }
+    },
+    {
+      "id": "corps-cooperation-03",
+      "competencyId": "corps-cooperation",
+      "domainId": "corps",
+      "label": "Éprouver le plaisir de jouer dans le respect des autres et des règles communes.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Jouer à un jeu de poursuite sans brusquer les autres élèves (jeux Le chat et la souris, Les belettes)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 26
+      }
+    },
+    {
+      "id": "corps-cooperation-04",
+      "competencyId": "corps-cooperation",
+      "domainId": "corps",
+      "label": "Jouer en coopérant.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "S’organiser à plusieurs pour poursuivre ou rattraper un adversaire, déplacer des objets d’une zone à l’autre, etc."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 26
+      }
+    },
+    {
+      "id": "corps-cooperation-05",
+      "competencyId": "corps-cooperation",
+      "domainId": "corps",
+      "label": "Jouer en exerçant des rôles différents : attaquant, attaquante et défenseur, défenseuse.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Jouer à plusieurs en identifiant la zone à atteindre et les rôles des joueurs et des joueuses (attaquants, attaquantes ou défenseurs, défenseuses)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 26
+      }
+    },
+    {
+      "id": "corps-cooperation-06",
+      "competencyId": "corps-cooperation",
+      "domainId": "corps",
+      "label": "Coopérer dans le respect des autres et des règles communes.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Accepter la défaite dans le cadre d’un jeu à règles (jeux Promenons-nous dans les bois, Les trois refuges)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 26
+      }
+    },
+    {
+      "id": "corps-cooperation-07",
+      "competencyId": "corps-cooperation",
+      "domainId": "corps",
+      "label": "Élaborer seul ou à plusieurs des stratégies pour gagner un jeu.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Construire une stratégie individuelle ou collective (jeux Protéger son trésor, Les renards, les poules et les serpents)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 26
+      }
+    },
+    {
+      "id": "corps-cooperation-08",
+      "competencyId": "corps-cooperation",
+      "domainId": "corps",
+      "label": "Jouer en exerçant des rôles différents : attaquant, attaquante, défenseur, défenseuse et arbitre.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Sortir son adversaire d’une zone en le poussant ou le tirant, l’immobiliser au sol sans lui faire mal (jeux Décrocher le coquillage du rocher, Sortir les ours de leur tanière)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 26
+      }
+    },
+    {
+      "id": "corps-cooperation-09",
+      "competencyId": "corps-cooperation",
+      "domainId": "corps",
+      "label": "Éprouver le plaisir de coopérer et de s’opposer dans le respect des autres et des règles communes.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Accepter les contraintes liées à l’élaboration d’une stratégie au sein d’une équipe (jeu La forêt, jeux d’attaque et de défense d’un territoire)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 26
       }
     }
   ]
