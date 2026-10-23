@@ -203,6 +203,26 @@
       "id": "temps-environnement",
       "domainId": "temps",
       "label": "Découvrir l’environnement proche"
+    },
+    {
+      "id": "vivant-animaux-vegetaux",
+      "domainId": "vivant",
+      "label": "Découvrir les animaux et les végétaux"
+    },
+    {
+      "id": "vivant-corps-sante",
+      "domainId": "vivant",
+      "label": "Découvrir le corps humain et la santé"
+    },
+    {
+      "id": "vivant-objets-materiaux",
+      "domainId": "vivant",
+      "label": "Découvrir les objets et les matériaux"
+    },
+    {
+      "id": "vivant-matiere-melanges",
+      "domainId": "vivant",
+      "label": "Découvrir les états de la matière et les mélanges"
     }
   ],
   "objectives": [
@@ -5858,6 +5878,758 @@
       "source": {
         "bo": "BO n°19 du 7 mai 2026",
         "page": 58
+      }
+    },
+    {
+      "id": "vivant-animaux-vegetaux-01",
+      "competencyId": "vivant-animaux-vegetaux",
+      "domainId": "vivant",
+      "label": "Repérer et nommer les caractéristiques morphologiques générales des plantes et des animaux observés avec la classe.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Identifier et nommer les caractéristiques des animaux et des plantes, notamment : - tête, bouche, bec, yeux, pattes, nageoires, ailes, plumes, poils et écailles ; - racine, tige, feuille, fleur, tronc et branche."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 60
+      }
+    },
+    {
+      "id": "vivant-animaux-vegetaux-02",
+      "competencyId": "vivant-animaux-vegetaux",
+      "domainId": "vivant",
+      "label": "Reconnaitre et nommer le mâle et la femelle, le jeune et l'adulte pour plusieurs espèces animales.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Utiliser le lexique adapté : le chevreau, la chèvre et le bouc, le chiot, la chienne et le chien, etc."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 60
+      }
+    },
+    {
+      "id": "vivant-animaux-vegetaux-03",
+      "competencyId": "vivant-animaux-vegetaux",
+      "domainId": "vivant",
+      "label": "Prodiguer des soins nécessaires aux élevages et aux cultures.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Assurer l’arrosage de plantations, en quantité adaptée et régulière, à l’invitation des professeurs."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 60
+      }
+    },
+    {
+      "id": "vivant-animaux-vegetaux-04",
+      "competencyId": "vivant-animaux-vegetaux",
+      "domainId": "vivant",
+      "label": "Reconnaitre une ou plusieurs étapes d’un cycle de vie à partir de l’observation d’animaux et de plantes.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Constater et décrire des changements liés à la croissance d’une plante à partir d’un suivi d’observation (photographies régulières)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 60
+      }
+    },
+    {
+      "id": "vivant-animaux-vegetaux-05",
+      "competencyId": "vivant-animaux-vegetaux",
+      "domainId": "vivant",
+      "label": "Identifier et décrire les besoins essentiels de quelques animaux et de végétaux à partir d'observations d'élevage, de cultures de plantes, et des soins prodigués.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Connaitre les préférences alimentaires des animaux élevés ou étudiés en classe."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 60
+      }
+    },
+    {
+      "id": "vivant-animaux-vegetaux-06",
+      "competencyId": "vivant-animaux-vegetaux",
+      "domainId": "vivant",
+      "label": "Observer et nommer le mode de déplacement de quelques animaux en relation avec leur milieu de vie.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Savoir dire si un animal vole, marche, rampe, saute, grimpe, court ou nage."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 60
+      }
+    },
+    {
+      "id": "vivant-animaux-vegetaux-07",
+      "competencyId": "vivant-animaux-vegetaux",
+      "domainId": "vivant",
+      "label": "Respecter la vie sous toutes ses formes.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Ne pas écraser les petits animaux de la cour de l’école afin de les préserver."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 60
+      }
+    },
+    {
+      "id": "vivant-animaux-vegetaux-08",
+      "competencyId": "vivant-animaux-vegetaux",
+      "domainId": "vivant",
+      "label": "Identifier des éléments morphologiques spécifiques à une espèce végétale ou animale.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Classer des animaux en fonction de leurs caractéristiques (poils, plumes, écailles, etc.)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 60
+      }
+    },
+    {
+      "id": "vivant-animaux-vegetaux-09",
+      "competencyId": "vivant-animaux-vegetaux",
+      "domainId": "vivant",
+      "label": "Reconnaitre les étapes de la vie d'un animal ou d'une plante.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Nommer et ordonner les étapes du cycle de vie d’une plante ou d’un animal observées avec la classe (naissance, éclosion, germination – larve, nymphe, métamorphose, etc.)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 60
+      }
+    },
+    {
+      "id": "vivant-animaux-vegetaux-10",
+      "competencyId": "vivant-animaux-vegetaux",
+      "domainId": "vivant",
+      "label": "Décrire les besoins essentiels de quelques animaux ou de végétaux.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Réaliser une affiche ou un carnet de voyage pour réinvestir les connaissances lexicales acquises (étapes de la vie, morphologie, locomotion, alimentation, milieu de vie), après une sortie (visite d’une ferme, sortie « nature » etc.)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 60
+      }
+    },
+    {
+      "id": "vivant-animaux-vegetaux-11",
+      "competencyId": "vivant-animaux-vegetaux",
+      "domainId": "vivant",
+      "label": "Contribuer à une action collective favorable à la préservation de la biodiversité dans un milieu proche de l’école.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Participer avec la classe à la mise en place d’un potager dans l’école ou dans un jardin collectif."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 60
+      }
+    },
+    {
+      "id": "vivant-corps-sante-01",
+      "competencyId": "vivant-corps-sante",
+      "domainId": "vivant",
+      "label": "Nommer et représenter quelques parties du corps humain.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Désigner différentes parties du corps de la poupée pendant l’activité de rangement de ses vêtements dans le coin d’imitation."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 60
+      }
+    },
+    {
+      "id": "vivant-corps-sante-02",
+      "competencyId": "vivant-corps-sante",
+      "domainId": "vivant",
+      "label": "Découvrir les sens utilisés lors d’expériences sensorielles variées.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Identifier parmi d’autres un objet connu et caché dans un sac ou dans une boite par le toucher."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 60
+      }
+    },
+    {
+      "id": "vivant-corps-sante-03",
+      "competencyId": "vivant-corps-sante",
+      "domainId": "vivant",
+      "label": "Respecter quelques règles d’hygiène de vie, à l’invitation de l’adulte.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Se laver les mains après le passage aux toilettes, avant et après les repas, se moucher, etc. avec l’aide de l’adulte."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 60
+      }
+    },
+    {
+      "id": "vivant-corps-sante-04",
+      "competencyId": "vivant-corps-sante",
+      "domainId": "vivant",
+      "label": "Identifier et nommer les parties du corps humain.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Placer les pièces d’un puzzle représentant le corps humain en nommant les bras, les mains, les jambes, la tête, le cou, le tronc, etc."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 61
+      }
+    },
+    {
+      "id": "vivant-corps-sante-05",
+      "competencyId": "vivant-corps-sante",
+      "domainId": "vivant",
+      "label": "Identifier et nommer des organes sensoriels et les modalités de perception associées.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Associer les yeux et la vue, le nez et l’odorat, la langue et le gout, la peau et le toucher, l’oreille et l’audition."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 61
+      }
+    },
+    {
+      "id": "vivant-corps-sante-06",
+      "competencyId": "vivant-corps-sante",
+      "domainId": "vivant",
+      "label": "Observer des changements liés à sa croissance.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Constater des changements physiques liées à sa croissance en s’appuyant sur des éléments concrets (vêtements, chaussures, photographies fournies par la famille, toise personnelle)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 61
+      }
+    },
+    {
+      "id": "vivant-corps-sante-07",
+      "competencyId": "vivant-corps-sante",
+      "domainId": "vivant",
+      "label": "Connaitre quelques règles d’hygiène corporelle et de propreté.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Réaliser en autonomie les premiers gestes qui garantissent son hygiène corporelle (se laver les mains, se moucher, etc.)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 61
+      }
+    },
+    {
+      "id": "vivant-corps-sante-08",
+      "competencyId": "vivant-corps-sante",
+      "domainId": "vivant",
+      "label": "Identifier et nommer quelques articulations et la segmentation des membres.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Situer sur soi et nommer la cheville, le genou, le coude, la hanche, l’épaule, la cuisse, la jambe, le pied, le bras, l’avant-bras, le poignet, la main, etc."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 61
+      }
+    },
+    {
+      "id": "vivant-corps-sante-09",
+      "competencyId": "vivant-corps-sante",
+      "domainId": "vivant",
+      "label": "Se représenter avec un corps articulé en mouvement.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Réaliser un dessin de plus en plus réaliste d’un personnage en train de courir ou de sauter à l’appui d’un mannequin articulé en bois."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 61
+      }
+    },
+    {
+      "id": "vivant-corps-sante-10",
+      "competencyId": "vivant-corps-sante",
+      "domainId": "vivant",
+      "label": "Connaitre quelques étapes de la vie d’un enfant jusqu’à six ans.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Classer et commenter quatre photographies fournies par sa famille, montrant les caractéristiques de son développement physique."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 61
+      }
+    },
+    {
+      "id": "vivant-objets-materiaux-01",
+      "competencyId": "vivant-objets-materiaux",
+      "domainId": "vivant",
+      "label": "Reconnaitre et comparer des matériaux usuels à partir de perceptions sensorielles.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Trier différents objets et échantillons de matières selon des propriétés perceptibles par les sens (doux, piquant, mou, dur, lisse, rugueux, etc.)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 62
+      }
+    },
+    {
+      "id": "vivant-objets-materiaux-02",
+      "competencyId": "vivant-objets-materiaux",
+      "domainId": "vivant",
+      "label": "Repérer des transformations de matériaux sous l’effet d’actions mécaniques avec les mains ou avec des outils.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Modeler de la pâte à sel, déchirer et froisser du papier, découper de la pâte à modeler, presser des fruits et filtrer pour faire du jus, etc."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 62
+      }
+    },
+    {
+      "id": "vivant-objets-materiaux-03",
+      "competencyId": "vivant-objets-materiaux",
+      "domainId": "vivant",
+      "label": "Utiliser des objets, connaitre leur nom et leur fonction.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Identifier et nommer parmi une collection d’objets, ceux qui sont constitués de papier, de carton, de plastique, de métal, etc."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 62
+      }
+    },
+    {
+      "id": "vivant-objets-materiaux-04",
+      "competencyId": "vivant-objets-materiaux",
+      "domainId": "vivant",
+      "label": "Réaliser une construction, fabriquer un objet librement ou par un guidage pas à pas.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Construire une tour la plus haute possible avec des planchettes en bois."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 62
+      }
+    },
+    {
+      "id": "vivant-objets-materiaux-05",
+      "competencyId": "vivant-objets-materiaux",
+      "domainId": "vivant",
+      "label": "Différencier des matériaux en fonction de leurs propriétés et différencier un objet du matériau qui le constitue.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Classer des objets ou des échantillons de matériaux à partir de tests de leurs propriétés (magnétisme, perméabilité, opacité, transparence etc.) : « La cuillère en fer ou en acier est attirée par l’aimant mais pas la cuillère en bois. »"
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 62
+      }
+    },
+    {
+      "id": "vivant-objets-materiaux-06",
+      "competencyId": "vivant-objets-materiaux",
+      "domainId": "vivant",
+      "label": "Désigner et utiliser des outils ou des objets adaptés à une situation et à une action technique.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Choisir parmi l’emporte-pièce, les ciseaux ou un couteau en bois, ce qui convient le mieux pour réaliser des sablés identiques pendant l’atelier cuisine."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 62
+      }
+    },
+    {
+      "id": "vivant-objets-materiaux-07",
+      "competencyId": "vivant-objets-materiaux",
+      "domainId": "vivant",
+      "label": "Réaliser une construction, fabriquer un objet à partir d’un modèle.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Construire un moulinet à vent en respectant les étapes de réalisation photographiées ou dessinées."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 62
+      }
+    },
+    {
+      "id": "vivant-objets-materiaux-08",
+      "competencyId": "vivant-objets-materiaux",
+      "domainId": "vivant",
+      "label": "Reproduire quelques gestes respectueux de l’environnement montrés par l’adulte.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Trier et jeter les déchets dans la poubelle appropriée."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 62
+      }
+    },
+    {
+      "id": "vivant-objets-materiaux-09",
+      "competencyId": "vivant-objets-materiaux",
+      "domainId": "vivant",
+      "label": "Associer une solution technique à une fonction technique.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Identifier et comprendre que la poignée de l’arrosoir sert à le transporter, que le réservoir sert à contenir l’eau et que la pomme sert à mieux répartir l’eau."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 62
+      }
+    },
+    {
+      "id": "vivant-objets-materiaux-10",
+      "competencyId": "vivant-objets-materiaux",
+      "domainId": "vivant",
+      "label": "Fabriquer un objet en réponse à un besoin en exploitant des propriétés de matériaux ou des phénomènes physiques (équilibre, magnétisme, perméabilité, opacité ou transparence).",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Fabriquer le support d’un labyrinthe pour pouvoir déplacer un objet en fer ou en acier à l’aide d’un aimant placé en-dessous. Construire une bascule avec un pivot et une planche et placer des objets de part et d’autre pour établir un équilibre."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 62
+      }
+    },
+    {
+      "id": "vivant-objets-materiaux-11",
+      "competencyId": "vivant-objets-materiaux",
+      "domainId": "vivant",
+      "label": "Explorer la notion de flottabilité avec des objets pleins constitués d’une seule et même matière : observer que, plongés dans l’eau, ils flottent tous ou coulent tous.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Plonger des objets pleins (sans creux, sans trous) d'une même matière (bois, fer, cire de bougie, polystyrène, verre) et observer leur comportement : quand on les plonge dans l'eau, ils coulent tous (fer, verre) ou ils flottent tous (cire, polystyrène, bois)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 62
+      }
+    },
+    {
+      "id": "vivant-objets-materiaux-12",
+      "competencyId": "vivant-objets-materiaux",
+      "domainId": "vivant",
+      "label": "Construire, fabriquer, réaliser en suivant une recette ou une fiche technique.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Rassembler les éléments nécessaires et respecter la chronologie des étapes pour réaliser une soupe froide."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 63
+      }
+    },
+    {
+      "id": "vivant-objets-materiaux-13",
+      "competencyId": "vivant-objets-materiaux",
+      "domainId": "vivant",
+      "label": "Élaborer une suite d’instructions pour réaliser une tâche simple.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Choisir et organiser 3 à 5 instructions simples (avancer, tourner) dans le bon ordre pour conduire un objet ou un robot jusqu’à une case cible sur un quadrillage."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 63
+      }
+    },
+    {
+      "id": "vivant-objets-materiaux-14",
+      "competencyId": "vivant-objets-materiaux",
+      "domainId": "vivant",
+      "label": "Identifier et prévenir les risques liés à certains objets.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Fabriquer le support d’un labyrinthe pour pouvoir déplacer un objet en fer ou en acier à l’aide d’un aimant placé en-dessous. Construire une bascule avec un pivot et une planche et placer des objets de part et d’autre pour établir un équilibre."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 63
+      }
+    },
+    {
+      "id": "vivant-matiere-melanges-01",
+      "competencyId": "vivant-matiere-melanges",
+      "domainId": "vivant",
+      "label": "Explorer quelques caractéristiques des solides et des liquides.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Choisir une méthode adaptée, avec et sans ustensiles, pour transporter des liquides et des solides (les ustensiles avec des trous, tels qu’une passoire ou un filtre à café, laissent passer l’eau, pour les solides (sable, cailloux), cela dépend de la taille des trous)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 63
+      }
+    },
+    {
+      "id": "vivant-matiere-melanges-02",
+      "competencyId": "vivant-matiere-melanges",
+      "domainId": "vivant",
+      "label": "Constater les effets d’un déplacement d’air sur des objets ou sur soi-même.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "« Je sens l’air sur ma joue quand on agite un éventail. », « Quand il y a du vent, les feuilles volent dans la cour et le moulinet tourne vite. »"
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 63
+      }
+    },
+    {
+      "id": "vivant-matiere-melanges-03",
+      "competencyId": "vivant-matiere-melanges",
+      "domainId": "vivant",
+      "label": "Réaliser et observer des mélanges.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Fabriquer de la pâte à sel, du sirop à l’eau, mélanger du riz et des lentilles, du sable et de l’eau."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 63
+      }
+    },
+    {
+      "id": "vivant-matiere-melanges-04",
+      "competencyId": "vivant-matiere-melanges",
+      "domainId": "vivant",
+      "label": "Découvrir et observer la fusion et la solidification de l’eau.",
+      "ageBands": [
+        "before4"
+      ],
+      "examples": {
+        "before4": "Observer, manipuler et fabriquer de la glace (dehors ou en utilisant un mélange réfrigérant), la faire fondre."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 63
+      }
+    },
+    {
+      "id": "vivant-matiere-melanges-05",
+      "competencyId": "vivant-matiere-melanges",
+      "domainId": "vivant",
+      "label": "Identifier une condition favorable à la fusion de la glace.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Rechercher ensemble différentes manières de faire fondre des glaçons par exemple pour libérer un personnage pris à l’intérieur, les tester et garder trace des observations."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 63
+      }
+    },
+    {
+      "id": "vivant-matiere-melanges-06",
+      "competencyId": "vivant-matiere-melanges",
+      "domainId": "vivant",
+      "label": "Mettre en évidence la présence d’air en le mettant en mouvement.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Faire bouger une plume en produisant du vent avec son corps (souffler doucement, agiter la main) et avec des objets (feuille cartonnée, pompe à vélo, petit ventilateur, etc.)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 63
+      }
+    },
+    {
+      "id": "vivant-matiere-melanges-07",
+      "competencyId": "vivant-matiere-melanges",
+      "domainId": "vivant",
+      "label": "Distinguer les solides qui se dissolvent dans l’eau de ceux qui ne se dissolvent pas.",
+      "ageBands": [
+        "from4"
+      ],
+      "examples": {
+        "from4": "Observer que certains solides, comme le sel, se dissolvent dans l’eau, tandis que d’autres, comme le riz, le sable ou les morceaux d’écorce, ne se dissolvent pas."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 63
+      }
+    },
+    {
+      "id": "vivant-matiere-melanges-08",
+      "competencyId": "vivant-matiere-melanges",
+      "domainId": "vivant",
+      "label": "Identifier et nommer l’état de l’eau dans différentes situations.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Observer les manifestations naturelles au fil des saisons et commenter des photographies représentant différents états de l’eau (pluie, flaque, mer, glacier, neige, givre etc.)."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 63
+      }
+    },
+    {
+      "id": "vivant-matiere-melanges-09",
+      "competencyId": "vivant-matiere-melanges",
+      "domainId": "vivant",
+      "label": "Identifier la présence de l’air quand il est perceptible par les sens.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Observer le mouvement du ballon de baudruche lorsqu’on le lâche après l’avoir rempli d’air avec un gonfleur."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 63
+      }
+    },
+    {
+      "id": "vivant-matiere-melanges-10",
+      "competencyId": "vivant-matiere-melanges",
+      "domainId": "vivant",
+      "label": "Distinguer, parmi quelques solides, ceux qui peuvent se dissoudre dans l’eau.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Mélanger différents solides à de l’eau (sucre, sel, sable, etc.) et noter les effets obtenus dans un tableau à double entrée. Récupérer à l’aide d’un filtre les solides non dissous."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 63
+      }
+    },
+    {
+      "id": "vivant-matiere-melanges-11",
+      "competencyId": "vivant-matiere-melanges",
+      "domainId": "vivant",
+      "label": "Commencer à agir de manière autonome pour le respect de l’environnement.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Éteindre la lumière en sortant d’une salle vide ; fermer correctement le robinet après utilisation ; éviter le gaspillage de papier, etc."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 63
+      }
+    },
+    {
+      "id": "vivant-matiere-melanges-12",
+      "competencyId": "vivant-matiere-melanges",
+      "domainId": "vivant",
+      "label": "Prendre en compte les risques de l’environnement familier.",
+      "ageBands": [
+        "from5"
+      ],
+      "examples": {
+        "from5": "Reconnaitre les pictogrammes présents sur les contenants pour identifier certains produits toxiques ou dangereux."
+      },
+      "source": {
+        "bo": "BO n°19 du 7 mai 2026",
+        "page": 63
       }
     }
   ]
