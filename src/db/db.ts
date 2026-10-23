@@ -39,3 +39,10 @@ export class CarnetDB extends Dexie {
 }
 
 export const db = new CarnetDB()
+
+// Les tests E2E sèment et inspectent la base depuis la page. En production, la
+// base reste invisible pour le code applicatif extérieur.
+if (import.meta.env.DEV && typeof window !== 'undefined') {
+  const devWindow = window as unknown as { __carnetDb: CarnetDB }
+  devWindow.__carnetDb = db
+}
