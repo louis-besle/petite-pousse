@@ -323,7 +323,7 @@ export async function seedValidation(
 
   return page.evaluate(
     async (payload) => {
-      const database = (window as unknown as { __carnetDb: DevDatabase }).__carnetDb
+      const database = (window as unknown as { __petitePousseDb: DevDatabase }).__petitePousseDb
       const validationId = `val_seed_${crypto.randomUUID()}`
       const createdAt = new Date().toISOString()
       let photoId: string | undefined
@@ -405,7 +405,7 @@ export async function readDb(
 ): Promise<Array<Record<string, unknown>>> {
   return page.evaluate(
     async ({ tableName }) => {
-      const database = (window as unknown as { __carnetDb: DevDatabase }).__carnetDb
+      const database = (window as unknown as { __petitePousseDb: DevDatabase }).__petitePousseDb
       const handle = (database as unknown as Record<string, DevTable | undefined>)[
         tableName
       ]
@@ -435,7 +435,7 @@ export async function readDb(
  */
 export async function clearDb(page: Page): Promise<void> {
   await page.evaluate(async () => {
-    const database = (window as unknown as { __carnetDb: DevDatabase }).__carnetDb
+    const database = (window as unknown as { __petitePousseDb: DevDatabase }).__petitePousseDb
 
     await database.transaction(
       'rw',
@@ -470,7 +470,7 @@ export async function setCurrentSchoolYear(
 ): Promise<void> {
   await page.evaluate(
     async (id) => {
-      const database = (window as unknown as { __carnetDb: DevDatabase }).__carnetDb
+      const database = (window as unknown as { __petitePousseDb: DevDatabase }).__petitePousseDb
 
       if ((await database.schoolYears.get(id)) === undefined) {
         throw new Error(`Année scolaire absente : ${id}`)
@@ -494,7 +494,7 @@ export async function setCurrentSchoolYear(
 export async function seedDraft(page: Page, studentId: string): Promise<void> {
   await page.evaluate(
     async (id) => {
-      const database = (window as unknown as { __carnetDb: DevDatabase }).__carnetDb
+      const database = (window as unknown as { __petitePousseDb: DevDatabase }).__petitePousseDb
 
       await database.transaction('rw', [database.drafts], async () => {
         await database.drafts.clear()
@@ -546,7 +546,7 @@ export async function seedBulkPhotoValidations(
 ): Promise<void> {
   await page.evaluate(
     async (payload) => {
-      const database = (window as unknown as { __carnetDb: DevDatabase }).__carnetDb
+      const database = (window as unknown as { __petitePousseDb: DevDatabase }).__petitePousseDb
       const bytes = Uint8Array.from(atob(payload.photoBase64), (character) =>
         character.charCodeAt(0),
       )

@@ -66,7 +66,7 @@ test.describe('WebKit — parcours iPhone', () => {
   }) => {
     await seed(page)
 
-    await expect(page).toHaveTitle('La classe · Carnet de réussites')
+    await expect(page).toHaveTitle('La classe · Petite pousse')
     await expect(page.locator('html')).toHaveAttribute('lang', 'fr')
     await expect(
       page.getByRole('heading', { level: 1, name: /^Bonjour/ }),
@@ -89,7 +89,7 @@ test.describe('WebKit — parcours iPhone', () => {
     await expect(
       page.getByRole('heading', { level: 1, name: 'Léa', exact: true }),
     ).toBeVisible()
-    await expect(page).toHaveTitle('Dossier de l’élève · Carnet de réussites')
+    await expect(page).toHaveTitle('Dossier de l’élève · Petite pousse')
 
     const overflow = await page.evaluate(
       () =>
@@ -100,7 +100,7 @@ test.describe('WebKit — parcours iPhone', () => {
     // Retour par la navigation : le focus suit le nouvel écran.
     await page.getByRole('link', { name: 'Élèves', exact: true }).click()
     await expect(page.locator('#main')).toBeFocused()
-    await expect(page).toHaveTitle('La classe · Carnet de réussites')
+    await expect(page).toHaveTitle('La classe · Petite pousse')
   })
 
   test('filtrer le programme par niveau met la liste à jour', async ({ page }) => {
@@ -175,7 +175,7 @@ test.describe('WebKit — parcours iPhone', () => {
 
     await page.getByRole('button', { name: /Valider la réussite/ }).click()
 
-    await expect(page).toHaveTitle('Réussite enregistrée · Carnet de réussites')
+    await expect(page).toHaveTitle('Réussite enregistrée · Petite pousse')
     await expect(
       page.getByRole('heading', { level: 1, name: /C.est noté/ }),
     ).toBeVisible()
@@ -194,7 +194,7 @@ test.describe('WebKit — parcours iPhone', () => {
     await expect(
       page.getByRole('heading', { level: 1, name: 'Bilan de Léa', exact: true }),
     ).toBeVisible()
-    await expect(page).toHaveTitle('Aperçu du bilan · Carnet de réussites')
+    await expect(page).toHaveTitle('Aperçu du bilan · Petite pousse')
 
     const sheet = page.getByRole('article', {
       name: 'Aperçu de la feuille A4 de Léa',
@@ -221,7 +221,7 @@ test.describe('WebKit — parcours iPhone', () => {
       {
         label: 'classe',
         route: '/',
-        title: 'La classe · Carnet de réussites',
+        title: 'La classe · Petite pousse',
         ready: async () => {
           await expect(
             page.getByRole('link', { name: /^Léa, section MS,/ }),
@@ -231,7 +231,7 @@ test.describe('WebKit — parcours iPhone', () => {
       {
         label: 'programme',
         route: '/programme',
-        title: 'Programme · Carnet de réussites',
+        title: 'Programme · Petite pousse',
         ready: async () => {
           await expect(
             page.getByRole('button', { name: /^Ouvrir l’objectif :/ }).first(),
@@ -241,7 +241,7 @@ test.describe('WebKit — parcours iPhone', () => {
       {
         label: 'dossier',
         route: `/students/${studentId}`,
-        title: 'Dossier de l’élève · Carnet de réussites',
+        title: 'Dossier de l’élève · Petite pousse',
         ready: async () => {
           await expect(
             page.getByRole('heading', { level: 1, name: 'Léa' }),
@@ -251,7 +251,7 @@ test.describe('WebKit — parcours iPhone', () => {
       {
         label: 'bilans',
         route: '/bilans',
-        title: 'Bilans · Carnet de réussites',
+        title: 'Bilans · Petite pousse',
         ready: async () => {
           await expect(
             page.getByRole('button', { name: /^Bilan 1/ }),

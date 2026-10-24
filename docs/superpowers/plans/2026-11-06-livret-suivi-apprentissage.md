@@ -1,4 +1,6 @@
-# Carnet de réussites — plan d'implémentation
+# Plan d'implémentation — nom de travail : Carnet de réussites
+
+> **Note historique.** Ce plan a été écrit avant le choix du nom définitif. L’application s’appelle désormais **Petite pousse** ; les identifiants techniques `carnet-de-reussites` (base IndexedDB, format de sauvegarde, URL) sont conservés pour la compatibilité.
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 

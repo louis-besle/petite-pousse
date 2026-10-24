@@ -1,4 +1,4 @@
-﻿Fonts bundled with Carnet de reussites.
+﻿Fonts bundled with Petite pousse.
 
 ===== Nunito =====
 Copyright 2014 The Nunito Project Authors (https://github.com/googlefonts/nunito)

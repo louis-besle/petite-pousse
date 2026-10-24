@@ -1,4 +1,4 @@
-# Protocole de validation avec lecteurs d’écran — Carnet de réussites
+# Protocole de validation avec lecteurs d’écran — Petite pousse
 
 **Version du protocole :** 1.0  
 **Date de rédaction :** 7 novembre 2026  
@@ -136,8 +136,8 @@ guillemets sont les textes attendus dans l’interface.
 ### Étape 1 — Chargement et titre de page
 
 - **Action :** ouvrir l’application à l’adresse de test.
-- **Attendu :** VoiceOver/TalkBack annonce le titre **« La classe · Carnet de
-  réussites »** (ou le titre de l’onglet), la langue est le français, puis le
+- **Attendu :** VoiceOver/TalkBack annonce le titre **« La classe · Petite
+  pousse »** (ou le titre de l’onglet), la langue est le français, puis le
   titre de niveau 1 « Bonjour… ».
 - **Échec si :** le titre n’est pas annoncé, est en anglais, ou l’écran est muet
   au chargement.
@@ -347,7 +347,7 @@ Dupliquer ce tableau pour VoiceOver et pour TalkBack.
 
 | # | Étape | Annonce attendue (résumé) | Statut | Annonce entendue / notes |
 | --- | --- | --- | --- | --- |
-| 1 | Chargement | « La classe · Carnet de réussites » | | |
+| 1 | Chargement | « La classe · Petite pousse » | | |
 | 2 | Évitement et titres | lien puis contenu principal ; titres hiérarchisés | | |
 | 3 | Classe | « Léa, section MS, 1 réussite, lien » | | |
 | 4 | Choix de l’élève | « Élève Léa, section MS, groupe » | | |

@@ -53,7 +53,7 @@ test.describe('sauvegardes', () => {
     const download = await downloadPromise
 
     expect(download.suggestedFilename()).toMatch(
-      /^carnet-de-reussites-backup-\d{4}-\d{2}-\d{2}\.zip$/,
+      /^petite-pousse-backup-\d{4}-\d{2}-\d{2}\.zip$/,
     )
     const backupPath = await download.path()
     expect(backupPath).not.toBeNull()
@@ -213,7 +213,7 @@ test.describe('sauvegardes', () => {
       const download = await downloadPromise
 
       expect(download.suggestedFilename()).toMatch(
-        /^carnet-de-reussites-backup-\d{4}-\d{2}-\d{2}-chiffre\.zip$/,
+        /^petite-pousse-backup-\d{4}-\d{2}-\d{2}-chiffre\.zip$/,
       )
       const backupPath = await download.path()
       expect(backupPath).not.toBeNull()

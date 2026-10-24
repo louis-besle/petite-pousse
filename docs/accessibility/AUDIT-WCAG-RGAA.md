@@ -1,5 +1,6 @@
-# Audit d’accessibilité — Carnet de réussites
+# Audit d’accessibilité — Petite pousse
 
+**Application :** Petite pousse (nom définitif ; audit conduit sous le nom de travail « Carnet de réussites »).  
 **Date de l’audit :** 7 novembre 2026  
 **Version auditée :** `main` après les correctifs de cet audit (référentiel 2026.1.0)  
 **Normes de référence :** WCAG 2.1 AA, WCAG 2.2 AA, RGAA 4.1.2

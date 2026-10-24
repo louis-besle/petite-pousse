@@ -81,7 +81,7 @@ export function ClassScreen() {
       <header className={styles.header}>
         <div className={styles.brandline}>
           <FlowerMark size={19} />
-          <span className={styles.brandWord}>Carnet de réussites</span>
+          <span className={styles.brandWord}>Petite pousse</span>
           <Link to="/settings" className={styles.teacherLink}>
             <span>{teacherInitial}</span>
             <span className={styles.srOnly}>Ouvrir les réglages</span>
