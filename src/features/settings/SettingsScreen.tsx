@@ -378,6 +378,11 @@ export function SettingsScreen() {
             régulière et à la conserver dans un endroit protégé.
           </p>
           <p>
+            La sauvegarde ZIP n’est pas chiffrée : elle contient les données
+            personnelles et les photos des enfants. Conserve-la dans un endroit
+            protégé et supprime-la après le transfert.
+          </p>
+          <p>
             Supprimer un élève efface définitivement son dossier, ses réussites et
             ses photos.
           </p>

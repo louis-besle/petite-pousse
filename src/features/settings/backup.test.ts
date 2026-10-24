@@ -15,12 +15,17 @@ import {
   type BackupPackage,
 } from './backup'
 
+/** En-tête JPEG minimal exigé par la validation des photos restaurées. */
+const JPEG_MAGIC = new Uint8Array([0xff, 0xd8, 0xff, 0xe0])
+
 /**
  * Le `Blob` de jsdom ne survit pas au clone structuré de fake-indexeddb ;
  * celui de Node est conservé (même procédé que les tests du dossier photo).
  */
 function jpegBlob(content: string): Blob {
-  return new NodeBlob([content], { type: 'image/jpeg' }) as unknown as Blob
+  return new NodeBlob([JPEG_MAGIC, content], {
+    type: 'image/jpeg',
+  }) as unknown as Blob
 }
 
 function objectiveAt(index: number): Objective {
@@ -44,6 +49,45 @@ async function zipBytes(blob: Blob): Promise<Uint8Array> {
 function rewriteZip(files: Unzipped): File {
   const bytes = zipSync(files)
   return new File([bytes], 'sauvegarde-modifiee.zip', { type: 'application/zip' })
+}
+
+/** Sous-ensemble modifiable de `data.json` pour les tests d'intégrité. */
+interface EditableBackupData {
+  schemaVersion: number
+  settings: {
+    currentSchoolYearId: string
+    [key: string]: unknown
+  }
+  schoolYears: { id: string; [key: string]: unknown }[]
+  students: { id: string; [key: string]: unknown }[]
+  validations: {
+    id: string
+    studentId: string
+    schoolYearId: string
+    photoId?: string
+    date: string
+    createdAt: string
+    [key: string]: unknown
+  }[]
+  photos: {
+    id: string
+    validationId: string
+    [key: string]: unknown
+  }[]
+}
+
+async function mutateBackupData(
+  blob: Blob,
+  mutate: (data: EditableBackupData) => void,
+): Promise<File> {
+  const files = unzipSync(await zipBytes(blob))
+  const dataEntry = files['data.json']
+  if (!dataEntry) throw new Error('data.json absent du ZIP de test.')
+
+  const data = JSON.parse(strFromU8(dataEntry)) as EditableBackupData
+  mutate(data)
+  files['data.json'] = strToU8(JSON.stringify(data))
+  return rewriteZip(files)
 }
 
 async function tableCounts() {
@@ -133,8 +177,6 @@ async function seedBackupData() {
     leaValidation,
     adamValidation,
     photo,
-    fullText,
-    thumbText,
   }
 }
 
@@ -195,8 +237,6 @@ describe('exportBackup / readBackup / restoreBackup', () => {
         leaValidation,
         adamValidation,
         photo,
-        fullText,
-        thumbText,
       } = await seedBackupData()
       const settingsBeforeExport = await getSettings()
 
@@ -248,15 +288,11 @@ describe('exportBackup / readBackup / restoreBackup', () => {
       expect(restoredPhoto?.width).toBe(photo.width)
       expect(restoredPhoto?.height).toBe(photo.height)
       expect(
-        new TextDecoder().decode(
-          new Uint8Array(await restoredPhoto!.full.arrayBuffer()),
-        ),
-      ).toBe(fullText)
+        new Uint8Array(await restoredPhoto!.full.arrayBuffer()),
+      ).toEqual(new Uint8Array(await photo.full.arrayBuffer()))
       expect(
-        new TextDecoder().decode(
-          new Uint8Array(await restoredPhoto!.thumb.arrayBuffer()),
-        ),
-      ).toBe(thumbText)
+        new Uint8Array(await restoredPhoto!.thumb.arrayBuffer()),
+      ).toEqual(new Uint8Array(await photo.thumb.arrayBuffer()))
 
       expect(await db.schoolYears.get(makeSchoolYear().id)).toBeDefined()
       expect(await db.schoolYears.count()).toBe(backup.data.schoolYears.length)
@@ -333,6 +369,125 @@ describe('exportBackup / readBackup / restoreBackup', () => {
         /incomplète|photo/i,
       )
       expect(await tableCounts()).toEqual(before)
+    },
+    ZIP_TIMEOUT_MS,
+  )
+
+  it(
+    'refuse une réussite dont l’élève est absent et laisse la base intacte',
+    async () => {
+      const { leaValidation } = await seedBackupData()
+      const before = await tableCounts()
+
+      const file = await mutateBackupData(await exportBackup(() => {}), (data) => {
+        const validation = data.validations.find(
+          (candidate) => candidate.id === leaValidation.id,
+        )
+        if (!validation) throw new Error('Réussite absente du ZIP de test.')
+        validation.studentId = 'student-absent'
+      })
+
+      await expect(readBackup(file, () => {})).rejects.toThrow(/élève absent/)
+      expect(await tableCounts()).toEqual(before)
+    },
+    ZIP_TIMEOUT_MS,
+  )
+
+  it(
+    'refuse une année en cours absente des années et laisse la base intacte',
+    async () => {
+      await seedBackupData()
+      const before = await tableCounts()
+
+      const file = await mutateBackupData(await exportBackup(() => {}), (data) => {
+        data.settings.currentSchoolYearId = '2099-2100'
+      })
+
+      await expect(readBackup(file, () => {})).rejects.toThrow(
+        /année scolaire en cours/,
+      )
+      expect(await tableCounts()).toEqual(before)
+    },
+    ZIP_TIMEOUT_MS,
+  )
+
+  it(
+    'refuse une photo vide et laisse la base intacte',
+    async () => {
+      const { photo } = await seedBackupData()
+      const before = await tableCounts()
+
+      const blob = await exportBackup(() => {})
+      const files = unzipSync(await zipBytes(blob))
+      files[`photos/${photo.id}.jpg`] = new Uint8Array(0)
+
+      await expect(readBackup(rewriteZip(files), () => {})).rejects.toThrow(
+        /vide/,
+      )
+      expect(await tableCounts()).toEqual(before)
+    },
+    ZIP_TIMEOUT_MS,
+  )
+
+  it(
+    'refuse une photo qui n’est pas un JPEG et laisse la base intacte',
+    async () => {
+      const { photo } = await seedBackupData()
+      const before = await tableCounts()
+
+      const blob = await exportBackup(() => {})
+      const files = unzipSync(await zipBytes(blob))
+      files[`thumbs/${photo.id}.jpg`] = strToU8('pas une image JPEG')
+
+      await expect(readBackup(rewriteZip(files), () => {})).rejects.toThrow(
+        /JPEG/,
+      )
+      expect(await tableCounts()).toEqual(before)
+    },
+    ZIP_TIMEOUT_MS,
+  )
+
+  it(
+    'lit un ZIP de plus de 1 Mio par morceaux avec une progression intermédiaire',
+    async () => {
+      await ensureSeed()
+      const student = makeStudent({ firstName: 'Léa' })
+      await db.students.add(student)
+
+      const largeBytes = new Uint8Array(1_500_000)
+      largeBytes.set(JPEG_MAGIC)
+      const largePhoto = new NodeBlob([largeBytes], {
+        type: 'image/jpeg',
+      }) as unknown as Blob
+
+      await createValidation({
+        studentId: student.id,
+        objective: objectiveAt(0),
+        ageBand: 'from4',
+        date: '2026-10-12',
+        referentialVersion: REFERENTIAL_VERSION,
+        photo: {
+          full: largePhoto,
+          thumb: jpegBlob('vignette'),
+          width: 800,
+          height: 600,
+          mime: 'image/jpeg',
+        },
+      })
+
+      const blob = await exportBackup(() => {})
+      expect(blob.size).toBeGreaterThan(1024 * 1024)
+
+      const ratios: number[] = []
+      const backup = await readBackup(await asZipFile(blob), (ratio) =>
+        ratios.push(ratio),
+      )
+
+      expect(backup.summary.photos).toBe(1)
+      expectMonotonicProgress(ratios)
+      // La lecture par morceaux produit au moins une valeur intermédiaire
+      // avant la fin de la phase de décompression (0 à 0,9).
+      expect(ratios.some((ratio) => ratio > 0 && ratio < 0.9)).toBe(true)
     },
     ZIP_TIMEOUT_MS,
   )

@@ -13,7 +13,10 @@ import { exportBackup } from './backup'
 
 /** Même précaution que les tests de photos : NodeBlob survit à IndexedDB. */
 function jpegBlob(content: string): Blob {
-  return new NodeBlob([content], { type: 'image/jpeg' }) as unknown as Blob
+  return new NodeBlob(
+    [new Uint8Array([0xff, 0xd8, 0xff, 0xe0]), content],
+    { type: 'image/jpeg' },
+  ) as unknown as Blob
 }
 
 function objectiveAt(index: number): Objective {
@@ -133,6 +136,34 @@ describe('BackupPanel', () => {
     },
     30_000,
   )
+
+  it('demande confirmation avant de lire un ZIP de plus de 300 Mo', async () => {
+    const user = userEvent.setup()
+    renderApp({ route: '/settings' })
+
+    await screen.findByRole('heading', { level: 2, name: 'Sauvegarde' })
+    const input = screen.getByLabelText('Fichier de sauvegarde ZIP')
+
+    const hugeFile = new File([new Uint8Array([1])], 'gros.zip', {
+      type: 'application/zip',
+    })
+    Object.defineProperty(hugeFile, 'size', {
+      configurable: true,
+      value: 301 * 1024 * 1024,
+    })
+
+    fireEvent.change(input, { target: { files: [hugeFile] } })
+
+    const dialog = await screen.findByRole('dialog', {
+      name: 'Importer une grosse sauvegarde ?',
+    })
+    expect(dialog).toHaveTextContent(/300 Mo/)
+
+    await user.click(within(dialog).getByRole('button', { name: 'Annuler' }))
+    await waitFor(() =>
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
+    )
+  })
 
   it('affiche « Jamais sauvegardé » et le total de réussites avant la première sauvegarde', async () => {
     await db.students.add(makeStudent({ firstName: 'Léa' }))

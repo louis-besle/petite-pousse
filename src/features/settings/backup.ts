@@ -29,6 +29,23 @@ const REMIND_AFTER_NEW_VALIDATIONS = 50
 /** Un rappel apparaît quand la dernière sauvegarde a au moins ce nombre de jours. */
 const REMIND_AFTER_DAYS = 30
 
+/** Taille des morceaux lus depuis le fichier, jamais tout le ZIP d'un coup. */
+const READ_CHUNK_SIZE = 1024 * 1024
+
+/** Part de la progression consacrée à la lecture/décompression du ZIP. */
+const READ_PHASE_RATIO = 0.9
+
+/**
+ * Erreur de lecture/validation d'une sauvegarde. Le panneau peut afficher son
+ * message français ; toute autre erreur inattendue reste générique.
+ */
+export class BackupReadError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = 'BackupReadError'
+  }
+}
+
 const DATA_MISSING =
   'Ce fichier n’est pas une sauvegarde : le fichier data.json est absent.'
 const DATA_CORRUPT =
@@ -38,6 +55,9 @@ const DATA_INVALID =
 const SCHEMA_TOO_RECENT =
   'Cette sauvegarde vient d’une version plus récente de l’application. ' +
   'Mets à jour l’application avant de la restaurer.'
+const SCHEMA_TOO_OLD =
+  'Cette sauvegarde a été créée par une version trop ancienne de l’application ' +
+  'et ne peut pas être restaurée.'
 const ZIP_UNREADABLE =
   'Le fichier ZIP est illisible ou endommagé. Vérifie que tu as choisi le bon fichier.'
 const REFERENTIAL_MISSING =
@@ -195,51 +215,265 @@ function concatBytes(chunks: Uint8Array[]): Uint8Array<ArrayBuffer> {
   return output
 }
 
+interface ZipContents {
+  /** Photos et vignettes déjà converties en Blob, sans octets bruts doublés. */
+  photos: Map<string, Blob>
+  /** `data.json` et `referential.json` décodés une fois leur entrée terminée. */
+  json: Map<string, string>
+}
+
+const CALENDAR_DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/
+
+function isValidCalendarDate(value: string): boolean {
+  const match = CALENDAR_DATE_PATTERN.exec(value)
+  if (!match) return false
+
+  const year = Number(match[1])
+  const month = Number(match[2])
+  const day = Number(match[3])
+
+  if (month < 1 || month > 12 || day < 1) return false
+  return day <= new Date(Date.UTC(year, month, 0)).getUTCDate()
+}
+
+function isValidTimestamp(value: string): boolean {
+  return !Number.isNaN(new Date(value).getTime())
+}
+
+function assertUniqueIds(ids: string[], label: string): void {
+  const seen = new Set<string>()
+
+  for (const id of ids) {
+    if (seen.has(id)) {
+      throw new BackupReadError(
+        `La sauvegarde est invalide : plusieurs ${label} partagent ` +
+          `l’identifiant « ${id} ».`,
+      )
+    }
+    seen.add(id)
+  }
+}
+
 /**
- * Lit un ZIP en streaming et retourne les octets de chaque entrée. Les photos
- * sont conservées une par une pour la restauration ; le ZIP lui-même n'est
- * jamais matérialisé en une seule copie de tous les fichiers.
+ * Vérifie les liens entre entités avant toute écriture : année en cours,
+ * élèves et années référencés, cohérence des photos, dates et doublons.
+ */
+function assertBackupIntegrity(data: BackupData): void {
+  if (data.settings.id !== SETTINGS_ID) {
+    throw new BackupReadError(
+      'La sauvegarde est invalide : les réglages ne portent pas l’identifiant attendu.',
+    )
+  }
+
+  assertUniqueIds(
+    data.schoolYears.map((year) => year.id),
+    'années scolaires',
+  )
+  assertUniqueIds(
+    data.students.map((student) => student.id),
+    'élèves',
+  )
+  assertUniqueIds(
+    data.validations.map((validation) => validation.id),
+    'réussites',
+  )
+  assertUniqueIds(
+    data.photos.map((photo) => photo.id),
+    'photos',
+  )
+
+  const yearIds = new Set(data.schoolYears.map((year) => year.id))
+  const studentIds = new Set(data.students.map((student) => student.id))
+  const validationIds = new Set(
+    data.validations.map((validation) => validation.id),
+  )
+  const photoById = new Map(data.photos.map((photo) => [photo.id, photo]))
+
+  if (!yearIds.has(data.settings.currentSchoolYearId)) {
+    throw new BackupReadError(
+      `La sauvegarde est invalide : l’année scolaire en cours ` +
+        `« ${data.settings.currentSchoolYearId} » est absente du fichier.`,
+    )
+  }
+
+  for (const year of data.schoolYears) {
+    if (
+      !isValidCalendarDate(year.start) ||
+      !isValidCalendarDate(year.period1End) ||
+      !isValidCalendarDate(year.period2End)
+    ) {
+      throw new BackupReadError(
+        `La sauvegarde est invalide : les bornes de l’année scolaire ` +
+          `« ${year.id} » sont invalides.`,
+      )
+    }
+  }
+
+  for (const validation of data.validations) {
+    if (!studentIds.has(validation.studentId)) {
+      throw new BackupReadError(
+        `La sauvegarde est invalide : la réussite « ${validation.id} » ` +
+          'référence un élève absent.',
+      )
+    }
+
+    if (!yearIds.has(validation.schoolYearId)) {
+      throw new BackupReadError(
+        `La sauvegarde est invalide : la réussite « ${validation.id} » ` +
+          'référence une année scolaire absente.',
+      )
+    }
+
+    if (!isValidCalendarDate(validation.date)) {
+      throw new BackupReadError(
+        `La sauvegarde est invalide : la date de la réussite ` +
+          `« ${validation.id} » est invalide.`,
+      )
+    }
+
+    if (!isValidTimestamp(validation.createdAt)) {
+      throw new BackupReadError(
+        `La sauvegarde est invalide : la date de création de la réussite ` +
+          `« ${validation.id} » est invalide.`,
+      )
+    }
+
+    if (validation.photoId !== undefined) {
+      const photo = photoById.get(validation.photoId)
+      if (!photo) {
+        throw new BackupReadError(
+          `La sauvegarde est invalide : la photo de la réussite ` +
+            `« ${validation.id} » est absente des métadonnées.`,
+        )
+      }
+      if (photo.validationId !== validation.id) {
+        throw new BackupReadError(
+          `La sauvegarde est invalide : la photo « ${photo.id} » ne ` +
+            `correspond pas à la réussite « ${validation.id} ».`,
+        )
+      }
+    }
+  }
+
+  for (const photo of data.photos) {
+    if (!validationIds.has(photo.validationId)) {
+      throw new BackupReadError(
+        `La sauvegarde est invalide : la photo « ${photo.id} » référence ` +
+          'une réussite absente.',
+      )
+    }
+    if (!isValidTimestamp(photo.createdAt)) {
+      throw new BackupReadError(
+        `La sauvegarde est invalide : la date de création de la photo ` +
+          `« ${photo.id} » est invalide.`,
+      )
+    }
+  }
+}
+
+/**
+ * Lit un ZIP en streaming, par morceaux de 1 Mio. Chaque entrée est accumulée
+ * seulement jusqu'à son `final`, puis convertie immédiatement en Blob (photos)
+ * ou en chaîne JSON : les octets bruts ne sont jamais conservés en double.
  */
 async function readZipEntries(
   file: File,
-): Promise<Map<string, Uint8Array<ArrayBuffer>>> {
-  let bytes: Uint8Array
-  try {
-    bytes = new Uint8Array(await file.arrayBuffer())
-  } catch {
-    throw new Error(ZIP_UNREADABLE)
-  }
-
-  const entries = new Map<string, Uint8Array<ArrayBuffer>>()
+  onReadProgress: (ratio: number) => void,
+): Promise<ZipContents> {
+  const photos = new Map<string, Blob>()
+  const json = new Map<string, string>()
   let failure: unknown
 
   const unzip = new Unzip((entry) => {
-    const chunks: Uint8Array<ArrayBuffer>[] = []
+    const isPhoto =
+      entry.name.startsWith('photos/') || entry.name.startsWith('thumbs/')
+    const isJson =
+      entry.name === 'data.json' || entry.name === 'referential.json'
 
+    if (!isPhoto && !isJson) {
+      entry.ondata = () => {}
+      entry.start()
+      return
+    }
+
+    const chunks: Uint8Array<ArrayBuffer>[] = []
     entry.ondata = (error, chunk, final) => {
       if (error) {
         failure = error
         return
       }
       if (chunk.length > 0) chunks.push(chunk)
-      if (final) entries.set(entry.name, concatBytes(chunks))
+      if (!final) return
+
+      try {
+        if (isPhoto) {
+          photos.set(entry.name, new Blob(chunks, { type: 'image/jpeg' }))
+        } else {
+          json.set(entry.name, strFromU8(concatBytes(chunks)))
+        }
+      } catch (error) {
+        failure = error
+      }
+
+      // Les références aux morceaux sont libérées dès la conversion.
+      chunks.length = 0
     }
 
     entry.start()
   })
   unzip.register(UnzipInflate)
 
+  const size = file.size
+  if (size <= 0) {
+    throw new BackupReadError(ZIP_UNREADABLE)
+  }
+
+  let offset = 0
+  while (offset < size) {
+    const end = Math.min(offset + READ_CHUNK_SIZE, size)
+    let chunk: Uint8Array
+    try {
+      chunk = new Uint8Array(await file.slice(offset, end).arrayBuffer())
+    } catch {
+      throw new BackupReadError(ZIP_UNREADABLE)
+    }
+    offset = end
+
+    try {
+      unzip.push(chunk, false)
+    } catch {
+      throw new BackupReadError(ZIP_UNREADABLE)
+    }
+
+    onReadProgress(offset / size)
+  }
+
   try {
-    unzip.push(bytes, true)
+    unzip.push(new Uint8Array(0), true)
   } catch {
-    throw new Error(ZIP_UNREADABLE)
+    throw new BackupReadError(ZIP_UNREADABLE)
   }
 
   if (failure !== undefined) {
-    throw new Error(ZIP_UNREADABLE)
+    throw new BackupReadError(ZIP_UNREADABLE)
   }
 
-  return entries
+  return { photos, json }
+}
+
+async function assertJpegBlob(blob: Blob, label: string): Promise<void> {
+  if (blob.size === 0) {
+    throw new BackupReadError(
+      `La sauvegarde est incomplète : ${label} est vide.`,
+    )
+  }
+
+  const head = new Uint8Array(await blob.slice(0, 3).arrayBuffer())
+  if (head.length < 3 || head[0] !== 0xff || head[1] !== 0xd8 || head[2] !== 0xff) {
+    throw new BackupReadError(
+      `La sauvegarde est corrompue : ${label} n’est pas une image JPEG.`,
+    )
+  }
 }
 
 /**
@@ -382,19 +616,21 @@ export async function readBackup(
   const report = progressReporter(onProgress)
   report(0)
 
-  const entries = await readZipEntries(file)
-  report(0.3)
+  const contents = await readZipEntries(file, (ratio) =>
+    report(READ_PHASE_RATIO * ratio),
+  )
+  report(READ_PHASE_RATIO)
 
-  const dataBytes = entries.get('data.json')
-  if (!dataBytes) {
-    throw new Error(DATA_MISSING)
+  const dataText = contents.json.get('data.json')
+  if (dataText === undefined) {
+    throw new BackupReadError(DATA_MISSING)
   }
 
   let rawData: unknown
   try {
-    rawData = JSON.parse(strFromU8(dataBytes))
+    rawData = JSON.parse(dataText)
   } catch {
-    throw new Error(DATA_CORRUPT)
+    throw new BackupReadError(DATA_CORRUPT)
   }
 
   // La version est contrôlée avant le schéma complet : une sauvegarde future
@@ -404,18 +640,18 @@ export async function readBackup(
     typeof rawData.schemaVersion !== 'number' ||
     !Number.isInteger(rawData.schemaVersion)
   ) {
-    throw new Error(DATA_INVALID)
+    throw new BackupReadError(DATA_INVALID)
   }
   if (rawData.schemaVersion > BACKUP_SCHEMA_VERSION) {
-    throw new Error(SCHEMA_TOO_RECENT)
+    throw new BackupReadError(SCHEMA_TOO_RECENT)
   }
   if (rawData.schemaVersion < BACKUP_SCHEMA_VERSION) {
-    throw new Error(DATA_INVALID)
+    throw new BackupReadError(SCHEMA_TOO_OLD)
   }
 
   const parsed = backupDataSchema.safeParse(rawData)
   if (!parsed.success) {
-    throw new Error(DATA_INVALID)
+    throw new BackupReadError(DATA_INVALID)
   }
   const data = parsed.data
 
@@ -424,74 +660,60 @@ export async function readBackup(
       photo.path !== `photos/${photo.id}.jpg` ||
       photo.thumbPath !== `thumbs/${photo.id}.jpg`
     ) {
-      throw new Error(DATA_INVALID)
+      throw new BackupReadError(DATA_INVALID)
     }
   }
 
-  const referentialBytes = entries.get('referential.json')
-  if (!referentialBytes) {
-    throw new Error(REFERENTIAL_MISSING)
+  assertBackupIntegrity(data)
+
+  const referentialText = contents.json.get('referential.json')
+  if (referentialText === undefined) {
+    throw new BackupReadError(REFERENTIAL_MISSING)
   }
 
   let rawReferential: unknown
   try {
-    rawReferential = JSON.parse(strFromU8(referentialBytes))
+    rawReferential = JSON.parse(referentialText)
   } catch {
-    throw new Error(REFERENTIAL_INVALID)
+    throw new BackupReadError(REFERENTIAL_INVALID)
   }
   if (!isRecord(rawReferential) || typeof rawReferential.version !== 'string') {
-    throw new Error(REFERENTIAL_INVALID)
-  }
-
-  const metadataById = new Map(
-    data.photos.map((photo) => [photo.id, photo] as const),
-  )
-
-  for (const validation of data.validations) {
-    if (
-      validation.photoId !== undefined &&
-      !metadataById.has(validation.photoId)
-    ) {
-      throw new Error(
-        `La sauvegarde est incomplète : la photo de la réussite « ` +
-          `${validation.snapshot.objectiveLabel} » est absente du fichier ZIP.`,
-      )
-    }
+    throw new BackupReadError(REFERENTIAL_INVALID)
   }
 
   const photos: BackupPhotoFiles[] = []
   for (let index = 0; index < data.photos.length; index += 1) {
     const metadata = data.photos[index]!
-    const full = entries.get(metadata.path)
-    const thumb = entries.get(metadata.thumbPath)
+    const full = contents.photos.get(metadata.path)
+    const thumb = contents.photos.get(metadata.thumbPath)
 
     if (!full) {
-      throw new Error(
+      throw new BackupReadError(
         `La sauvegarde est incomplète : la photo « ${metadata.id} » est ` +
           'absente du fichier ZIP.',
       )
     }
     if (!thumb) {
-      throw new Error(
+      throw new BackupReadError(
         `La sauvegarde est incomplète : la vignette de la photo ` +
           `« ${metadata.id} » est absente du fichier ZIP.`,
       )
     }
 
+    await assertJpegBlob(full, `la photo « ${metadata.id} »`)
+    await assertJpegBlob(thumb, `la vignette de la photo « ${metadata.id} »`)
+
     photos.push({
       id: metadata.id,
       validationId: metadata.validationId,
-      full: new Blob([full], { type: metadata.mime }),
-      thumb: new Blob([thumb], { type: metadata.mime }),
+      full,
+      thumb,
     })
 
-    // Libère les octets bruts au fur et à mesure : sur une grosse sauvegarde,
-    // les entrées déjà transformées en Blob ne restent pas une seconde fois
-    // en mémoire.
-    entries.delete(metadata.path)
-    entries.delete(metadata.thumbPath)
-
-    report(0.3 + (0.7 * (index + 1)) / data.photos.length)
+    report(
+      READ_PHASE_RATIO +
+        ((1 - READ_PHASE_RATIO) * (index + 1)) / data.photos.length,
+    )
   }
 
   report(1)
@@ -590,9 +812,6 @@ export async function restoreBackup(
         await db.photos.bulkPut(photoRecords)
       }
       report(0.95)
-
-      // Un brouillon de capture ne doit jamais survivre au remplacement.
-      await db.drafts.clear()
     },
   )
 

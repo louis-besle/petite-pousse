@@ -10,6 +10,7 @@ import { Button } from '@/ui/Button'
 import { ConfirmSheet } from '@/ui/ConfirmSheet'
 import { useToast } from '@/ui/useToast'
 import {
+  BackupReadError,
   exportBackup,
   readBackup,
   restoreBackup,
@@ -63,8 +64,8 @@ function backupDateLabel(iso: string): string {
  * du remplacement, date de la dernière sauvegarde et rappel.
  *
  * L'import ne touche à la base qu'après lecture et validation complètes du ZIP,
- * puis confirmation explicite. Le fichier est relu entièrement en mémoire avant
- * la transaction de remplacement.
+ * puis confirmation explicite. Le fichier est décompressé en streaming et
+ * validé avant la transaction de remplacement.
  */
 export function BackupPanel() {
   const { showToast } = useToast()
@@ -76,6 +77,7 @@ export function BackupPanel() {
   const [progress, setProgress] = useState(0)
   const [pending, setPending] = useState<BackupPackage | undefined>()
   const [sizeWarning, setSizeWarning] = useState(false)
+  const [largeImport, setLargeImport] = useState<File | undefined>()
 
   const totalValidations = validations?.length ?? 0
   const loading = settings === undefined || validations === undefined
@@ -143,8 +145,12 @@ export function BackupPanel() {
       const backup = await readBackup(file, setProgress)
       setPending(backup)
     } catch (error) {
+      // L'erreur brute reste dans la console ; l'interface ne montre que du
+      // français maîtrisé, même si le décodeur remonte un message anglais.
       console.error('Lecture de la sauvegarde impossible.', error)
-      showToast(error instanceof Error ? error.message : READ_ERROR)
+      showToast(
+        error instanceof BackupReadError ? error.message : READ_ERROR,
+      )
     } finally {
       setPhase('idle')
       setProgress(0)
@@ -156,6 +162,19 @@ export function BackupPanel() {
     // Permet de réimporter le même fichier immédiatement après une annulation.
     event.target.value = ''
 
+    if (file === undefined) return
+
+    if (file.size > LARGE_BACKUP_BYTES) {
+      setLargeImport(file)
+      return
+    }
+
+    void readSelectedFile(file)
+  }
+
+  function confirmLargeImport(): void {
+    const file = largeImport
+    setLargeImport(undefined)
     if (file !== undefined) {
       void readSelectedFile(file)
     }
@@ -196,6 +215,11 @@ export function BackupPanel() {
         <p className={styles.hint}>
           Un fichier ZIP contient toutes les années, les réussites et les photos.
           Il permet de retrouver tes données sur un autre appareil.
+        </p>
+        <p className={styles.hint}>
+          <strong>Le ZIP n’est pas chiffré.</strong> Il contient des données
+          personnelles et les photos des enfants. Conserve-le dans un endroit
+          protégé et supprime-le après le transfert.
         </p>
 
         <dl className={styles.backupSummary}>
@@ -267,6 +291,8 @@ export function BackupPanel() {
           type="file"
           accept=".zip,application/zip"
           aria-label="Fichier de sauvegarde ZIP"
+          aria-hidden="true"
+          tabIndex={-1}
           className={styles.fileInput}
           onChange={handleFileChange}
         />
@@ -288,8 +314,24 @@ export function BackupPanel() {
       />
 
       <ConfirmSheet
+        open={largeImport !== undefined}
+        title="Importer une grosse sauvegarde ?"
+        description={
+          <>
+            Cette sauvegarde dépasse 300 Mo. Sa lecture peut prendre plusieurs
+            minutes et demander beaucoup de mémoire. Garde l’écran allumé et
+            branche l’appareil.
+          </>
+        }
+        confirmLabel="Continuer l’import"
+        onConfirm={confirmLargeImport}
+        onClose={() => setLargeImport(undefined)}
+      />
+
+      <ConfirmSheet
         open={pending !== undefined}
         title="Restaurer cette sauvegarde ?"
+        tone="danger"
         description={
           pending === undefined ? null : (
             <>
