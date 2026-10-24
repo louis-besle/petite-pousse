@@ -48,6 +48,7 @@ const DOMAIN_ICONS: Record<Domain['id'], IconName> = {
   arts: 'palette',
   temps: 'clock',
   vivant: 'leaf',
+  evar: 'heart',
 }
 
 /** Recherche insensible à la casse et aux accents (« memoriser » trouve « mémoriser »). */
@@ -99,7 +100,8 @@ function matchesFilters(
 }
 
 /**
- * Programme officiel : les six domaines, objectif par objectif.
+ * Programme officiel : les six domaines du programme 2026 et le programme EVAR,
+ * objectif par objectif.
  *
  * Chaque domaine est un accordéon qui compte les objectifs correspondant aux
  * filtres et les validations de la classe pour l'année sélectionnée. La barre
@@ -261,7 +263,7 @@ export function ProgrammeScreen() {
       <header className={styles.header}>
         <h1 className={styles.title}>Programme</h1>
         <p className={styles.subtitle}>
-          Les six domaines du programme 2026, objectif par objectif
+          Les six domaines du programme 2026 et le programme EVAR, objectif par objectif
         </p>
       </header>
 

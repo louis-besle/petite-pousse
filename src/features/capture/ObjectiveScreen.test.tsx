@@ -270,7 +270,7 @@ describe('ObjectiveScreen', () => {
     }
   })
 
-  // Marge de 15 s pour le rendu complet des 398 cartes sous la charge parallèle
+  // Marge de 15 s pour le rendu complet des 407 cartes sous la charge parallèle
   // de la suite (accommodation de test, pas un benchmark produit).
   it('affiche tous les niveaux quand l’option est activée', async () => {
     const lea = await addStudent('Léa', 'MS')

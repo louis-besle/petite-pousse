@@ -436,8 +436,10 @@ export function SettingsScreen() {
             régulière et à la conserver dans un endroit protégé.
           </p>
           <p>
-            La sauvegarde ZIP n’est pas chiffrée : elle contient les données
-            personnelles et les photos des enfants. Conserve-la dans un endroit
+            La sauvegarde peut être protégée par un mot de passe. Sans ce mot de
+            passe, elle reste illisible ; il n’existe aucun moyen de le
+            récupérer. Une sauvegarde non chiffrée contient les données
+            personnelles et les photos des enfants : conserve-la dans un endroit
             protégé et supprime-la après le transfert.
           </p>
           <p>

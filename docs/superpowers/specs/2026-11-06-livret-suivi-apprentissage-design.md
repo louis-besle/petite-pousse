@@ -58,7 +58,7 @@ Deux fois par an, l'application produit une feuille A4 par élève (ou plusieurs
 - Gestion de plusieurs classes ou d'une école entière.
 - Notes chiffrées, moyennes, bulletin scolaire.
 - Analyse d'image, reconnaissance faciale, suggestion automatique d'objectif.
-- Programme EVAR (éducation à la vie affective et relationnelle) : hors périmètre v1.
+- Programme EVAR (éducation à la vie affective et relationnelle) : hors périmètre v1, livré en v1.1.
 - Application native iOS/iPadOS/Android : l'application est une PWA installable.
 
 ### Anti-objectifs
@@ -463,20 +463,27 @@ Ces points ne demandent plus d'arbitrage : ils sont fixés pour que le plan soit
 - **Transfert entre appareils** : par sauvegarde, sans synchronisation automatique.
 - **Année scolaire** : aucune remise à zéro ; table `SchoolYear`, sélecteur d'année, action « Passer à l'année suivante ».
 - **Navigateurs** : iOS/iPadOS 16+, Android 10+ avec Chrome à jour.
-- **Lot de PDF** : reporté en v1.1.
-- **Sauvegarde chiffrée** : reportée en v1.1.
+- **Lot de PDF** : livré en v1.1 (un ZIP, un PDF par élève).
+- **Sauvegarde chiffrée** : livrée en v1.1 (mot de passe facultatif, sans récupération).
 - **Nom de l'application** : « Carnet de réussites » reste un nom de travail.
 
 ## 15. Plus tard (v1.1 et au-delà)
 
-- Génération des 20 bilans en lot (ZIP ou PDF combiné).
+Livré en v1.1 :
+
+- ✅ Génération des bilans en lot : un ZIP, un PDF par élève de la classe, pour l'année et la période sélectionnées.
+- ✅ Sauvegarde chiffrée par mot de passe : AES-256-GCM, PBKDF2-SHA256, manifeste en clair, aucune récupération possible. Les anciennes sauvegardes en clair restent restaurables.
+- ✅ Programme EVAR : neuvième catégorie du référentiel (`evar`), après les six domaines 2026 ; trois axes, neuf objectifs (trois par tranche d'âge), source BO n° 6 du 6 février 2025. Référentiel `2026.2.0`, 407 objectifs.
+- ✅ Validation avec lecteurs d'écran : protocole VoiceOver/TalkBack livré, exécution sur appareils réels encore à faire ; couverture WebKit automatisée ajoutée.
+
+Reste à faire :
+
 - Export d'une année seule et fusion de sauvegardes.
-- Sauvegarde chiffrée par mot de passe.
 - Verrouillage de l'app par code.
 - Objectifs « maison » en plus du programme officiel.
 - Import CSV de la liste des élèves.
-- Programme EVAR.
 - Statistiques de classe par domaine (sans note chiffrée).
+- Nom définitif de l'application : « Carnet de réussites » reste un nom de travail.
 
 ## 16. Références de conception
 

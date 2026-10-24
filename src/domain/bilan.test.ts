@@ -203,6 +203,42 @@ describe('buildBilanModel', () => {
     expect(model.domains[0]?.entries[0]?.domainLabel).toBe('Musique et rythmes')
   })
 
+  it('regroupe une réussite EVAR sous EVAR, après les six domaines du programme 2026', () => {
+    const domainIds: Domain['id'][] = [
+      'langage',
+      'corps',
+      'arts',
+      'maths',
+      'temps',
+      'vivant',
+      'evar',
+    ]
+    const validations = domainIds.map((domainId, index) =>
+      makeValidation({
+        id: `v-${domainId}`,
+        date: '2026-10-12',
+        domainId,
+        domainLabel: referential.domains.find((domain) => domain.id === domainId)?.label ?? domainId,
+        objectiveLabel: `Objectif ${index + 1}`,
+      }),
+    )
+
+    const model = buildBilanModel({
+      student: lea,
+      year,
+      period: 1,
+      validations,
+      photos: new Map(),
+      referential,
+    })
+
+    expect(model.domains.map((group) => group.domain.id)).toEqual(domainIds)
+    const evar = model.domains.at(-1)
+    expect(evar?.domain).toMatchObject({ id: 'evar', label: 'EVAR', order: 7 })
+    expect(evar?.entries).toHaveLength(1)
+    expect(evar?.entries[0]?.domainLabel).toBe('EVAR')
+  })
+
   it('borne le deuxième bilan au lendemain de la date de changement', () => {
     const adjusted: SchoolYear = { ...year, period1End: '2027-02-05' }
     const model = buildBilanModel({

@@ -270,6 +270,10 @@
   background-color: var(--d-vivant);
 }
 
+.domainDot[data-domain='evar'] {
+  background-color: var(--d-evar);
+}
+
 .domainLabel {
   font-size: 8.5px;
   font-weight: 800;
@@ -349,6 +353,11 @@
 .thumbEmpty[data-domain='vivant'] {
   background-color: var(--d-vivant-soft);
   color: var(--d-vivant-ink);
+}
+
+.thumbEmpty[data-domain='evar'] {
+  background-color: var(--d-evar-soft);
+  color: var(--d-evar-ink);
 }
 
 .entryText {

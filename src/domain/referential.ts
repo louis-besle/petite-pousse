@@ -2,13 +2,21 @@ import { z } from 'zod'
 import rawReferential from '../data/referential.json'
 import type { AgeBand, Competency, Domain, Objective, Section } from './types'
 
-export const REFERENTIAL_VERSION = '2026.1.0'
+export const REFERENTIAL_VERSION = '2026.2.0'
 
-export const DOMAIN_IDS = ['langage', 'corps', 'arts', 'maths', 'temps', 'vivant'] as const
+export const DOMAIN_IDS = [
+  'langage',
+  'corps',
+  'arts',
+  'maths',
+  'temps',
+  'vivant',
+  'evar',
+] as const
 export const AGE_BANDS = ['before4', 'from4', 'from5'] as const
 
 /**
- * Catalogue officiel des six domaines du programme 2026.
+ * Catalogue officiel des six domaines du programme 2026 et du programme EVAR.
  * Les intitulés longs sont ceux du BO, les libellés courts servent la navigation.
  */
 export const DOMAINS: Domain[] = [
@@ -47,6 +55,12 @@ export const DOMAINS: Domain[] = [
     label: 'Vivant',
     longLabel: 'Découvrir le monde du vivant, de la matière et des objets',
     order: 6,
+  },
+  {
+    id: 'evar',
+    label: 'EVAR',
+    longLabel: 'Éducation à la vie affective et relationnelle',
+    order: 7,
   },
 ]
 

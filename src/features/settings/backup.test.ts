@@ -8,6 +8,9 @@ import { REFERENTIAL_VERSION, referential } from '@/domain/referential'
 import type { Objective } from '@/domain/types'
 import { makeSchoolYear, makeSettings, makeStudent } from '@/test/fixtures'
 import {
+  BackupCorruptedError,
+  BackupPasswordRequiredError,
+  BackupWrongPasswordError,
   exportBackup,
   readBackup,
   restoreBackup,
@@ -226,6 +229,188 @@ async function clearAllData(): Promise<void> {
 // Les ZIP passent par de vrais Blobs et de vraies transactions IndexedDB :
 // le délai par défaut de Vitest est trop court sur une machine chargée.
 const ZIP_TIMEOUT_MS = 30_000
+
+const PASSWORD = 'mot-de-passe-solide'
+
+describe('chiffrement des sauvegardes', () => {
+  it(
+    'exporte puis relit une sauvegarde chiffrée avec le bon mot de passe',
+    async () => {
+      const { photo } = await seedBackupData()
+
+      const exportProgress: number[] = []
+      const blob = await exportBackup((ratio) => exportProgress.push(ratio), {
+        password: PASSWORD,
+      })
+      expectMonotonicProgress(exportProgress)
+
+      // Le manifeste reste en clair et décrit exactement les paramètres KDF.
+      const files = unzipSync(await zipBytes(blob))
+      expect(Object.keys(files)[0]).toBe('manifest.json')
+      const manifestText = strFromU8(files['manifest.json']!)
+      const manifest = JSON.parse(manifestText) as {
+        format: string
+        version: number
+        encrypted: boolean
+        kdf: { name: string; hash: string; iterations: number; salt: string }
+        cipher: { name: string; tagLength: number }
+        check: { iv: string; data: string }
+      }
+      expect(manifest.format).toBe('carnet-de-reussites-backup')
+      expect(manifest.version).toBe(1)
+      expect(manifest.encrypted).toBe(true)
+      expect(manifest.kdf.name).toBe('PBKDF2')
+      expect(manifest.kdf.hash).toBe('SHA-256')
+      expect(manifest.kdf.iterations).toBe(310_000)
+      expect(manifest.cipher).toEqual({ name: 'AES-GCM', tagLength: 128 })
+      expect(manifest.check.iv.length).toBeGreaterThan(0)
+      expect(manifest.check.data.length).toBeGreaterThan(0)
+
+      const readProgress: number[] = []
+      const backup = await readBackup(
+        await asZipFile(blob),
+        (ratio) => readProgress.push(ratio),
+        PASSWORD,
+      )
+      expectMonotonicProgress(readProgress)
+
+      expect(backup.summary.encrypted).toBe(true)
+      expect(backup.summary.students).toBe(2)
+      expect(backup.summary.validations).toBe(2)
+      expect(backup.summary.photos).toBe(1)
+      expect(backup.data.schemaVersion).toBe(1)
+      expect(backup.data.students.map((student) => student.firstName).sort()).toEqual([
+        'Adam',
+        'Léa',
+      ])
+
+      const restoredPhoto = backup.photos[0]
+      expect(restoredPhoto).toBeDefined()
+      expect(
+        new Uint8Array(await restoredPhoto!.full.arrayBuffer()),
+      ).toEqual(new Uint8Array(await photo.full.arrayBuffer()))
+      expect(
+        new Uint8Array(await restoredPhoto!.thumb.arrayBuffer()),
+      ).toEqual(new Uint8Array(await photo.thumb.arrayBuffer()))
+    },
+    ZIP_TIMEOUT_MS,
+  )
+
+  it(
+    'ouvre une sauvegarde chiffrée sans mot de passe avec une erreur dédiée',
+    async () => {
+      await seedBackupData()
+      const blob = await exportBackup(() => {}, { password: PASSWORD })
+
+      await expect(
+        readBackup(await asZipFile(blob), () => {}),
+      ).rejects.toBeInstanceOf(BackupPasswordRequiredError)
+    },
+    ZIP_TIMEOUT_MS,
+  )
+
+  it(
+    'signale un mauvais mot de passe sans le confondre avec un fichier corrompu',
+    async () => {
+      await seedBackupData()
+      const blob = await exportBackup(() => {}, { password: PASSWORD })
+
+      await expect(
+        readBackup(await asZipFile(blob), () => {}, 'mauvais-mot-de-passe'),
+      ).rejects.toBeInstanceOf(BackupWrongPasswordError)
+    },
+    ZIP_TIMEOUT_MS,
+  )
+
+  it(
+    'signale une altération du chiffré comme une sauvegarde corrompue',
+    async () => {
+      await seedBackupData()
+      const blob = await exportBackup(() => {}, { password: PASSWORD })
+
+      const files = unzipSync(await zipBytes(blob))
+      const dataEntry = files['data.json']
+      if (!dataEntry) throw new Error('data.json absent du ZIP de test.')
+      // Le dernier octet appartient au tag GCM : le modifier casse
+      // l'authentification sans toucher au manifeste ni au mot de passe.
+      dataEntry[dataEntry.length - 1] = dataEntry[dataEntry.length - 1]! ^ 0xff
+
+      await expect(
+        readBackup(rewriteZip(files), () => {}, PASSWORD),
+      ).rejects.toBeInstanceOf(BackupCorruptedError)
+    },
+    ZIP_TIMEOUT_MS,
+  )
+
+  it(
+    'lit encore une ancienne sauvegarde en clair et ignore le mot de passe fourni',
+    async () => {
+      await seedBackupData()
+      const blob = await exportBackup(() => {})
+
+      const backup = await readBackup(
+        await asZipFile(blob),
+        () => {},
+        PASSWORD,
+      )
+
+      expect(backup.summary.encrypted).toBe(false)
+      expect(backup.summary.students).toBe(2)
+      expect(backup.summary.validations).toBe(2)
+    },
+    ZIP_TIMEOUT_MS,
+  )
+
+  it(
+    'conserve une réussite EVAR dans une sauvegarde chiffrée',
+    async () => {
+      const { lea } = await seedBackupData()
+      const evarObjective = referential.objectives.find(
+        (objective) =>
+          objective.domainId === 'evar' && objective.ageBands.includes('from4'),
+      )
+      if (evarObjective === undefined) {
+        throw new Error('Objectif EVAR de test introuvable.')
+      }
+
+      await createValidation({
+        studentId: lea.id,
+        objective: evarObjective,
+        ageBand: 'from4',
+        date: '2026-10-14',
+        referentialVersion: REFERENTIAL_VERSION,
+      })
+
+      const blob = await exportBackup(() => {}, { password: PASSWORD })
+      const backup = await readBackup(
+        await asZipFile(blob),
+        () => {},
+        PASSWORD,
+      )
+      const restored = backup.data.validations.find(
+        (validation) => validation.objectiveId === evarObjective.id,
+      )
+
+      expect(restored?.snapshot.domainId).toBe('evar')
+      expect(restored?.snapshot.domainLabel).toBe('EVAR')
+    },
+    ZIP_TIMEOUT_MS,
+  )
+
+  it(
+    'ne laisse aucune donnée lisible en clair dans le ZIP chiffré',
+    async () => {
+      await seedBackupData()
+      const blob = await exportBackup(() => {}, { password: PASSWORD })
+
+      const raw = new TextDecoder().decode(await zipBytes(blob))
+      expect(raw).not.toContain('schemaVersion')
+      expect(raw).not.toContain('photo-pleine-de-lea')
+      expect(raw).not.toContain('École des Tilleuls')
+    },
+    ZIP_TIMEOUT_MS,
+  )
+})
 
 describe('exportBackup / readBackup / restoreBackup', () => {
   it(

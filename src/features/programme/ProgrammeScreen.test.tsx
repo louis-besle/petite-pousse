@@ -102,7 +102,9 @@ describe('ProgrammeScreen', () => {
       await screen.findByRole('heading', { level: 1, name: 'Programme' }),
     ).toBeInTheDocument()
     expect(
-      screen.getByText('Les six domaines du programme 2026, objectif par objectif'),
+      screen.getByText(
+        'Les six domaines du programme 2026 et le programme EVAR, objectif par objectif',
+      ),
     ).toBeInTheDocument()
 
     // Le premier domaine officiel est déplié par défaut.
@@ -396,6 +398,37 @@ describe('ProgrammeScreen', () => {
     await waitFor(() =>
       expect(within(objectiveItem(LANGAGE_1.label)).getByText('1 élève')).toBeInTheDocument(),
     )
+  })
+
+  it('affiche le programme EVAR après les six domaines, objectif par objectif', async () => {
+    await addStudent('Léa', 'MS')
+
+    const user = userEvent.setup()
+    renderApp({ route: '/programme' })
+
+    // Le groupe EVAR est le dernier des sept domaines.
+    const domainToggles = await screen.findAllByRole('button', { name: /objectifs ·/ })
+    expect(domainToggles.at(-1)).toHaveAccessibleName(/^EVAR/)
+
+    await user.click(within(levelFilters()).getByRole('button', { name: 'MS' }))
+    await user.click(screen.getByRole('button', { name: /^EVAR/ }))
+
+    const evar = await screen.findByRole('region', { name: 'EVAR' })
+    expect(within(evar).getAllByRole('listitem')).toHaveLength(3)
+
+    const evarLabels = referential.objectives
+      .filter(
+        (objective) =>
+          objective.domainId === 'evar' && objective.ageBands.includes('from4'),
+      )
+      .map((objective) => objective.label)
+    for (const label of evarLabels) {
+      expect(within(evar).getByText(label)).toBeInTheDocument()
+    }
+
+    // Les objectifs des autres tranches d'âge ne s'affichent pas.
+    const before4Label = objective('evar-corps-avant4').label
+    expect(within(evar).queryByText(before4Label)).not.toBeInTheDocument()
   })
 
   it('affiche le nombre d’objectifs filtrés et de validations par domaine', async () => {

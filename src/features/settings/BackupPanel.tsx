@@ -1,4 +1,4 @@
-import { useRef, useState, type ChangeEvent } from 'react'
+import { useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale/fr'
 import { db } from '@/db/db'
@@ -8,9 +8,15 @@ import { todayIso } from '@/lib/date'
 import { downloadBlob } from '@/lib/share'
 import { Button } from '@/ui/Button'
 import { ConfirmSheet } from '@/ui/ConfirmSheet'
+import { Field } from '@/ui/Field'
+import { Sheet } from '@/ui/Sheet'
 import { useToast } from '@/ui/useToast'
 import {
+  BACKUP_PASSWORD_MIN_LENGTH,
+  BackupEncryptionUnavailableError,
+  BackupPasswordRequiredError,
   BackupReadError,
+  BackupWrongPasswordError,
   exportBackup,
   readBackup,
   restoreBackup,
@@ -60,12 +66,14 @@ function backupDateLabel(iso: string): string {
 }
 
 /**
- * Carte de sauvegarde : export ZIP complet, import avec résumé et confirmation
- * du remplacement, date de la dernière sauvegarde et rappel.
+ * Carte de sauvegarde : export ZIP complet (en clair ou chiffré par mot de
+ * passe), import avec résumé et confirmation du remplacement, date de la
+ * dernière sauvegarde et rappel.
  *
  * L'import ne touche à la base qu'après lecture et validation complètes du ZIP,
  * puis confirmation explicite. Le fichier est décompressé en streaming et
- * validé avant la transaction de remplacement.
+ * validé avant la transaction de remplacement. Une archive chiffrée ouvre une
+ * feuille de mot de passe ; un mauvais mot de passe laisse la feuille ouverte.
  */
 export function BackupPanel() {
   const { showToast } = useToast()
@@ -79,6 +87,16 @@ export function BackupPanel() {
   const [sizeWarning, setSizeWarning] = useState(false)
   const [largeImport, setLargeImport] = useState<File | undefined>()
 
+  const [protect, setProtect] = useState(false)
+  const [password, setPassword] = useState('')
+  const [confirmation, setConfirmation] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+
+  const [passwordRequest, setPasswordRequest] = useState<File | undefined>()
+  const [importPassword, setImportPassword] = useState('')
+  const [importError, setImportError] = useState<string | undefined>()
+  const [showImportPassword, setShowImportPassword] = useState(false)
+
   const totalValidations = validations?.length ?? 0
   const loading = settings === undefined || validations === undefined
   const busy = phase !== 'idle'
@@ -86,18 +104,41 @@ export function BackupPanel() {
     settings !== undefined && shouldRemindBackup(settings, totalValidations)
   const percent = Math.round(progress * 100)
 
-  async function runExport(): Promise<void> {
+  const passwordTooShort =
+    password !== '' && password.length < BACKUP_PASSWORD_MIN_LENGTH
+  const passwordMismatch = confirmation !== '' && password !== confirmation
+  const passwordReady =
+    password.length >= BACKUP_PASSWORD_MIN_LENGTH &&
+    password === confirmation
+  const canExport = !protect || passwordReady
+
+  async function runExport(exportPassword?: string): Promise<void> {
     setSizeWarning(false)
     setPhase('exporting')
     setProgress(0)
 
     try {
-      const blob = await exportBackup(setProgress)
-      downloadBlob(blob, `carnet-de-reussites-backup-${todayIso()}.zip`)
+      const blob = await exportBackup(
+        setProgress,
+        exportPassword === undefined ? undefined : { password: exportPassword },
+      )
+      const suffix = exportPassword === undefined ? '' : '-chiffre'
+      downloadBlob(
+        blob,
+        `carnet-de-reussites-backup-${todayIso()}${suffix}.zip`,
+      )
       showToast('Sauvegarde téléchargée.')
+      setProtect(false)
+      setPassword('')
+      setConfirmation('')
+      setShowPassword(false)
     } catch (error) {
       console.error('Création de la sauvegarde impossible.', error)
-      showToast(EXPORT_ERROR)
+      showToast(
+        error instanceof BackupEncryptionUnavailableError
+          ? error.message
+          : EXPORT_ERROR,
+      )
     } finally {
       setPhase('idle')
       setProgress(0)
@@ -106,6 +147,7 @@ export function BackupPanel() {
 
   async function handleExportClick(): Promise<void> {
     if (busy) return
+    if (protect && !passwordReady) return
 
     setPhase('estimating')
     let tooLarge = false
@@ -134,23 +176,45 @@ export function BackupPanel() {
       return
     }
 
-    await runExport()
+    await runExport(protect ? password : undefined)
   }
 
-  async function readSelectedFile(file: File): Promise<void> {
+  function closePasswordSheet(): void {
+    setPasswordRequest(undefined)
+    setImportPassword('')
+    setImportError(undefined)
+    setShowImportPassword(false)
+  }
+
+  async function readSelectedFile(
+    file: File,
+    importPasswordValue?: string,
+  ): Promise<void> {
     setPhase('reading')
     setProgress(0)
 
     try {
-      const backup = await readBackup(file, setProgress)
+      const backup = await readBackup(file, setProgress, importPasswordValue)
+      closePasswordSheet()
       setPending(backup)
     } catch (error) {
       // L'erreur brute reste dans la console ; l'interface ne montre que du
       // français maîtrisé, même si le décodeur remonte un message anglais.
       console.error('Lecture de la sauvegarde impossible.', error)
-      showToast(
-        error instanceof BackupReadError ? error.message : READ_ERROR,
-      )
+
+      if (error instanceof BackupPasswordRequiredError) {
+        setPasswordRequest(file)
+        setImportPassword('')
+        setImportError(undefined)
+      } else if (error instanceof BackupWrongPasswordError) {
+        // La feuille reste ouverte : le fichier choisi est conservé.
+        setImportError(error.message)
+      } else {
+        closePasswordSheet()
+        showToast(
+          error instanceof BackupReadError ? error.message : READ_ERROR,
+        )
+      }
     } finally {
       setPhase('idle')
       setProgress(0)
@@ -178,6 +242,17 @@ export function BackupPanel() {
     if (file !== undefined) {
       void readSelectedFile(file)
     }
+  }
+
+  async function handlePasswordSubmit(
+    event: FormEvent<HTMLFormElement>,
+  ): Promise<void> {
+    event.preventDefault()
+    const file = passwordRequest
+    if (file === undefined || importPassword === '' || phase === 'reading') {
+      return
+    }
+    await readSelectedFile(file, importPassword)
   }
 
   async function handleRestore(): Promise<void> {
@@ -217,9 +292,9 @@ export function BackupPanel() {
           Il permet de retrouver tes données sur un autre appareil.
         </p>
         <p className={styles.hint}>
-          <strong>Le ZIP n’est pas chiffré.</strong> Il contient des données
-          personnelles et les photos des enfants. Conserve-le dans un endroit
-          protégé et supprime-le après le transfert.
+          <strong>Sans mot de passe, le ZIP n’est pas chiffré.</strong> Il
+          contient des données personnelles et les photos des enfants. Conserve-le
+          dans un endroit protégé et supprime-le après le transfert.
         </p>
 
         <dl className={styles.backupSummary}>
@@ -244,7 +319,89 @@ export function BackupPanel() {
           </p>
         ) : null}
 
-        {phase === 'exporting' || phase === 'reading' ? (
+        <div className={styles.passwordBlock}>
+          <label className={styles.checkboxRow} htmlFor="backup-protect">
+            <input
+              id="backup-protect"
+              className={styles.checkbox}
+              type="checkbox"
+              checked={protect}
+              disabled={busy || loading}
+              onChange={(event) => {
+                setProtect(event.target.checked)
+                if (!event.target.checked) {
+                  setPassword('')
+                  setConfirmation('')
+                  setShowPassword(false)
+                }
+              }}
+            />
+            Protéger par un mot de passe
+          </label>
+
+          {protect ? (
+            <>
+              <div className={styles.passwordField}>
+                <span className={styles.label} aria-hidden="true">
+                  Mot de passe
+                </span>
+                <Field
+                  label="Mot de passe"
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete="new-password"
+                  value={password}
+                  disabled={busy}
+                  onChange={(event) => setPassword(event.target.value)}
+                />
+              </div>
+
+              <div className={styles.passwordField}>
+                <span className={styles.label} aria-hidden="true">
+                  Confirmation du mot de passe
+                </span>
+                <Field
+                  label="Confirmer le mot de passe"
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete="new-password"
+                  value={confirmation}
+                  disabled={busy}
+                  onChange={(event) => setConfirmation(event.target.value)}
+                />
+              </div>
+
+              <div className={styles.passwordActions}>
+                <Button
+                  variant="ghost"
+                  aria-pressed={showPassword}
+                  disabled={busy}
+                  onClick={() => setShowPassword((visible) => !visible)}
+                >
+                  {showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                </Button>
+              </div>
+
+              {passwordTooShort ? (
+                <p className={styles.passwordHint}>
+                  Le mot de passe doit contenir au moins{' '}
+                  {BACKUP_PASSWORD_MIN_LENGTH} caractères.
+                </p>
+              ) : null}
+              {passwordMismatch ? (
+                <p className={styles.passwordError} role="alert">
+                  Les deux mots de passe ne correspondent pas.
+                </p>
+              ) : null}
+
+              <p className={styles.warning}>
+                Sans ce mot de passe, la sauvegarde est définitivement illisible.
+                Il n’existe aucun moyen de le récupérer.
+              </p>
+            </>
+          ) : null}
+        </div>
+
+        {phase === 'exporting' ||
+        (phase === 'reading' && passwordRequest === undefined) ? (
           <div className={styles.backupProgress}>
             <div className={styles.progressRow}>
               <progress
@@ -271,7 +428,7 @@ export function BackupPanel() {
         <Button
           variant="dark"
           fullWidth
-          disabled={busy || loading}
+          disabled={busy || loading || !canExport}
           onClick={() => void handleExportClick()}
         >
           {phase === 'estimating' ? 'Préparation…' : 'Exporter une sauvegarde'}
@@ -309,7 +466,7 @@ export function BackupPanel() {
           </>
         }
         confirmLabel="Continuer l’export"
-        onConfirm={() => void runExport()}
+        onConfirm={() => void runExport(protect ? password : undefined)}
         onClose={() => setSizeWarning(false)}
       />
 
@@ -328,6 +485,93 @@ export function BackupPanel() {
         onClose={() => setLargeImport(undefined)}
       />
 
+      <Sheet
+        open={passwordRequest !== undefined}
+        title="Sauvegarde chiffrée"
+        onClose={() => {
+          if (phase !== 'reading') closePasswordSheet()
+        }}
+      >
+        <form
+          className={styles.passwordForm}
+          onSubmit={(event) => void handlePasswordSubmit(event)}
+        >
+          <p className={styles.hint}>
+            Cette sauvegarde est protégée par un mot de passe. Saisis-le pour
+            pouvoir la lire.
+          </p>
+
+          <div className={styles.passwordField}>
+            <span className={styles.label} aria-hidden="true">
+              Mot de passe
+            </span>
+            <Field
+              label="Mot de passe"
+              type={showImportPassword ? 'text' : 'password'}
+              autoComplete="current-password"
+              value={importPassword}
+              disabled={phase === 'reading'}
+              onChange={(event) => {
+                setImportPassword(event.target.value)
+                setImportError(undefined)
+              }}
+            />
+          </div>
+
+          <div className={styles.passwordActions}>
+            <Button
+              variant="ghost"
+              aria-pressed={showImportPassword}
+              disabled={phase === 'reading'}
+              onClick={() => setShowImportPassword((visible) => !visible)}
+            >
+              {showImportPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+            </Button>
+          </div>
+
+          {importError !== undefined ? (
+            <p className={styles.passwordError} role="alert">
+              {importError}
+            </p>
+          ) : null}
+
+          {phase === 'reading' ? (
+            <div className={styles.backupProgress}>
+              <progress
+                className={styles.progress}
+                value={percent}
+                max={100}
+                aria-label="Progression de la lecture"
+                aria-valuetext={`${percent} %`}
+              />
+              <p className={styles.status} aria-live="polite">
+                Lecture de la sauvegarde… {percent} %
+              </p>
+            </div>
+          ) : null}
+
+          <div className={styles.formActions}>
+            <Button
+              type="submit"
+              variant="dark"
+              fullWidth
+              disabled={importPassword === '' || phase === 'reading'}
+            >
+              Lire la sauvegarde
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              fullWidth
+              disabled={phase === 'reading'}
+              onClick={closePasswordSheet}
+            >
+              Annuler
+            </Button>
+          </div>
+        </form>
+      </Sheet>
+
       <ConfirmSheet
         open={pending !== undefined}
         title="Restaurer cette sauvegarde ?"
@@ -337,6 +581,9 @@ export function BackupPanel() {
             <>
               La sauvegarde contient {summaryText(pending.summary)}, exportée le{' '}
               {backupDateLabel(pending.summary.exportedAt)}.{' '}
+              {pending.summary.encrypted ? (
+                <strong>Sauvegarde chiffrée.</strong>
+              ) : null}{' '}
               <strong>Toutes les données actuelles seront remplacées.</strong>
               {phase === 'restoring' ? (
                 <span className={styles.backupDialogProgress}>

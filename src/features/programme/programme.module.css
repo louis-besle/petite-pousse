@@ -167,6 +167,11 @@
   color: var(--d-vivant-ink);
 }
 
+.domainIcon[data-domain='evar'] {
+  background-color: var(--d-evar-soft);
+  color: var(--d-evar-ink);
+}
+
 .domainText {
   display: flex;
   min-width: 0;
@@ -258,6 +263,11 @@
 .rowItem[data-domain='vivant'],
 .domainBlock[data-domain='vivant'] {
   --domain-color: var(--d-vivant);
+}
+
+.rowItem[data-domain='evar'],
+.domainBlock[data-domain='evar'] {
+  --domain-color: var(--d-evar);
 }
 
 /* Toute la ligne est un bouton : le libellé, le niveau et le compteur font

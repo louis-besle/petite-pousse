@@ -11,7 +11,7 @@ import {
 import { z } from 'zod'
 import { SETTINGS_ID, db, type SettingsRecord } from '@/db/db'
 import { updateSettings } from '@/db/settings'
-import { referential } from '@/domain/referential'
+import { DOMAIN_IDS, referential } from '@/domain/referential'
 import { schoolYearIdForDate } from '@/domain/schoolYear'
 import type {
   Photo,
@@ -37,6 +37,24 @@ const READ_CHUNK_SIZE = 1024 * 1024
 const READ_PHASE_RATIO = 0.9
 
 /**
+ * Format du manifeste de chiffrement, premier fichier de l'archive. Il reste
+ * en clair : il porte les paramètres KDF et le jeton de vérification.
+ */
+const BACKUP_FORMAT = 'carnet-de-reussites-backup'
+const MANIFEST_ENTRY = 'manifest.json'
+const ENCRYPTION_VERSION = 1
+const KDF_NAME = 'PBKDF2'
+const KDF_HASH = 'SHA-256'
+const KDF_ITERATIONS = 310_000
+const SALT_BYTES = 16
+const IV_BYTES = 12
+const GCM_TAG_LENGTH = 128
+const CHECK_TOKEN = 'carnet-de-reussites'
+
+/** Longueur minimale du mot de passe, partagée avec le panneau. */
+export const BACKUP_PASSWORD_MIN_LENGTH = 8
+
+/**
  * Erreur de lecture/validation d'une sauvegarde. Le panneau peut afficher son
  * message français ; toute autre erreur inattendue reste générique.
  */
@@ -44,6 +62,49 @@ export class BackupReadError extends Error {
   constructor(message: string) {
     super(message)
     this.name = 'BackupReadError'
+  }
+}
+
+/** La sauvegarde est chiffrée : un mot de passe est nécessaire pour la lire. */
+export class BackupPasswordRequiredError extends BackupReadError {
+  constructor(
+    message = 'Cette sauvegarde est chiffrée : son mot de passe est nécessaire pour la lire.',
+  ) {
+    super(message)
+    this.name = 'BackupPasswordRequiredError'
+  }
+}
+
+/**
+ * WebCrypto n'est pas disponible : aucune sauvegarde chiffrée ne peut être
+ * produite. Afficher ce message précis plutôt qu'une erreur de stockage.
+ */
+export class BackupEncryptionUnavailableError extends Error {
+  constructor(
+    message = 'Le chiffrement n’est pas disponible sur cet appareil : la sauvegarde chiffrée n’a pas été créée.',
+  ) {
+    super(message)
+    this.name = 'BackupEncryptionUnavailableError'
+  }
+}
+
+/** Le mot de passe fourni ne correspond pas au jeton de vérification. */
+export class BackupWrongPasswordError extends BackupReadError {
+  constructor(
+    message = 'Le mot de passe est incorrect. Vérifie-le et réessaie.',
+  ) {
+    super(message)
+    this.name = 'BackupWrongPasswordError'
+  }
+}
+
+/** L'authentification GCM a échoué : le contenu chiffré a été altéré. */
+export class BackupCorruptedError extends BackupReadError {
+  constructor(
+    message = 'La sauvegarde chiffrée est endommagée ou a été modifiée : elle ne peut pas être lue.',
+  ) {
+    super(message)
+    this.name = 'BackupCorruptedError'
   }
 }
 
@@ -65,6 +126,8 @@ const REFERENTIAL_MISSING =
   'La sauvegarde est incomplète : le fichier referential.json est absent.'
 const REFERENTIAL_INVALID =
   'La sauvegarde est incomplète : referential.json est illisible.'
+const MANIFEST_INVALID =
+  'La sauvegarde est illisible : les informations de chiffrement sont invalides.'
 
 /** Métadonnées d'une photo dans `data.json` ; les octets vivent dans le ZIP. */
 export interface BackupPhotoMetadata {
@@ -113,7 +176,58 @@ export interface BackupSummary {
   photos: number
   exportedAt: string
   schemaVersion: number
+  /** Vrai quand l'archive était chiffrée par mot de passe. */
+  encrypted: boolean
 }
+
+/** Options d'export ; `password` active le chiffrement de toutes les entrées. */
+export interface BackupExportOptions {
+  password?: string
+}
+
+/**
+ * Manifeste en clair, toujours premier fichier d'une archive chiffrée. Le
+ * jeton `check` prouve que le mot de passe dérive la bonne clé.
+ */
+interface BackupManifest {
+  format: typeof BACKUP_FORMAT
+  version: typeof ENCRYPTION_VERSION
+  encrypted: true
+  kdf: {
+    name: typeof KDF_NAME
+    hash: typeof KDF_HASH
+    iterations: typeof KDF_ITERATIONS
+    salt: string
+  }
+  cipher: {
+    name: 'AES-GCM'
+    tagLength: typeof GCM_TAG_LENGTH
+  }
+  check: {
+    iv: string
+    data: string
+  }
+}
+
+const manifestSchema = z.object({
+  format: z.literal(BACKUP_FORMAT),
+  version: z.literal(ENCRYPTION_VERSION),
+  encrypted: z.literal(true),
+  kdf: z.object({
+    name: z.literal(KDF_NAME),
+    hash: z.literal(KDF_HASH),
+    iterations: z.literal(KDF_ITERATIONS),
+    salt: z.string().min(1),
+  }),
+  cipher: z.object({
+    name: z.literal('AES-GCM'),
+    tagLength: z.literal(GCM_TAG_LENGTH),
+  }),
+  check: z.object({
+    iv: z.string().min(1),
+    data: z.string().min(1),
+  }),
+})
 
 const schoolYearSchema = z.object({
   id: z.string().min(1),
@@ -132,7 +246,7 @@ const studentSchema = z.object({
 
 const validationSnapshotSchema = z.object({
   objectiveLabel: z.string().min(1),
-  domainId: z.enum(['langage', 'maths', 'corps', 'arts', 'temps', 'vivant']),
+  domainId: z.enum(DOMAIN_IDS),
   domainLabel: z.string().min(1),
   ageBand: z.enum(['before4', 'from4', 'from5']),
   example: z.string().optional(),
@@ -216,11 +330,191 @@ function concatBytes(chunks: Uint8Array[]): Uint8Array<ArrayBuffer> {
   return output
 }
 
+function bytesToBase64(bytes: Uint8Array): string {
+  let binary = ''
+  for (const byte of bytes) {
+    binary += String.fromCharCode(byte)
+  }
+  return btoa(binary)
+}
+
+function base64ToBytes(value: string): Uint8Array<ArrayBuffer> {
+  const binary = atob(value)
+  const bytes = new Uint8Array(binary.length)
+  for (let index = 0; index < binary.length; index += 1) {
+    bytes[index] = binary.charCodeAt(index)
+  }
+  return bytes
+}
+
+/**
+ * WebCrypto n'est pas garanti (navigateur ancien, contexte non sécurisé) :
+ * l'export chiffré doit échouer clairement plutôt que produire un ZIP en
+ * clair. Aucun repli silencieux n'est permis.
+ */
+function requireSubtle(): SubtleCrypto {
+  const subtle = globalThis.crypto?.subtle
+  if (!subtle) {
+    throw new BackupEncryptionUnavailableError()
+  }
+  return subtle
+}
+
+async function deriveKey(
+  password: string,
+  salt: Uint8Array<ArrayBuffer>,
+  iterations: number,
+): Promise<CryptoKey> {
+  const subtle = requireSubtle()
+  const material = await subtle.importKey(
+    'raw',
+    new Uint8Array(strToU8(password)),
+    'PBKDF2',
+    false,
+    ['deriveKey'],
+  )
+
+  return subtle.deriveKey(
+    { name: 'PBKDF2', salt, iterations, hash: KDF_HASH },
+    material,
+    { name: 'AES-GCM', length: 256 },
+    false,
+    ['encrypt', 'decrypt'],
+  )
+}
+
+/** Chiffre une entrée : IV aléatoire de 12 octets préfixé au chiffré GCM. */
+async function encryptBytes(
+  key: CryptoKey,
+  bytes: Uint8Array<ArrayBuffer>,
+): Promise<Uint8Array<ArrayBuffer>> {
+  const iv = globalThis.crypto.getRandomValues(new Uint8Array(IV_BYTES))
+  const ciphertext = await requireSubtle().encrypt(
+    { name: 'AES-GCM', iv, tagLength: GCM_TAG_LENGTH },
+    key,
+    bytes,
+  )
+  return concatBytes([iv, new Uint8Array(ciphertext)])
+}
+
+/** Déchiffre une entrée ; toute altération devient une erreur de corruption. */
+async function decryptBytes(
+  key: CryptoKey,
+  bytes: Uint8Array<ArrayBuffer>,
+): Promise<Uint8Array<ArrayBuffer>> {
+  if (bytes.length <= IV_BYTES) {
+    throw new BackupCorruptedError()
+  }
+
+  const iv = bytes.slice(0, IV_BYTES)
+  const ciphertext = bytes.subarray(IV_BYTES) as Uint8Array<ArrayBuffer>
+
+  try {
+    const plaintext = await requireSubtle().decrypt(
+      { name: 'AES-GCM', iv, tagLength: GCM_TAG_LENGTH },
+      key,
+      ciphertext,
+    )
+    return new Uint8Array(plaintext)
+  } catch {
+    throw new BackupCorruptedError()
+  }
+}
+
+async function createManifest(
+  password: string,
+): Promise<{ manifest: BackupManifest; key: CryptoKey }> {
+  const salt = globalThis.crypto.getRandomValues(new Uint8Array(SALT_BYTES))
+  const key = await deriveKey(password, salt, KDF_ITERATIONS)
+  const check = await encryptBytes(key, new Uint8Array(strToU8(CHECK_TOKEN)))
+
+  return {
+    manifest: {
+      format: BACKUP_FORMAT,
+      version: ENCRYPTION_VERSION,
+      encrypted: true,
+      kdf: {
+        name: KDF_NAME,
+        hash: KDF_HASH,
+        iterations: KDF_ITERATIONS,
+        salt: bytesToBase64(salt),
+      },
+      cipher: { name: 'AES-GCM', tagLength: GCM_TAG_LENGTH },
+      check: {
+        iv: bytesToBase64(check.slice(0, IV_BYTES)),
+        data: bytesToBase64(check.slice(IV_BYTES)),
+      },
+    },
+    key,
+  }
+}
+
+/**
+ * Vérifie le manifeste puis le jeton avant toute déchiffration : un mauvais
+ * mot de passe est signalé comme tel, jamais comme un fichier corrompu.
+ */
+async function unlockManifest(
+  manifestText: string,
+  password: string,
+): Promise<CryptoKey> {
+  let raw: unknown
+  try {
+    raw = JSON.parse(manifestText)
+  } catch {
+    throw new BackupCorruptedError(MANIFEST_INVALID)
+  }
+
+  const parsed = manifestSchema.safeParse(raw)
+  if (!parsed.success) {
+    throw new BackupCorruptedError(MANIFEST_INVALID)
+  }
+
+  let salt: Uint8Array<ArrayBuffer>
+  let iv: Uint8Array<ArrayBuffer>
+  let data: Uint8Array<ArrayBuffer>
+  try {
+    salt = base64ToBytes(parsed.data.kdf.salt)
+    iv = base64ToBytes(parsed.data.check.iv)
+    data = base64ToBytes(parsed.data.check.data)
+  } catch {
+    throw new BackupCorruptedError(MANIFEST_INVALID)
+  }
+
+  // Le manifeste est en clair : ses longueurs doivent être exactes pour que
+  // WebCrypto ne transforme pas un fichier malformé en « mauvais mot de passe ».
+  if (salt.length !== SALT_BYTES || iv.length !== IV_BYTES || data.length === 0) {
+    throw new BackupCorruptedError(MANIFEST_INVALID)
+  }
+
+  const key = await deriveKey(password, salt, parsed.data.kdf.iterations)
+
+  let token: Uint8Array
+  try {
+    token = new Uint8Array(
+      await requireSubtle().decrypt(
+        { name: 'AES-GCM', iv, tagLength: GCM_TAG_LENGTH },
+        key,
+        data,
+      ),
+    )
+  } catch {
+    throw new BackupWrongPasswordError()
+  }
+
+  if (strFromU8(token) !== CHECK_TOKEN) {
+    throw new BackupWrongPasswordError()
+  }
+
+  return key
+}
+
 interface ZipContents {
   /** Photos et vignettes déjà converties en Blob, sans octets bruts doublés. */
   photos: Map<string, Blob>
   /** `data.json` et `referential.json` décodés une fois leur entrée terminée. */
   json: Map<string, string>
+  /** Manifeste de chiffrement, présent uniquement dans une archive chiffrée. */
+  manifest?: string
 }
 
 const CALENDAR_DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/
@@ -394,14 +688,23 @@ function assertBackupIntegrity(data: BackupData): void {
  * Lit un ZIP en streaming, par morceaux de 1 Mio. Chaque entrée est accumulée
  * seulement jusqu'à son `final`, puis convertie immédiatement en Blob (photos)
  * ou en chaîne JSON : les octets bruts ne sont jamais conservés en double.
+ *
+ * Les entrées chiffrées sont déchiffrées une par une : au plus un lot de
+ * 1 Mio de chiffré attend pendant qu'une entrée est déchiffrée. Le manifeste
+ * est écrit en premier par l'export ; dès qu'il est lu, le mot de passe est
+ * vérifié avant de déchiffrer quoi que ce soit.
  */
 async function readZipEntries(
   file: File,
   onReadProgress: (ratio: number) => void,
+  password: string | undefined,
 ): Promise<ZipContents> {
   const photos = new Map<string, Blob>()
   const json = new Map<string, string>()
+  let manifest: string | undefined
   let failure: unknown
+  let pending: { name: string; bytes: Uint8Array<ArrayBuffer> }[] = []
+  let key: CryptoKey | undefined
 
   const unzip = new Unzip((entry) => {
     const isPhoto =
@@ -409,7 +712,7 @@ async function readZipEntries(
     const isJson =
       entry.name === 'data.json' || entry.name === 'referential.json'
 
-    if (!isPhoto && !isJson) {
+    if (!isPhoto && !isJson && entry.name !== MANIFEST_ENTRY) {
       entry.ondata = () => {}
       entry.start()
       return
@@ -424,16 +727,7 @@ async function readZipEntries(
       if (chunk.length > 0) chunks.push(chunk)
       if (!final) return
 
-      try {
-        if (isPhoto) {
-          photos.set(entry.name, new Blob(chunks, { type: 'image/jpeg' }))
-        } else {
-          json.set(entry.name, strFromU8(concatBytes(chunks)))
-        }
-      } catch (error) {
-        failure = error
-      }
-
+      pending.push({ name: entry.name, bytes: concatBytes(chunks) })
       // Les références aux morceaux sont libérées dès la conversion.
       chunks.length = 0
     }
@@ -441,6 +735,40 @@ async function readZipEntries(
     entry.start()
   })
   unzip.register(UnzipInflate)
+
+  async function flushPending(): Promise<void> {
+    if (pending.length === 0) return
+
+    const batch = pending
+    pending = []
+
+    for (const item of batch) {
+      if (item.name === MANIFEST_ENTRY) {
+        if (key !== undefined) continue
+        if (password === undefined || password === '') {
+          throw new BackupPasswordRequiredError()
+        }
+        let text: string
+        try {
+          text = strFromU8(item.bytes)
+        } catch {
+          throw new BackupCorruptedError(MANIFEST_INVALID)
+        }
+        key = await unlockManifest(text, password)
+        manifest = text
+        continue
+      }
+
+      const bytes =
+        key === undefined ? item.bytes : await decryptBytes(key, item.bytes)
+
+      if (item.name.startsWith('photos/') || item.name.startsWith('thumbs/')) {
+        photos.set(item.name, new Blob([bytes], { type: 'image/jpeg' }))
+      } else {
+        json.set(item.name, strFromU8(bytes))
+      }
+    }
+  }
 
   const size = file.size
   if (size <= 0) {
@@ -464,6 +792,7 @@ async function readZipEntries(
       throw new BackupReadError(ZIP_UNREADABLE)
     }
 
+    await flushPending()
     onReadProgress(offset / size)
   }
 
@@ -473,11 +802,13 @@ async function readZipEntries(
     throw new BackupReadError(ZIP_UNREADABLE)
   }
 
+  await flushPending()
+
   if (failure !== undefined) {
     throw new BackupReadError(ZIP_UNREADABLE)
   }
 
-  return { photos, json }
+  return manifest === undefined ? { photos, json } : { photos, json, manifest }
 }
 
 async function assertJpegBlob(blob: Blob, label: string): Promise<void> {
@@ -499,15 +830,32 @@ async function assertJpegBlob(blob: Blob, label: string): Promise<void> {
  * Exporte toutes les données dans un ZIP complet, en streaming :
  * `data.json`, `referential.json`, `photos/<id>.jpg`, `thumbs/<id>.jpg`.
  *
- * Les JPEG passent sans recompression ; les JSON sont dégonflés. Chaque photo
- * est lue puis poussée immédiatement dans l'archive : aucune collection de
- * tous les octets n'est conservée en mémoire.
+ * Sans mot de passe, les JPEG passent sans recompression et les JSON sont
+ * dégonflés. Avec un mot de passe, `manifest.json` est écrit en clair puis
+ * chaque entrée est chiffrée en AES-256-GCM et stockée sans compression.
+ * Chaque photo est lue puis poussée immédiatement dans l'archive : aucune
+ * collection de tous les octets n'est conservée en mémoire.
  */
 export async function exportBackup(
   onProgress: (ratio: number) => void,
+  options?: BackupExportOptions,
 ): Promise<Blob> {
   const report = progressReporter(onProgress)
   report(0)
+
+  const password = options?.password
+  const encryptionPassword =
+    password !== undefined && password !== '' ? password : undefined
+  const encrypting = encryptionPassword !== undefined
+
+  if (
+    encryptionPassword !== undefined &&
+    encryptionPassword.length < BACKUP_PASSWORD_MIN_LENGTH
+  ) {
+    throw new Error(
+      `Le mot de passe doit contenir au moins ${BACKUP_PASSWORD_MIN_LENGTH} caractères.`,
+    )
+  }
 
   const [settings, schoolYears, students, validations, photoRows] =
     await Promise.all([
@@ -553,7 +901,7 @@ export async function exportBackup(
     photos: photoMetadata,
   }
 
-  const totalFiles = 2 + photoRows.length * 2
+  const totalFiles = 2 + (encrypting ? 1 : 0) + photoRows.length * 2
   let completedFiles = 0
 
   function markFileWritten(): void {
@@ -592,16 +940,53 @@ export async function exportBackup(
     markFileWritten()
   }
 
+  let encryption: { manifest: BackupManifest; key: CryptoKey } | undefined
+  if (encryptionPassword !== undefined) {
+    encryption = await createManifest(encryptionPassword)
+  }
+
+  // Le chiffrement n'est pas compressé : `ZipPassThrough` évite un second
+  // passage sur les octets et garde une empreinte mémoire bornée.
+  async function addJson(
+    name: string,
+    bytes: Uint8Array<ArrayBuffer>,
+  ): Promise<void> {
+    if (encryption === undefined) {
+      addDeflated(name, bytes)
+      return
+    }
+    const key = encryption.key
+    addStored(name, await encryptBytes(key, bytes))
+  }
+
+  async function addBinary(
+    name: string,
+    bytes: Uint8Array<ArrayBuffer>,
+  ): Promise<void> {
+    if (encryption === undefined) {
+      addStored(name, bytes)
+      return
+    }
+    const key = encryption.key
+    addStored(name, await encryptBytes(key, bytes))
+  }
+
   try {
-    addDeflated('data.json', strToU8(JSON.stringify(data)))
-    addDeflated('referential.json', strToU8(JSON.stringify(referential)))
+    if (encryption !== undefined) {
+      addStored(MANIFEST_ENTRY, strToU8(JSON.stringify(encryption.manifest)))
+    }
+    await addJson('data.json', new Uint8Array(strToU8(JSON.stringify(data))))
+    await addJson(
+      'referential.json',
+      new Uint8Array(strToU8(JSON.stringify(referential))),
+    )
 
     for (const photo of photoRows) {
-      addStored(
+      await addBinary(
         `photos/${photo.id}.jpg`,
         new Uint8Array(await photo.full.arrayBuffer()),
       )
-      addStored(
+      await addBinary(
         `thumbs/${photo.id}.jpg`,
         new Uint8Array(await photo.thumb.arrayBuffer()),
       )
@@ -627,16 +1012,22 @@ export async function exportBackup(
  * Lit et valide entièrement un ZIP avant de toucher à la base : version de
  * schéma, `data.json`, `referential.json`, cohérence des photos et présence de
  * chaque fichier référencé. Toute anomalie rejette la sauvegarde.
+ *
+ * Un manifeste impose le mot de passe ; un mot de passe fourni pour une
+ * ancienne sauvegarde en clair est simplement ignoré.
  */
 export async function readBackup(
   file: File,
   onProgress: (ratio: number) => void,
+  password?: string,
 ): Promise<BackupPackage> {
   const report = progressReporter(onProgress)
   report(0)
 
-  const contents = await readZipEntries(file, (ratio) =>
-    report(READ_PHASE_RATIO * ratio),
+  const contents = await readZipEntries(
+    file,
+    (ratio) => report(READ_PHASE_RATIO * ratio),
+    password,
   )
   report(READ_PHASE_RATIO)
 
@@ -748,6 +1139,7 @@ export async function readBackup(
       photos: data.photos.length,
       exportedAt: data.exportedAt,
       schemaVersion: data.schemaVersion,
+      encrypted: contents.manifest !== undefined,
     },
   }
 }

@@ -3,15 +3,19 @@ import { defineConfig } from '@playwright/test'
 /**
  * Configuration E2E du carnet de réussites.
  *
- * Un seul projet Chromium, au format téléphone (390 × 844) : les navigateurs
- * WebKit et Firefox ne sont pas installés sur la machine de développement.
+ * Le projet `chromium` couvre toute la suite sauf le smoke WebKit, au format
+ * téléphone (390 × 844). Le projet `webkit` rejoue uniquement `webkit.spec.ts`,
+ * le navigateur de Safari sur iPhone et iPad, cible principale de l'application.
+ * `a11y.spec.ts` reste réservé à Chromium pour ne pas doubler la durée du
+ * contrôle.
+ *
  * `offline.spec.ts` est exclu de cette configuration : il exige un build de
  * production et tourne via `playwright.offline.config.ts`
  * (`npm run test:e2e:offline`).
  */
 export default defineConfig({
   testDir: './e2e',
-  testIgnore: /offline\.spec\.ts/,
+  testIgnore: [/offline\.spec\.ts/, /webkit\.spec\.ts/],
   outputDir: 'test-results',
   timeout: 60_000,
   expect: { timeout: 15_000 },
@@ -35,6 +39,20 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { browserName: 'chromium' },
+    },
+    {
+      // Safari iOS/iPadOS : le testIgnore global exclut `webkit.spec.ts` du
+      // projet Chromium, ce projet le réintègre seul.
+      name: 'webkit',
+      testMatch: /webkit\.spec\.ts/,
+      testIgnore: [],
+      use: {
+        browserName: 'webkit',
+        viewport: { width: 390, height: 844 },
+        isMobile: true,
+        hasTouch: true,
+        deviceScaleFactor: 3,
+      },
     },
   ],
   webServer: {

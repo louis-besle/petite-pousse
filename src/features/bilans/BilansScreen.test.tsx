@@ -6,8 +6,22 @@ import { updateSettings } from '@/db/settings'
 import { createValidation } from '@/db/validations'
 import { REFERENTIAL_VERSION, referential } from '@/domain/referential'
 import type { Objective, SchoolYear, Section } from '@/domain/types'
+import { downloadBlob } from '@/lib/share'
 import { makeSchoolYear, makeStudent } from '@/test/fixtures'
 import { renderApp } from '@/test/render'
+import { generateBilanBundle, type BatchBilanBundle } from './batch'
+
+vi.mock('@/lib/share', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/lib/share')>()
+  return { ...actual, downloadBlob: vi.fn() }
+})
+
+vi.mock('./batch', () => ({
+  generateBilanBundle: vi.fn(),
+}))
+
+const downloadBlobMock = vi.mocked(downloadBlob)
+const generateBundleMock = vi.mocked(generateBilanBundle)
 
 function objective(id: string): Objective {
   const found = referential.objectives.find((candidate) => candidate.id === id)
@@ -71,6 +85,8 @@ async function saveCutover(
 
 beforeEach(async () => {
   await ensureSeed()
+  downloadBlobMock.mockClear()
+  generateBundleMock.mockReset()
 })
 
 describe('BilansScreen', () => {
@@ -389,5 +405,87 @@ describe('BilansScreen', () => {
       'href',
       '/students',
     )
+    // Classe vide : aucune génération de lot à proposer.
+    expect(
+      screen.queryByRole('button', { name: /Générer .*\(ZIP\)/ }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('télécharge le ZIP de toute la classe et annonce la progression', async () => {
+    await setUpYear()
+    await addStudent('Léa')
+    await addStudent('Adam', 'PS')
+
+    let resolveBundle!: (bundle: BatchBilanBundle) => void
+    generateBundleMock.mockImplementationOnce(async (input, onProgress) => {
+      const student = input.students[0]
+      if (student !== undefined) {
+        onProgress?.({ done: 1, total: input.students.length, student })
+      }
+      return new Promise<BatchBilanBundle>((resolve) => {
+        resolveBundle = resolve
+      })
+    })
+
+    const user = userEvent.setup()
+    renderApp({ route: '/bilans' })
+    await screen.findByRole('button', { name: /^Bilan 1/ })
+
+    const button = screen.getByRole('button', {
+      name: 'Générer les 2 bilans (ZIP)',
+    })
+    await user.click(button)
+
+    // Adam est le premier élève trié par prénom.
+    const status = await screen.findByText('Bilan 1 sur 2 · Adam')
+    expect(status).toHaveAttribute('role', 'status')
+    expect(button).toBeDisabled()
+
+    const progress = screen.getByRole('progressbar', {
+      name: 'Progression de la génération des bilans',
+    })
+    expect(progress).toHaveAttribute('value', '1')
+    expect(progress).toHaveAttribute('max', '2')
+
+    resolveBundle({
+      blob: new Blob(['zip'], { type: 'application/zip' }),
+      filename: 'bilans-1-2026-2027.zip',
+      count: 2,
+    })
+
+    expect(await screen.findByText('2 bilans téléchargés.')).toBeInTheDocument()
+    expect(downloadBlobMock).toHaveBeenCalledWith(
+      expect.any(Blob),
+      'bilans-1-2026-2027.zip',
+    )
+    await waitFor(() => expect(button).not.toBeDisabled())
+  })
+
+  it('affiche un message français quand la génération du lot échoue', async () => {
+    await setUpYear()
+    await addStudent('Léa')
+
+    generateBundleMock.mockRejectedValueOnce(new Error('échec disque'))
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+    try {
+      const user = userEvent.setup()
+      renderApp({ route: '/bilans' })
+      await screen.findByRole('button', { name: /^Bilan 1/ })
+
+      await user.click(
+        screen.getByRole('button', { name: 'Générer le bilan (ZIP)' }),
+      )
+
+      expect(
+        await screen.findByText(
+          'Les bilans n’ont pas pu être générés. Réessaie.',
+        ),
+      ).toBeInTheDocument()
+      expect(consoleError).toHaveBeenCalled()
+      expect(downloadBlobMock).not.toHaveBeenCalled()
+    } finally {
+      consoleError.mockRestore()
+    }
   })
 })

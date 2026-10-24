@@ -1,8 +1,9 @@
-# Source officielle du référentiel 2026
+# Source officielle du référentiel 2026 et du programme EVAR
 
-`objectives.csv` est la transcription du programme officiel de l’école maternelle.
-Il est la seule source du référentiel embarqué (`src/data/referential.json`) et ne
-doit contenir que des intitulés et des exemples recopiés du texte officiel.
+`objectives.csv` est la transcription du programme officiel de l’école maternelle
+et du programme EVAR. Il est la seule source du référentiel embarqué
+(`src/data/referential.json`) et ne doit contenir que des intitulés et des
+exemples recopiés du texte officiel.
 
 ## Textes officiels
 
@@ -14,8 +15,16 @@ doit contenir que des intitulés et des exemples recopiés du texte officiel.
   - Notice : <https://www.education.gouv.fr/bo/2026/Hebdo19/MENE2608627A>
   - Annexe (PDF) :
     <https://www.education.gouv.fr/sites/default/files/document/annexe-programme-d-enseignement-de-l-ecole-maternelle-cycle-1-516107.pdf>
-- **Version consolidée Éduscol** utilisée pour la transcription (les deux BO
-  réunis, avec les objectifs et exemples déclinés par âge) :
+- **BO n°6 du 6 février 2025**, arrêté du 3 février 2025 : programme
+  d’éducation à la vie affective et relationnelle (EVAR) à l’école maternelle.
+  - Notice : <https://www.education.gouv.fr/bo/2025/Hebdo6/MENE2503064A>
+  - Annexe (PDF) :
+    <https://www.education.gouv.fr/sites/default/files/document/Annexe%20%E2%80%93%20Un%20programme%20ambitieux%20%3A%20%C3%A9duquer%20%C3%A0%20la%20vie%20affective%20et%20relationnelle%2C%20et%20%C3%A0%20la%20sexualit%C3%A9-405357.pdf>
+  - Synthèse maternelle (4 pages) :
+    <https://eduscol.education.gouv.fr/sites/default/files/document/2025evar4pagesa5maternellepdf-113340.pdf>
+- **Version consolidée Éduscol** utilisée pour la transcription des six
+  domaines (les deux BO réunis, avec les objectifs et exemples déclinés par
+  âge) :
   <https://eduscol.education.gouv.fr/sites/default/files/document/programme-cycle-1-consolide-127565.pdf>
   (63 pages).
 
@@ -41,6 +50,15 @@ PDF 6 porte le folio « 5 ». Toutes les valeurs `source_page` du CSV sont des
 La page PDF 52 est une page blanche de séparation (folio « 51 » seul) : elle ne
 contient aucun contenu de programme.
 
+Les objectifs EVAR ne viennent pas de ce PDF consolidé : ils sont dans l’annexe
+du BO n°6, aux pages PDF 11 à 16.
+
+| Tranche EVAR | Pages PDF de l’annexe |
+|---|---|
+| À aborder avant 4 ans | 11-12 |
+| À partir de 4 ans | 13-14 |
+| À partir de 5 ans | 15-16 |
+
 Pour un objectif présent dans plusieurs tranches d’âge, `source_page` indique la
 page du tableau où l’objectif apparaît pour la première fois (tranche la plus
 jeune).
@@ -48,10 +66,14 @@ jeune).
 Provenance par domaine :
 
 - `langage` et `maths` : BO n°41 du 31 octobre 2024 (version consolidée) ;
-- `corps`, `arts`, `temps`, `vivant` : BO n°19 du 7 mai 2026.
+- `corps`, `arts`, `temps`, `vivant` : BO n°19 du 7 mai 2026 ;
+- `evar` : BO n°6 du 6 février 2025, programme EVAR de l’école maternelle.
 
-État de la transcription : les six domaines sont complets (398 objectifs,
-37 compétences). Les identifiants déjà publiés n’ont pas été renumérotés.
+État de la transcription : les six domaines de 2026 et l’EVAR sont complets
+(407 objectifs, 40 compétences, version `2026.2.0`). Les identifiants déjà
+publiés n’ont pas été renumérotés. Le test
+`scripts/referential/build.test.ts` vérifie que le CSV reproduit exactement
+`src/data/referential.json`.
 
 ## Structure officielle retenue
 
@@ -142,12 +164,14 @@ est donc éditoriale, mais l’exemple n’est jamais réécrit :
 ## Conventions d’identifiants
 
 - `domain_id` : identifiant officiel du domaine (`langage`, `corps`, `arts`,
-  `maths`, `temps`, `vivant`).
+  `maths`, `temps`, `vivant`) ou `evar` pour le programme d’éducation à la vie
+  affective et relationnelle.
 - `competency_id` : `<préfixe domaine>-<slug>`, où `<slug>` est un slug ASCII
-  stable du titre de compétence. Les six préfixes utilisés sont `lang`, `corps`,
-  `arts`, `maths`, `temps` et `vivant` (par exemple `lang-vocabulaire`,
+  stable du titre de compétence. Les préfixes utilisés sont `lang`, `corps`,
+  `arts`, `maths`, `temps`, `vivant` et `evar` (par exemple `lang-vocabulaire`,
   `corps-manipuler`, `arts-graphisme`, `maths-nombres`, `temps-reperes`,
-  `vivant-animaux-vegetaux`).
+  `vivant-animaux-vegetaux`, `evar-corps`). Pour l’EVAR, les trois compétences
+  sont les trois axes officiels du programme.
 - `objective_id` : `<préfixe domaine>-<slug compétence>-<numéro sur deux
   chiffres>`, par exemple `lang-vocabulaire-01` ou `lang-phonologie-14`. Les
   numéros suivent l’ordre d’apparition dans le programme, commencent à `01` et
@@ -165,8 +189,9 @@ objective_id,domain_id,competency_id,competency_label,objective_label,age_bands,
 
 Les champs contenant une virgule sont entre guillemets ; les guillemets internes
 sont doublés. `source_bo` vaut `BO n°41 du 31 octobre 2024` pour les domaines
-`langage` et `maths`, et `BO n°19 du 7 mai 2026` pour les quatre autres.
-`source_page` est un entier (page PDF).
+`langage` et `maths`, `BO n°19 du 7 mai 2026` pour les quatre autres, et
+`BO n° 6 du 6 février 2025` pour `evar`. `source_page` est un entier (page PDF
+du document correspondant).
 
 Le fichier est écrit avec Node ou Python en UTF-8 sans BOM ; ne pas utiliser
 `Set-Content -Encoding utf8` sous PowerShell, qui ajoute un BOM.

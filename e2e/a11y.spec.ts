@@ -234,6 +234,17 @@ const AUDIT_CASES: AuditCase[] = [
       await expect(page.getByRole('dialog')).toBeVisible()
     },
   },
+  {
+    label: 'sauvegarde chiffrée',
+    title: 'Réglages · Carnet de réussites',
+    route: () => '/settings',
+    ready: async (page) => {
+      await page
+        .getByRole('checkbox', { name: 'Protéger par un mot de passe' })
+        .check()
+      await expect(page.getByLabel('Mot de passe', { exact: true })).toBeVisible()
+    },
+  },
 ]
 
 /** Repart du corps du document, comme à l'arrivée sur une page. */

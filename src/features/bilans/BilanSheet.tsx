@@ -14,6 +14,7 @@ const DOMAIN_ICONS: Record<Domain['id'], IconName> = {
   arts: 'palette',
   temps: 'clock',
   vivant: 'leaf',
+  evar: 'heart',
 }
 
 /** « 1 réussite », « 2 réussites ». */

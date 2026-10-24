@@ -20,6 +20,7 @@ export type IconName =
   | 'palette'
   | 'clock'
   | 'leaf'
+  | 'heart'
   | 'download'
 
 const PATHS: Record<IconName, ReactNode> = {
@@ -108,6 +109,9 @@ const PATHS: Record<IconName, ReactNode> = {
       <path d="M20 4C10 4 4 9 4 16c0 2 1 3 3 4 7 0 13-6 13-16Z" />
       <path d="M4 20c4-6 8-9 13-12" />
     </>
+  ),
+  heart: (
+    <path d="M12 20c-4.5-2.9-7.5-6-7.5-9.4A4.1 4.1 0 0 1 12 7.7a4.1 4.1 0 0 1 7.5 2.9C19.5 14 16.5 17.1 12 20Z" />
   ),
   download: (
     <>
