@@ -256,6 +256,10 @@ async function resetFocus(page: Page): Promise<void> {
 }
 
 async function expectNoAxeViolations(page: Page, label: string): Promise<void> {
+  // Même précaution que dans le smoke WebKit : la transition de l'onglet actif
+  // ne doit pas être capturée à mi-parcours par le calcul de contraste.
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+
   const results = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze()
   const details = results.violations.map((violation) => {
     const nodes = violation.nodes
