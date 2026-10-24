@@ -48,6 +48,12 @@ async function seed(page: Page): Promise<Seed> {
 
 /** Échoue en listant chaque violation, pour que le rapport CI soit actionnable. */
 async function expectNoAxeViolations(page: Page, label: string): Promise<void> {
+  // L'onglet actif de la navigation a une transition de 0,16 s entre deux
+  // couleurs. Axe peut la surprendre à mi-parcours et signaler un contraste
+  // transitoire (4,06:1) qui n'existe pas à l'état stable. On force le rendu
+  // « mouvement réduit », déjà supporté par l'application, avant le scan.
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+
   const results = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze()
   const details = results.violations.map((violation) => {
     const nodes = violation.nodes.map((node) => node.target.join(' ')).join(', ')
