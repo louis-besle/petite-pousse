@@ -59,22 +59,55 @@ function stubStorage(value: unknown): void {
   })
 }
 
+/**
+ * Fait échouer la lecture des années scolaires. La méthode est posée sur
+ * l'instance de table puis retirée : le prototype Dexie reste intact.
+ */
+let originalSchoolYearsToArray: PropertyDescriptor | undefined
+let schoolYearsReadStubbed = false
+
+function stubSchoolYearsReadFailure(): void {
+  originalSchoolYearsToArray = Object.getOwnPropertyDescriptor(
+    db.schoolYears,
+    'toArray',
+  )
+  schoolYearsReadStubbed = true
+
+  Object.defineProperty(db.schoolYears, 'toArray', {
+    configurable: true,
+    value: async () => {
+      throw new Error('IndexedDB indisponible')
+    },
+  })
+}
+
 beforeEach(async () => {
   localStorage.clear()
   await ensureSeed()
 })
 
 afterEach(() => {
-  if (!storageStubbed) return
+  if (storageStubbed) {
+    if (originalStorage === undefined) {
+      Reflect.deleteProperty(navigator, 'storage')
+    } else {
+      Object.defineProperty(navigator, 'storage', originalStorage)
+    }
 
-  if (originalStorage === undefined) {
-    Reflect.deleteProperty(navigator, 'storage')
-  } else {
-    Object.defineProperty(navigator, 'storage', originalStorage)
+    originalStorage = undefined
+    storageStubbed = false
   }
 
-  originalStorage = undefined
-  storageStubbed = false
+  if (schoolYearsReadStubbed) {
+    if (originalSchoolYearsToArray === undefined) {
+      Reflect.deleteProperty(db.schoolYears, 'toArray')
+    } else {
+      Object.defineProperty(db.schoolYears, 'toArray', originalSchoolYearsToArray)
+    }
+
+    originalSchoolYearsToArray = undefined
+    schoolYearsReadStubbed = false
+  }
 })
 
 describe('SettingsScreen', () => {
@@ -205,6 +238,47 @@ describe('SettingsScreen', () => {
     expect(await screen.findByText(/15 janvier 2027/)).toBeInTheDocument()
   })
 
+  it('enregistre la fin du bilan 2 pour l’année en cours seulement', async () => {
+    acknowledgePrivacy()
+    const previousYear = makeSchoolYear({
+      id: '2025-2026',
+      start: '2025-09-01',
+      period1End: '2026-01-31',
+      period2End: '2026-06-30',
+    })
+    await db.schoolYears.put(previousYear)
+    await setUpCurrentYear()
+    const previousBefore = await db.schoolYears.get('2025-2026')
+    const currentBefore = await db.schoolYears.get('2026-2027')
+
+    const user = userEvent.setup()
+    renderApp({ route: '/settings' })
+    await screen.findByLabelText('Nom de l’école')
+
+    await user.click(
+      screen.getByRole('button', { name: 'Modifier la date de changement' }),
+    )
+
+    const dialog = await screen.findByRole('dialog', {
+      name: 'Modifier la date de changement',
+    })
+    const endInput = within(dialog).getByLabelText('Fin du bilan 2')
+    expect(endInput).toHaveValue('2027-06-30')
+
+    fireEvent.change(endInput, { target: { value: '2027-06-15' } })
+    await user.click(within(dialog).getByRole('button', { name: 'Enregistrer' }))
+
+    await waitFor(async () => {
+      expect((await db.schoolYears.get('2026-2027'))?.period2End).toBe('2027-06-15')
+    })
+
+    const currentAfter = await db.schoolYears.get('2026-2027')
+    expect(currentAfter?.start).toBe(currentBefore?.start)
+    expect(currentAfter?.period1End).toBe(currentBefore?.period1End)
+    expect(await db.schoolYears.get('2025-2026')).toEqual(previousBefore)
+    expect(await screen.findByText(/15 juin 2027/)).toBeInTheDocument()
+  })
+
   it('affiche l’espace utilisé et le quota quand l’API de stockage est disponible', async () => {
     acknowledgePrivacy()
     const estimate = vi.fn(async () => ({
@@ -224,8 +298,12 @@ describe('SettingsScreen', () => {
 
   it('demande un stockage persistant et affiche l’accord du navigateur', async () => {
     acknowledgePrivacy()
-    const persist = vi.fn(async () => true)
-    const persisted = vi.fn(async () => true)
+    let persistent = false
+    const persist = vi.fn(async () => {
+      persistent = true
+      return true
+    })
+    const persisted = vi.fn(async () => persistent)
     stubStorage({
       estimate: vi.fn(async () => ({ usage: 1024, quota: 4096 })),
       persist,
@@ -242,6 +320,24 @@ describe('SettingsScreen', () => {
     await waitFor(() => expect(persist).toHaveBeenCalledTimes(1))
     expect(persisted).toHaveBeenCalled()
     expect(await screen.findByText(/Stockage persistant accordé/)).toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: 'Demander un stockage persistant' }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('ne propose pas la demande quand le stockage est déjà persistant', async () => {
+    acknowledgePrivacy()
+    stubStorage({
+      persist: vi.fn(async () => true),
+      persisted: vi.fn(async () => true),
+    })
+
+    renderApp({ route: '/settings' })
+
+    expect(await screen.findByText(/Stockage persistant accordé/)).toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: 'Demander un stockage persistant' }),
+    ).not.toBeInTheDocument()
   })
 
   it('affiche un message de repli quand l’API de stockage n’est pas disponible', async () => {
@@ -280,6 +376,31 @@ describe('SettingsScreen', () => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   })
 
+  it('ne mémorise pas la notice fermée sans « J’ai compris »', async () => {
+    const user = userEvent.setup()
+    const first = renderApp({ route: '/settings' })
+
+    const dialog = await screen.findByRole('dialog', {
+      name: 'Tes données restent sur ton appareil',
+    })
+    expect(dialog).toBeInTheDocument()
+
+    await user.keyboard('{Escape}')
+    await waitFor(() =>
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
+    )
+    expect(localStorage.getItem(PRIVACY_KEY)).toBeNull()
+
+    first.unmount()
+    renderApp({ route: '/settings' })
+
+    expect(
+      await screen.findByRole('dialog', {
+        name: 'Tes données restent sur ton appareil',
+      }),
+    ).toBeInTheDocument()
+  })
+
   it('affiche la version de l’application', async () => {
     acknowledgePrivacy()
     renderApp({ route: '/settings' })
@@ -299,6 +420,20 @@ describe('SettingsScreen', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent(
       /n.ont pas pu être chargés/,
     )
+    expect(screen.getByRole('heading', { name: 'Stockage' })).toBeInTheDocument()
+    expect(screen.getByText(`Version ${__APP_VERSION__}`)).toBeInTheDocument()
+  })
+
+  it('affiche une alerte si les années ne peuvent pas être lues, sans casser le formulaire', async () => {
+    acknowledgePrivacy()
+    stubSchoolYearsReadFailure()
+
+    renderApp({ route: '/settings' })
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      /Les données de l.année n.ont pas pu être lues/,
+    )
+    expect(screen.getByLabelText('Nom de l’école')).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Stockage' })).toBeInTheDocument()
     expect(screen.getByText(`Version ${__APP_VERSION__}`)).toBeInTheDocument()
   })

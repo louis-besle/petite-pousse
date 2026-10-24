@@ -1,8 +1,11 @@
 import { useId, useState, type FormEvent } from 'react'
 import { PeriodEditor } from '@/features/bilans/PeriodEditor'
-import { startNextSchoolYear, useSchoolYears } from '@/db/schoolYears'
+import {
+  startNextSchoolYear,
+  useSchoolYearsState,
+} from '@/db/schoolYears'
 import { updateSettings, useSettingsState } from '@/db/settings'
-import { useValidationsForYear } from '@/db/validations'
+import { useValidationsForYearState } from '@/db/validations'
 import { nextSchoolYearId, periodRange } from '@/domain/schoolYear'
 import type { SchoolYear, Settings, Validation } from '@/domain/types'
 import { formatLongDate } from '@/lib/date'
@@ -22,6 +25,10 @@ const LOAD_ERROR =
   'Les réglages n’ont pas pu être chargés. Le stockage local de cet appareil est ' +
   'peut-être indisponible ou plein. Ferme puis rouvre l’application ; tes données ' +
   'déjà enregistrées ne sont pas effacées.'
+const READ_ERROR =
+  'Les données de l’année n’ont pas pu être lues. Le stockage local de cet appareil ' +
+  'est peut-être indisponible. Le formulaire et le stockage restent utilisables ; ' +
+  'ferme puis rouvre l’application pour réessayer.'
 
 /** « 2026-09-01 » → « 1er septembre 2026 ». */
 function dayLabel(date: string): string {
@@ -246,6 +253,7 @@ function BilanDatesSection({ year, validations }: BilanDatesSectionProps) {
         <PeriodEditor
           year={year}
           validations={validations}
+          allowPeriod2End
           onClose={() => setEditing(false)}
         />
       ) : null}
@@ -260,8 +268,13 @@ function BilanDatesSection({ year, validations }: BilanDatesSectionProps) {
  */
 export function SettingsScreen() {
   const { settings, error } = useSettingsState()
-  const schoolYears = useSchoolYears()
-  const validations = useValidationsForYear(settings?.currentSchoolYearId ?? '')
+  const {
+    years: schoolYears,
+    error: schoolYearsError,
+  } = useSchoolYearsState()
+  const { validations, error: validationsError } = useValidationsForYearState(
+    settings?.currentSchoolYearId ?? '',
+  )
   const [privacyOpen, setPrivacyOpen] = useState(() => !hasAcknowledgedPrivacy())
 
   function acknowledgePrivacy(): void {
@@ -269,6 +282,7 @@ export function SettingsScreen() {
     setPrivacyOpen(false)
   }
 
+  const readError = schoolYearsError || validationsError
   const currentYear =
     settings === undefined
       ? undefined
@@ -306,7 +320,11 @@ export function SettingsScreen() {
 
           <SchoolYearSection currentYearId={settings.currentSchoolYearId} />
 
-          {schoolYears === undefined ? (
+          {readError ? (
+            <p className={styles.errorCard} role="alert">
+              {READ_ERROR}
+            </p>
+          ) : schoolYears === undefined ? (
             <p className={styles.loading} role="status">
               Chargement des dates de bilan…
             </p>
@@ -316,7 +334,10 @@ export function SettingsScreen() {
               scolaire ci-dessus.
             </p>
           ) : (
-            <BilanDatesSection year={currentYear} validations={validations ?? []} />
+            <BilanDatesSection
+              year={currentYear}
+              validations={validations ?? []}
+            />
           )}
         </>
       )}
@@ -341,7 +362,7 @@ export function SettingsScreen() {
       <Sheet
         open={privacyOpen}
         title="Tes données restent sur ton appareil"
-        onClose={acknowledgePrivacy}
+        onClose={() => setPrivacyOpen(false)}
       >
         <div className={styles.privacyBody}>
           <p>L’application ne crée aucun compte et n’envoie rien sur Internet.</p>

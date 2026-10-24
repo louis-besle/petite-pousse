@@ -130,3 +130,29 @@ export function useSchoolYears(): SchoolYear[] | undefined {
     return years.sort((a, b) => b.start.localeCompare(a.start))
   }, [])
 }
+
+export interface SchoolYearsState {
+  /** `undefined` pendant le chargement initial ou après une lecture en échec. */
+  years: SchoolYear[] | undefined
+  /** Vrai quand la lecture des années a échoué. */
+  error: boolean
+}
+
+/**
+ * Variante sûre de `useSchoolYears` : une lecture rejetée devient un drapeau
+ * d'erreur au lieu d'être relancée au rendu par `useLiveQuery`. Réservée aux
+ * écrans qui doivent rester utilisables malgré une panne de stockage.
+ */
+export function useSchoolYearsState(): SchoolYearsState {
+  const result = useLiveQuery(async () => {
+    try {
+      const years = await db.schoolYears.toArray()
+      return { years: years.sort((a, b) => b.start.localeCompare(a.start)), error: false }
+    } catch (error) {
+      console.error('Lecture des années scolaires impossible.', error)
+      return { years: undefined, error: true }
+    }
+  }, [])
+
+  return result ?? { years: undefined, error: false }
+}

@@ -161,6 +161,35 @@ export function useValidationsForYear(yearId: string): Validation[] | undefined 
   )
 }
 
+export interface YearValidationsState {
+  /** `undefined` pendant le chargement initial ou après une lecture en échec. */
+  validations: Validation[] | undefined
+  /** Vrai quand la lecture des validations a échoué. */
+  error: boolean
+}
+
+/**
+ * Variante sûre de `useValidationsForYear` : une lecture rejetée devient un
+ * drapeau d'erreur au lieu d'être relancée au rendu par `useLiveQuery`.
+ * Réservée aux écrans qui doivent rester utilisables malgré une panne.
+ */
+export function useValidationsForYearState(yearId: string): YearValidationsState {
+  const result = useLiveQuery(async () => {
+    try {
+      const validations = await db.validations
+        .where('schoolYearId')
+        .equals(yearId)
+        .toArray()
+      return { validations, error: false }
+    } catch (error) {
+      console.error('Lecture des validations de l’année impossible.', error)
+      return { validations: undefined, error: true }
+    }
+  }, [yearId])
+
+  return result ?? { validations: undefined, error: false }
+}
+
 /** Toutes les validations. `undefined` pendant le chargement initial. */
 export function useAllValidations(): Validation[] | undefined {
   return useLiveQuery(() => db.validations.toArray(), [])

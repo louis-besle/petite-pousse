@@ -60,6 +60,11 @@ export function StoragePanel() {
   )
 
   const canPersist = typeof manager?.persist === 'function'
+  const canRequestPersistence =
+    canPersist &&
+    (persistence === 'unknown' ||
+      persistence === 'refused' ||
+      persistence === 'error')
 
   useEffect(() => {
     let cancelled = false
@@ -168,14 +173,15 @@ export function StoragePanel() {
 
       {canPersist ? (
         <>
-          <Button
-            variant="ghost"
-            fullWidth
-            disabled={persistence === 'requesting'}
-            onClick={() => void handlePersist()}
-          >
-            Demander un stockage persistant
-          </Button>
+          {canRequestPersistence ? (
+            <Button
+              variant="ghost"
+              fullWidth
+              onClick={() => void handlePersist()}
+            >
+              Demander un stockage persistant
+            </Button>
+          ) : null}
           <p className={styles.status} role="status">
             {persistence === 'requesting'
               ? 'Demande envoyée au navigateur…'
