@@ -71,6 +71,44 @@ export function schoolYearIdForDate(date: string): string {
   return `${startYear}-${startYear + 1}`
 }
 
+/**
+ * Année scolaire à utiliser pour les vues par défaut (classe, dossier, bilans).
+ *
+ * L'année des réglages est prioritaire quand elle contient la date : c'est elle
+ * que la maîtresse a explicitement ouverte. Sinon, une réussite datée du jour est
+ * classée d'après sa date (`schoolYearIdForDate`), donc l'écran doit suivre
+ * l'année qui contient cette date pour ne pas masquer ce qui vient d'être noté.
+ * À défaut, on garde l'année préférée, puis la plus récente (`years` est trié du
+ * plus récent au plus ancien par `useSchoolYears`).
+ */
+export function resolveCurrentSchoolYearId(
+  years: SchoolYear[],
+  preferredId: string | undefined,
+  date: string,
+): string | undefined {
+  assertDateString(date, 'date')
+
+  const preferred =
+    preferredId === undefined
+      ? undefined
+      : years.find((year) => year.id === preferredId)
+
+  if (
+    preferred !== undefined &&
+    date >= preferred.start &&
+    date <= preferred.period2End
+  ) {
+    return preferred.id
+  }
+
+  const containing = years.find(
+    (year) => date >= year.start && date <= year.period2End,
+  )
+  if (containing !== undefined) return containing.id
+
+  return preferred?.id ?? years[0]?.id
+}
+
 /** Année par défaut : 1er septembre, changement de semestre au 31 janvier, fin au 30 juin. */
 export function defaultSchoolYear(id: string): SchoolYear {
   const startYear = parseSchoolYearId(id)

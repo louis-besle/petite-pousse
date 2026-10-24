@@ -6,9 +6,13 @@ import {
 } from '@/db/schoolYears'
 import { updateSettings, useSettingsState } from '@/db/settings'
 import { useValidationsForYearState } from '@/db/validations'
-import { nextSchoolYearId, periodRange } from '@/domain/schoolYear'
+import {
+  nextSchoolYearId,
+  periodRange,
+  resolveCurrentSchoolYearId,
+} from '@/domain/schoolYear'
 import type { SchoolYear, Settings, Validation } from '@/domain/types'
-import { formatLongDate } from '@/lib/date'
+import { formatLongDate, todayIso } from '@/lib/date'
 import { Button } from '@/ui/Button'
 import { ConfirmSheet } from '@/ui/ConfirmSheet'
 import { InstallHint, isIosDevice, useIsStandalone } from '@/ui/InstallHint'
@@ -321,6 +325,16 @@ export function SettingsScreen() {
     settings === undefined
       ? undefined
       : (schoolYears ?? []).find((year) => year.id === settings.currentSchoolYearId)
+  // Année dans laquelle une réussite datée d'aujourd'hui serait réellement
+  // classée ; elle diffère des réglages pendant un passage d'année décalé.
+  const effectiveYearId =
+    settings === undefined || schoolYears === undefined
+      ? undefined
+      : resolveCurrentSchoolYearId(
+          schoolYears,
+          settings.currentSchoolYearId,
+          todayIso(),
+        )
 
   return (
     <section className={styles.screen}>
@@ -353,6 +367,15 @@ export function SettingsScreen() {
           />
 
           <SchoolYearSection currentYearId={settings.currentSchoolYearId} />
+
+          {effectiveYearId !== undefined &&
+          effectiveYearId !== settings.currentSchoolYearId ? (
+            <p className={styles.warning}>
+              Les nouvelles réussites sont enregistrées dans l’année{' '}
+              {effectiveYearId} tant que l’année des réglages (
+              {settings.currentSchoolYearId}) n’est pas alignée sur cette date.
+            </p>
+          ) : null}
 
           {readError ? (
             <p className={styles.errorCard} role="alert">

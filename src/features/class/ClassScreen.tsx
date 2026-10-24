@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useSchoolYears } from '@/db/schoolYears'
 import { useSettings } from '@/db/settings'
 import { useStudents } from '@/db/students'
 import { useAllValidations, useValidationsForYear } from '@/db/validations'
+import { resolveCurrentSchoolYearId } from '@/domain/schoolYear'
 import type { Section } from '@/domain/types'
 import { shouldRemindBackup } from '@/features/settings/backup'
 import { formatLongDate, todayIso } from '@/lib/date'
@@ -31,13 +33,21 @@ function successLabel(count: number): string {
  * Écran d'accueil : la classe entière, filtrable par section, avec le nombre
  * de réussites de l'année en cours pour chaque élève.
  *
- * Les compteurs sont dérivés des validations de `settings.currentSchoolYearId`
- * uniquement : changer d'année dans les réglages change donc les totaux.
+ * Les compteurs sont dérivés de l'année qui contient la date du jour, en
+ * priorité celle des réglages. Une réussite créée aujourd'hui est classée
+ * d'après sa date : sans cet alignement, un passage d'année oublié ou anticipé
+ * la rendrait invisible dans la classe.
  */
 export function ClassScreen() {
   const students = useStudents()
   const settings = useSettings()
-  const validations = useValidationsForYear(settings?.currentSchoolYearId ?? '')
+  const schoolYears = useSchoolYears()
+  const currentYearId = resolveCurrentSchoolYearId(
+    schoolYears ?? [],
+    settings?.currentSchoolYearId,
+    todayIso(),
+  )
+  const validations = useValidationsForYear(currentYearId ?? '')
   const allValidations = useAllValidations()
   const navigate = useNavigate()
   const [filter, setFilter] = useState<SectionFilter>('all')
@@ -84,7 +94,9 @@ export function ClassScreen() {
           {settings ? (
             <>
               {' · '}
-              <span className={styles.year}>{settings.currentSchoolYearId}</span>
+              <span className={styles.year}>
+                {currentYearId ?? settings.currentSchoolYearId}
+              </span>
             </>
           ) : null}
         </p>

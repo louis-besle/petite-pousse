@@ -16,7 +16,7 @@ import type {
   Section,
 } from '@/domain/types'
 import { compressImage } from '@/lib/image'
-import { makeStudent } from '@/test/fixtures'
+import { makeSchoolYear, makeStudent } from '@/test/fixtures'
 import { renderApp } from '@/test/render'
 
 // Seule la compression est simulée : `fitDimensions` reste réel dans les tests.
@@ -145,6 +145,38 @@ describe('DossierScreen', () => {
       'href',
       `/bilans/${lea.id}?period=1&year=2026-2027`,
     )
+  })
+
+  it('affiche une réussite du jour quand l’année des réglages est en avance', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] })
+    vi.setSystemTime(new Date('2026-11-07T12:00:00'))
+
+    try {
+      // L'amorçage du test a tourné à l'heure réelle : on le rejoue à la date
+      // simulée pour garantir la présence de l'année 2026-2027.
+      await ensureSeed()
+      const lea = await addStudent('Léa', 'MS')
+      await db.schoolYears.put(
+        makeSchoolYear({
+          id: '2027-2028',
+          start: '2027-09-01',
+          period1End: '2028-01-31',
+          period2End: '2028-06-30',
+        }),
+      )
+      await updateSettings({ currentSchoolYearId: '2027-2028' })
+      await addValidation(lea.id, 'lang-vocabulaire-01', '2026-11-07')
+
+      renderApp({ route: `/students/${lea.id}` })
+
+      expect(await screen.findByText(LANGAGE_1)).toBeInTheDocument()
+      expect(await screen.findByText(/1 réussite cette année/)).toBeInTheDocument()
+      expect(screen.getByRole('combobox', { name: 'Année scolaire' })).toHaveValue(
+        '2026-2027',
+      )
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it('change d’année sans supprimer les réussites', async () => {
@@ -317,19 +349,34 @@ describe('DossierScreen', () => {
     }
   })
 
-  it('garde une année sélectionnée valide même si elle manque de la liste', async () => {
-    const lea = await addStudent('Léa', 'MS')
-    await updateSettings({ currentSchoolYearId: '2030-2031' })
+  it('se rabat sur une année connue quand l’année sélectionnée disparaît', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] })
+    vi.setSystemTime(new Date('2026-11-07T12:00:00'))
 
-    renderApp({ route: `/students/${lea.id}` })
+    try {
+      await ensureSeed()
+      const lea = await addStudent('Léa', 'MS')
+      // L'année des réglages est en avance : elle reste proposée, mais le
+      // défaut suit l'année qui contient la date du jour.
+      await updateSettings({ currentSchoolYearId: '2030-2031' })
 
-    const yearSelect = await screen.findByRole('combobox', { name: 'Année scolaire' })
-    await waitFor(() => expect(yearSelect).toHaveValue('2030-2031'))
+      const user = userEvent.setup()
+      renderApp({ route: `/students/${lea.id}` })
 
-    await db.schoolYears.delete('2030-2031')
+      const yearSelect = await screen.findByRole('combobox', { name: 'Année scolaire' })
+      await waitFor(() => expect(yearSelect).toHaveValue('2026-2027'))
+      expect(screen.getByRole('option', { name: '2030-2031' })).toBeInTheDocument()
 
-    await waitFor(() => expect(yearSelect).toHaveValue('2030-2031'))
-    expect(screen.getByRole('option', { name: '2030-2031' })).toBeInTheDocument()
+      await user.selectOptions(yearSelect, '2030-2031')
+      await waitFor(() => expect(yearSelect).toHaveValue('2030-2031'))
+
+      await db.schoolYears.delete('2030-2031')
+
+      await waitFor(() => expect(yearSelect).toHaveValue('2026-2027'))
+      expect(screen.queryByRole('option', { name: '2030-2031' })).not.toBeInTheDocument()
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it('affiche l’instantané quand l’objectif a disparu du référentiel', async () => {

@@ -116,6 +116,36 @@ describe('BilansScreen', () => {
     )
   })
 
+  it('choisit l’année de la date du jour quand les réglages sont en avance', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] })
+    vi.setSystemTime(new Date('2026-11-07T12:00:00'))
+
+    try {
+      // L'amorçage du test a tourné à l'heure réelle : on rejoue l'année du jour.
+      await ensureSeed()
+      await setUpYear({
+        id: '2027-2028',
+        start: '2027-09-01',
+        period1End: '2028-01-31',
+        period2End: '2028-06-30',
+      })
+      const lea = await addStudent('Léa')
+      await addValidation(lea.id, 'lang-vocabulaire-01', '2026-11-07')
+
+      renderApp({ route: '/bilans' })
+      await screen.findByRole('button', { name: /^Bilan 1/ })
+
+      expect(screen.getByRole('combobox', { name: 'Année scolaire' })).toHaveValue(
+        '2026-2027',
+      )
+      expect(within(periodCard(1)).getByText('1 réussite')).toBeInTheDocument()
+      expect(within(periodCard(1)).queryByText('Passé')).not.toBeInTheDocument()
+      expect(within(studentRow('Léa')).getByText('MS · 1 réussite')).toBeInTheDocument()
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
   it('déplace une réussite vers le bilan 2 en changeant la date au 15 janvier', async () => {
     await setUpYear()
     const lea = await addStudent('Léa')

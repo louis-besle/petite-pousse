@@ -7,7 +7,7 @@ import { createValidation } from '@/db/validations'
 import { REFERENTIAL_VERSION, referential } from '@/domain/referential'
 import type { Objective, Section } from '@/domain/types'
 import { formatLongDate, todayIso } from '@/lib/date'
-import { makeStudent } from '@/test/fixtures'
+import { makeSchoolYear, makeStudent } from '@/test/fixtures'
 import { renderApp } from '@/test/render'
 
 /** Objectif du référentiel réel, pour semer des validations crédibles. */
@@ -65,6 +65,37 @@ describe('ClassScreen', () => {
       'href',
       '/students',
     )
+  })
+
+  it('suit l’année de la date du jour quand les réglages sont en avance', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] })
+    vi.setSystemTime(new Date('2026-11-07T12:00:00'))
+
+    try {
+      await ensureSeed()
+      await db.schoolYears.put(
+        makeSchoolYear({
+          id: '2027-2028',
+          start: '2027-09-01',
+          period1End: '2028-01-31',
+          period2End: '2028-06-30',
+        }),
+      )
+      await updateSettings({ currentSchoolYearId: '2027-2028' })
+      const lea = await addStudent('Léa', 'MS')
+      await addValidation(lea.id, 0, '2026-11-07')
+
+      renderApp({ route: '/' })
+
+      const card = await screen.findByRole('link', { name: /Léa/ })
+      await waitFor(() =>
+        expect(within(card).getByText('1 réussite')).toBeInTheDocument(),
+      )
+      expect(screen.getByText('2026-2027')).toBeInTheDocument()
+      expect(screen.queryByText('2027-2028')).not.toBeInTheDocument()
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it('filtre les élèves par section sans recharger la page', async () => {

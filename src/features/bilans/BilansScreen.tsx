@@ -5,7 +5,11 @@ import { useSettings } from '@/db/settings'
 import { useStudents } from '@/db/students'
 import { useValidationsForYear } from '@/db/validations'
 import { countValidationsInPeriod } from '@/domain/bilan'
-import { periodForDate, periodRange } from '@/domain/schoolYear'
+import {
+  periodForDate,
+  periodRange,
+  resolveCurrentSchoolYearId,
+} from '@/domain/schoolYear'
 import type { SchoolYear } from '@/domain/types'
 import { formatShortDate, todayIso } from '@/lib/date'
 import { Avatar } from '@/ui/Avatar'
@@ -83,8 +87,14 @@ export function BilansScreen() {
   const [periodChoice, setPeriodChoice] = useState<1 | 2>()
   const [editingCutover, setEditingCutover] = useState(false)
 
-  const currentYearId = settings?.currentSchoolYearId
   const years = schoolYears ?? []
+  // L'année par défaut et le statut « Passé » suivent l'année qui contient la
+  // date du jour : une réussite datée d'aujourd'hui est classée par sa date.
+  const currentYearId = resolveCurrentSchoolYearId(
+    years,
+    settings?.currentSchoolYearId,
+    todayIso(),
+  )
   const yearIds = years.map((year) => year.id)
   yearIds.sort((a, b) => b.localeCompare(a))
 

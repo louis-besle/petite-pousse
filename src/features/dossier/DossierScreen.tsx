@@ -6,8 +6,9 @@ import { useSettings } from '@/db/settings'
 import { useStudents } from '@/db/students'
 import { useValidationsForStudent } from '@/db/validations'
 import { ageBandForSection, referential } from '@/domain/referential'
+import { resolveCurrentSchoolYearId } from '@/domain/schoolYear'
 import type { Domain, Section, Validation } from '@/domain/types'
-import { formatShortDate } from '@/lib/date'
+import { formatShortDate, todayIso } from '@/lib/date'
 import { usePhotoThumb } from '@/lib/usePhoto'
 import { Avatar } from '@/ui/Avatar'
 import { FlowerMark } from '@/ui/FlowerMark'
@@ -164,7 +165,14 @@ export function DossierScreen() {
     )
   }
 
-  const currentYearId = settings?.currentSchoolYearId
+  // L'année par défaut suit la date du jour, pas seulement les réglages : une
+  // réussite tout juste validée est classée par sa date (`schoolYearIdForDate`)
+  // et doit apparaître immédiatement, même si le passage d'année est décalé.
+  const currentYearId = resolveCurrentSchoolYearId(
+    years,
+    settings?.currentSchoolYearId,
+    todayIso(),
+  )
   const yearIds = years.map((year) => year.id)
   // Une année courante absente de la liste reste sélectionnable : le select ne
   // doit jamais basculer silencieusement sur une autre valeur.
@@ -225,7 +233,7 @@ export function DossierScreen() {
   const openDomainId =
     openDomain ?? groups.find((group) => group.validations.length > 0)?.id ?? 'langage'
   const bilanYear =
-    selectedYear === 'all' ? (settings?.currentSchoolYearId ?? years[0]?.id ?? '') : selectedYear
+    selectedYear === 'all' ? (currentYearId ?? years[0]?.id ?? '') : selectedYear
   const bilanUrl = `/bilans/${student.id}?period=1&year=${encodeURIComponent(bilanYear)}`
   const selectedValidation =
     selectedValidationId === undefined
