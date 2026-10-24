@@ -85,8 +85,8 @@ describe('BilanPreviewScreen', () => {
     expect(
       await screen.findByRole('heading', { level: 1, name: 'Bilan de Léa' }),
     ).toBeInTheDocument()
-    expect(screen.getByText('Bilan des réussites')).toBeInTheDocument()
-    expect(screen.getByText(objectiveLabel)).toBeInTheDocument()
+    expect(await screen.findByText('Bilan des réussites')).toBeInTheDocument()
+    expect(await screen.findByText(objectiveLabel)).toBeInTheDocument()
     expect(screen.getByText('Signature des parents')).toBeInTheDocument()
     expect(screen.queryByText('Page 1 / 1')).not.toBeInTheDocument()
     expect(
