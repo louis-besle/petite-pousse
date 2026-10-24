@@ -412,6 +412,46 @@ describe('exportBackup / readBackup / restoreBackup', () => {
   )
 
   it(
+    'refuse une année scolaire aux dates incohérentes et laisse la base intacte',
+    async () => {
+      await seedBackupData()
+      const before = await tableCounts()
+
+      const file = await mutateBackupData(await exportBackup(() => {}), (data) => {
+        const year = data.schoolYears[0]
+        if (!year) throw new Error('Année absente du ZIP de test.')
+        year.period1End = '2026-08-15'
+      })
+
+      await expect(readBackup(file, () => {})).rejects.toThrow(/dates incohérentes/)
+      expect(await tableCounts()).toEqual(before)
+    },
+    ZIP_TIMEOUT_MS,
+  )
+
+  it(
+    'refuse une réussite datée hors de son année scolaire et laisse la base intacte',
+    async () => {
+      const { leaValidation } = await seedBackupData()
+      const before = await tableCounts()
+
+      const file = await mutateBackupData(await exportBackup(() => {}), (data) => {
+        const validation = data.validations.find(
+          (candidate) => candidate.id === leaValidation.id,
+        )
+        if (!validation) throw new Error('Réussite absente du ZIP de test.')
+        validation.date = '2025-10-12'
+      })
+
+      await expect(readBackup(file, () => {})).rejects.toThrow(
+        /datée hors de son année scolaire/,
+      )
+      expect(await tableCounts()).toEqual(before)
+    },
+    ZIP_TIMEOUT_MS,
+  )
+
+  it(
     'refuse une photo vide et laisse la base intacte',
     async () => {
       const { photo } = await seedBackupData()

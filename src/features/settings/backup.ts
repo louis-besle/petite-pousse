@@ -12,6 +12,7 @@ import { z } from 'zod'
 import { SETTINGS_ID, db, type SettingsRecord } from '@/db/db'
 import { updateSettings } from '@/db/settings'
 import { referential } from '@/domain/referential'
+import { schoolYearIdForDate } from '@/domain/schoolYear'
 import type {
   Photo,
   SchoolYear,
@@ -307,6 +308,15 @@ function assertBackupIntegrity(data: BackupData): void {
           `« ${year.id} » sont invalides.`,
       )
     }
+
+    // Mêmes invariants que `updateSchoolYearPeriods` : une année acceptée ici
+    // doit rester affichable après restauration, sans faire lever `periodRange`.
+    if (!(year.start < year.period1End && year.period1End < year.period2End)) {
+      throw new BackupReadError(
+        `La sauvegarde est invalide : l’année scolaire « ${year.id} » a des ` +
+          'dates incohérentes.',
+      )
+    }
   }
 
   for (const validation of data.validations) {
@@ -328,6 +338,15 @@ function assertBackupIntegrity(data: BackupData): void {
       throw new BackupReadError(
         `La sauvegarde est invalide : la date de la réussite ` +
           `« ${validation.id} » est invalide.`,
+      )
+    }
+
+    // L'application classe toujours une réussite par sa date : une sauvegarde
+    // qui pointe vers une autre année serait ensuite invisible ou incohérente.
+    if (schoolYearIdForDate(validation.date) !== validation.schoolYearId) {
+      throw new BackupReadError(
+        'La sauvegarde est invalide : une réussite de la sauvegarde est ' +
+          'datée hors de son année scolaire.',
       )
     }
 
