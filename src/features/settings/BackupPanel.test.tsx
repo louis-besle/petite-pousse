@@ -31,7 +31,7 @@ function objectiveAt(index: number): Objective {
 
 async function asZipFile(blob: Blob): Promise<File> {
   const bytes = new Uint8Array(await blob.arrayBuffer())
-  return new File([bytes], 'carnet-de-reussites-backup.zip', {
+  return new File([bytes], 'petite-pousse-backup.zip', {
     type: 'application/zip',
   })
 }
@@ -240,7 +240,7 @@ describe('BackupPanel', () => {
       }
 
       expect(suggestedName).toMatch(
-        /^carnet-de-reussites-backup-\d{4}-\d{2}-\d{2}-chiffre\.zip$/,
+        /^petite-pousse-backup-\d{4}-\d{2}-\d{2}-chiffre\.zip$/,
       )
 
       const blob = createObjectURL.mock.calls[0]![0] as Blob

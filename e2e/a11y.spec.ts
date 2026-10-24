@@ -53,7 +53,7 @@ interface AuditCase {
 const AUDIT_CASES: AuditCase[] = [
   {
     label: 'classe',
-    title: 'La classe · Carnet de réussites',
+    title: 'La classe · Petite pousse',
     route: () => '/',
     ready: async (page) => {
       await expect(
@@ -63,7 +63,7 @@ const AUDIT_CASES: AuditCase[] = [
   },
   {
     label: 'choix de l’élève',
-    title: 'Nouvelle réussite · Carnet de réussites',
+    title: 'Nouvelle réussite · Petite pousse',
     route: () => '/capture',
     ready: async (page) => {
       await expect(
@@ -73,7 +73,7 @@ const AUDIT_CASES: AuditCase[] = [
   },
   {
     label: 'capture — photo',
-    title: 'Nouvelle réussite · Carnet de réussites',
+    title: 'Nouvelle réussite · Petite pousse',
     route: ({ studentId }) => `/capture/${studentId}/photo`,
     ready: async (page) => {
       await expect(
@@ -86,7 +86,7 @@ const AUDIT_CASES: AuditCase[] = [
   },
   {
     label: 'capture — objectif',
-    title: 'Choisir l’objectif · Carnet de réussites',
+    title: 'Choisir l’objectif · Petite pousse',
     route: () => '/capture/objective',
     ready: async (page) => {
       await expect(
@@ -96,7 +96,7 @@ const AUDIT_CASES: AuditCase[] = [
   },
   {
     label: 'dossier',
-    title: 'Dossier de l’élève · Carnet de réussites',
+    title: 'Dossier de l’élève · Petite pousse',
     route: ({ studentId }) => `/students/${studentId}`,
     ready: async (page) => {
       await expect(
@@ -107,7 +107,7 @@ const AUDIT_CASES: AuditCase[] = [
   },
   {
     label: 'gestion des élèves',
-    title: 'Gérer les élèves · Carnet de réussites',
+    title: 'Gérer les élèves · Petite pousse',
     route: () => '/students',
     ready: async (page) => {
       await expect(
@@ -117,7 +117,7 @@ const AUDIT_CASES: AuditCase[] = [
   },
   {
     label: 'programme',
-    title: 'Programme · Carnet de réussites',
+    title: 'Programme · Petite pousse',
     route: () => '/programme',
     ready: async (page) => {
       await expect(
@@ -127,7 +127,7 @@ const AUDIT_CASES: AuditCase[] = [
   },
   {
     label: 'bilans',
-    title: 'Bilans · Carnet de réussites',
+    title: 'Bilans · Petite pousse',
     route: () => '/bilans',
     ready: async (page) => {
       await expect(page.getByRole('button', { name: /^Bilan 1/ })).toBeVisible()
@@ -135,7 +135,7 @@ const AUDIT_CASES: AuditCase[] = [
   },
   {
     label: 'aperçu bilan',
-    title: 'Aperçu du bilan · Carnet de réussites',
+    title: 'Aperçu du bilan · Petite pousse',
     route: ({ studentId }) =>
       `/bilans/${studentId}?period=1&year=2026-2027`,
     ready: async (page) => {
@@ -147,7 +147,7 @@ const AUDIT_CASES: AuditCase[] = [
   },
   {
     label: 'réglages',
-    title: 'Réglages · Carnet de réussites',
+    title: 'Réglages · Petite pousse',
     route: () => '/settings',
     ready: async (page) => {
       await expect(
@@ -157,7 +157,7 @@ const AUDIT_CASES: AuditCase[] = [
   },
   {
     label: 'succès',
-    title: 'Réussite enregistrée · Carnet de réussites',
+    title: 'Réussite enregistrée · Petite pousse',
     route: ({ validationId }) => `/success/${validationId}`,
     ready: async (page) => {
       await expect(
@@ -167,7 +167,7 @@ const AUDIT_CASES: AuditCase[] = [
   },
   {
     label: 'page introuvable',
-    title: 'Page introuvable · Carnet de réussites',
+    title: 'Page introuvable · Petite pousse',
     route: () => '/inconnu',
     ready: async (page) => {
       await expect(
@@ -177,7 +177,7 @@ const AUDIT_CASES: AuditCase[] = [
   },
   {
     label: 'fiche objectif',
-    title: 'Programme · Carnet de réussites',
+    title: 'Programme · Petite pousse',
     route: () => '/programme',
     ready: async (page) => {
       await page
@@ -189,7 +189,7 @@ const AUDIT_CASES: AuditCase[] = [
   },
   {
     label: 'fiche réussite',
-    title: 'Dossier de l’élève · Carnet de réussites',
+    title: 'Dossier de l’élève · Petite pousse',
     route: ({ studentId }) => `/students/${studentId}`,
     ready: async (page) => {
       await page.locator('main ul li button').first().click()
@@ -198,7 +198,7 @@ const AUDIT_CASES: AuditCase[] = [
   },
   {
     label: 'formulaire élève',
-    title: 'Gérer les élèves · Carnet de réussites',
+    title: 'Gérer les élèves · Petite pousse',
     route: () => '/students',
     ready: async (page) => {
       await page.getByRole('button', { name: 'Ajouter un élève' }).click()
@@ -207,7 +207,7 @@ const AUDIT_CASES: AuditCase[] = [
   },
   {
     label: 'confirmation de suppression',
-    title: 'Gérer les élèves · Carnet de réussites',
+    title: 'Gérer les élèves · Petite pousse',
     route: () => '/students',
     ready: async (page) => {
       await page.getByRole('button', { name: 'Supprimer Léa' }).click()
@@ -216,7 +216,7 @@ const AUDIT_CASES: AuditCase[] = [
   },
   {
     label: 'dates de bilan',
-    title: 'Bilans · Carnet de réussites',
+    title: 'Bilans · Petite pousse',
     route: () => '/bilans',
     ready: async (page) => {
       await page
@@ -227,7 +227,7 @@ const AUDIT_CASES: AuditCase[] = [
   },
   {
     label: 'notice de confidentialité',
-    title: 'Réglages · Carnet de réussites',
+    title: 'Réglages · Petite pousse',
     route: () => '/settings',
     ready: async (page) => {
       await page.getByRole('button', { name: 'Relire la notice' }).click()
@@ -236,7 +236,7 @@ const AUDIT_CASES: AuditCase[] = [
   },
   {
     label: 'sauvegarde chiffrée',
-    title: 'Réglages · Carnet de réussites',
+    title: 'Réglages · Petite pousse',
     route: () => '/settings',
     ready: async (page) => {
       await page

@@ -1,8 +1,8 @@
-# Carnet de réussites — document de conception
+# Petite pousse — document de conception
 
 **Date** : 6 novembre 2026  
 **Statut** : proposition à valider  
-**Nom de travail** : Carnet de réussites  
+**Nom** : Petite pousse (nom définitif, choisi le 7 novembre 2026)  
 **Maquette de référence** : `maquettes/prototype.html` (prototype cliquable, données fictives)  
 **Images** : `maquettes/proto-*.png`, planche Figma « Livret suivi apprentissage »
 
@@ -465,7 +465,7 @@ Ces points ne demandent plus d'arbitrage : ils sont fixés pour que le plan soit
 - **Navigateurs** : iOS/iPadOS 16+, Android 10+ avec Chrome à jour.
 - **Lot de PDF** : livré en v1.1 (un ZIP, un PDF par élève).
 - **Sauvegarde chiffrée** : livrée en v1.1 (mot de passe facultatif, sans récupération).
-- **Nom de l'application** : « Carnet de réussites » reste un nom de travail.
+- **Nom de l'application** : Petite pousse (nom définitif).
 
 ## 15. Plus tard (v1.1 et au-delà)
 
@@ -475,6 +475,7 @@ Livré en v1.1 :
 - ✅ Sauvegarde chiffrée par mot de passe : AES-256-GCM, PBKDF2-SHA256, manifeste en clair, aucune récupération possible. Les anciennes sauvegardes en clair restent restaurables.
 - ✅ Programme EVAR : neuvième catégorie du référentiel (`evar`), après les six domaines 2026 ; trois axes, neuf objectifs (trois par tranche d'âge), source BO n° 6 du 6 février 2025. Référentiel `2026.2.0`, 407 objectifs.
 - ✅ Validation avec lecteurs d'écran : protocole VoiceOver/TalkBack livré, exécution sur appareils réels encore à faire ; couverture WebKit automatisée ajoutée.
+- ✅ Nom définitif : Petite pousse. Les identifiants techniques historiques (`carnet-de-reussites`) restent inchangés pour préserver les données et les sauvegardes.
 
 Reste à faire :
 
@@ -483,7 +484,6 @@ Reste à faire :
 - Objectifs « maison » en plus du programme officiel.
 - Import CSV de la liste des élèves.
 - Statistiques de classe par domaine (sans note chiffrée).
-- Nom définitif de l'application : « Carnet de réussites » reste un nom de travail.
 
 ## 16. Références de conception
 

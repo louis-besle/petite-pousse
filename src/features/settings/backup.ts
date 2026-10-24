@@ -40,6 +40,8 @@ const READ_PHASE_RATIO = 0.9
  * Format du manifeste de chiffrement, premier fichier de l'archive. Il reste
  * en clair : il porte les paramètres KDF et le jeton de vérification.
  */
+// Identifiant historique conservé tel quel : les sauvegardes déjà exportées
+// doivent rester lisibles après le renommage de l'application.
 const BACKUP_FORMAT = 'carnet-de-reussites-backup'
 const MANIFEST_ENTRY = 'manifest.json'
 const ENCRYPTION_VERSION = 1
@@ -49,6 +51,7 @@ const KDF_ITERATIONS = 310_000
 const SALT_BYTES = 16
 const IV_BYTES = 12
 const GCM_TAG_LENGTH = 128
+// Jeton historique : il permet de déchiffrer les sauvegardes existantes.
 const CHECK_TOKEN = 'carnet-de-reussites'
 
 /** Longueur minimale du mot de passe, partagée avec le panneau. */

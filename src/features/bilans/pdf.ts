@@ -192,7 +192,7 @@ function drawHeader(
   const identity = [meta.schoolName, meta.className, meta.teacherName]
     .filter((part) => part !== '')
     .join(' · ')
-  const left = identity === '' ? 'Carnet de réussites' : identity
+  const left = identity === '' ? 'Petite pousse' : identity
   const right = `Bilan ${model.period} · ${model.year.id}`
 
   page.drawText(left, {
@@ -409,7 +409,7 @@ function drawFooter(
     thickness: 0.6,
     color: LINE,
   })
-  page.drawText('Carnet de réussites', {
+  page.drawText('Petite pousse', {
     x: MARGIN,
     y: 30,
     size: 6.8,
@@ -446,9 +446,9 @@ export async function generateBilanPdf(
 
   document.setTitle(`Bilan de ${studentLabel(model.student)}`)
   document.setSubject('Bilan des réussites')
-  document.setAuthor(meta.teacherName.trim() || meta.schoolName.trim() || 'Carnet de réussites')
-  document.setCreator('Carnet de réussites')
-  document.setProducer('Carnet de réussites')
+  document.setAuthor(meta.teacherName.trim() || meta.schoolName.trim() || 'Petite pousse')
+  document.setCreator('Petite pousse')
+  document.setProducer('Petite pousse')
   document.setLanguage('fr-FR')
   // Affiche le titre du document dans la barre de la visionneuse, utile quand
   // plusieurs bilans sont ouverts. Le PDF reste non balisé : l'aperçu HTML est

@@ -8,7 +8,11 @@ import type {
   Validation,
 } from '@/domain/types'
 
-/** Nom stable de la base : il conditionne les sauvegardes et les migrations. */
+/**
+ * Nom stable de la base : il conditionne les sauvegardes et les migrations.
+ * L'identifiant historique est conservé après le renommage de l'application
+ * pour ne pas rendre invisibles les données déjà enregistrées sur les appareils.
+ */
 export const DB_NAME = 'carnet-de-reussites'
 
 /** Les réglages sont une ligne unique, identifiée par cette clé fixe. */
@@ -16,7 +20,7 @@ export const SETTINGS_ID = 'app'
 
 export type SettingsRecord = Settings & { id: typeof SETTINGS_ID }
 
-export class CarnetDB extends Dexie {
+export class PetitePousseDB extends Dexie {
   students!: EntityTable<Student, 'id'>
   schoolYears!: EntityTable<SchoolYear, 'id'>
   validations!: EntityTable<Validation, 'id'>
@@ -38,11 +42,11 @@ export class CarnetDB extends Dexie {
   }
 }
 
-export const db = new CarnetDB()
+export const db = new PetitePousseDB()
 
 // Les tests E2E sèment et inspectent la base depuis la page. En production, la
 // base reste invisible pour le code applicatif extérieur.
 if (import.meta.env.DEV && typeof window !== 'undefined') {
-  const devWindow = window as unknown as { __carnetDb: CarnetDB }
-  devWindow.__carnetDb = db
+  const devWindow = window as unknown as { __petitePousseDb: PetitePousseDB }
+  devWindow.__petitePousseDb = db
 }

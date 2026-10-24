@@ -32,8 +32,8 @@ export default defineConfig({
         id: '/',
         start_url: '/',
         scope: '/',
-        name: 'Carnet de réussites',
-        short_name: 'Carnet',
+        name: 'Petite pousse',
+        short_name: 'Petite pousse',
         lang: 'fr',
         // Pas d'`orientation` : l'iPad doit rester utilisable en paysage
         // (comportement actuel du manifest).
@@ -41,7 +41,7 @@ export default defineConfig({
         theme_color: '#FBF6EC',
         background_color: '#FBF6EC',
         description:
-          'Carnet de réussites : suivi des apprentissages de la maternelle, ' +
+          'Petite pousse : suivi des apprentissages de la maternelle, ' +
           'hors ligne et sur l’appareil.',
         icons: [
           {

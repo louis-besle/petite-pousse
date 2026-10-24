@@ -124,7 +124,7 @@ export function BilanSheet({ model, meta }: BilanSheetProps) {
         <header className={styles.sheetHeader}>
           <span className={styles.sheetIdentity}>
             <FlowerMark size={11} />
-            {identity === '' ? 'Carnet de réussites' : identity}
+            {identity === '' ? 'Petite pousse' : identity}
           </span>
           <span>
             Bilan {model.period} · {model.year.id}
@@ -155,7 +155,7 @@ export function BilanSheet({ model, meta }: BilanSheetProps) {
 
         <footer className={styles.sheetFooter}>
           <div className={styles.footerRow}>
-            <span>Carnet de réussites</span>
+            <span>Petite pousse</span>
             <span className={styles.signature}>
               Signature des parents
               <span className={styles.signatureLine} aria-hidden="true" />

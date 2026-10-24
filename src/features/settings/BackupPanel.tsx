@@ -125,7 +125,7 @@ export function BackupPanel() {
       const suffix = exportPassword === undefined ? '' : '-chiffre'
       downloadBlob(
         blob,
-        `carnet-de-reussites-backup-${todayIso()}${suffix}.zip`,
+        `petite-pousse-backup-${todayIso()}${suffix}.zip`,
       )
       showToast('Sauvegarde téléchargée.')
       setProtect(false)

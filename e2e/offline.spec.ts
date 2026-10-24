@@ -21,8 +21,8 @@ test.describe('hors ligne', () => {
     ).toBeVisible()
 
     // Le bundle de production n'expose jamais la base aux scripts de la page :
-    // `window.__carnetDb` est réservé au serveur de développement.
-    expect(await page.evaluate(() => '__carnetDb' in window)).toBe(false)
+    // `window.__petitePousseDb` est réservé au serveur de développement.
+    expect(await page.evaluate(() => '__petitePousseDb' in window)).toBe(false)
 
     // `ready` ne se résout qu'une fois le worker actif, précache terminé.
     await page.evaluate(() => navigator.serviceWorker.ready.then(() => true))

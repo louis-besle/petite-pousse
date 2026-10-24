@@ -1,14 +1,16 @@
-# Carnet de réussites
+# Petite pousse
 
 Application locale de suivi des compétences pour une classe de maternelle (PS, MS et GS) : photos, objectifs du programme officiel 2026 et du programme EVAR, dossiers élèves et bilans A4 imprimables.
 
 ## État
 
-Version **1.1.0**, en ligne : <https://carnet-de-reussites.vercel.app>
+Version **1.1.1**, en ligne : <https://carnet-de-reussites.vercel.app>
 
 PWA installable et utilisable hors ligne, couverte par **338 tests unitaires**, **50 parcours E2E** (Chromium et WebKit) et **1 test de rechargement hors ligne**.
 
 Nouveautés de la v1.1 :
+
+- **Nom définitif** : l’application s’appelle désormais **Petite pousse**. L’identifiant historique `carnet-de-reussites` est conservé pour la base locale, les sauvegardes et l’URL de production, afin de ne perdre aucune donnée.
 
 - **Bilans en lot** : un ZIP contenant un PDF par élève, pour l’année et la période sélectionnées.
 - **Sauvegarde chiffrée** : protection facultative par mot de passe (AES-256-GCM, PBKDF2-SHA256). Les anciennes sauvegardes en clair restent restaurables.

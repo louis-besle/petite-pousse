@@ -1,7 +1,7 @@
 import { defineConfig } from '@playwright/test'
 
 /**
- * Configuration E2E du carnet de réussites.
+ * Configuration E2E de Petite pousse.
  *
  * Le projet `chromium` couvre toute la suite sauf le smoke WebKit, au format
  * téléphone (390 × 844). Le projet `webkit` rejoue uniquement `webkit.spec.ts`,

@@ -6,7 +6,7 @@ import styles from './AppShell.module.css'
 /** La capture et l'écran de succès occupent tout l'écran, sans navigation basse. */
 const HIDDEN_NAV_PATTERN = /^\/(capture|success)(\/|$)/
 
-const APP_NAME = 'Carnet de réussites'
+const APP_NAME = 'Petite pousse'
 
 function hidesNav(pathname: string): boolean {
   return HIDDEN_NAV_PATTERN.test(pathname)

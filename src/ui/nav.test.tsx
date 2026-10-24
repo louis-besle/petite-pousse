@@ -63,7 +63,7 @@ describe('AppShell', () => {
   it('donne un titre de page à chaque route', () => {
     renderShell('/programme')
 
-    expect(document.title).toBe('Programme · Carnet de réussites')
+    expect(document.title).toBe('Programme · Petite pousse')
   })
 
   it('place le focus sur le contenu après un changement de route', async () => {
