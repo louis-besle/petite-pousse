@@ -98,6 +98,46 @@ describe('BilanPreviewScreen', () => {
     expect(screen.getByText(/12 oct\./)).toBeInTheDocument()
   })
 
+  it('résout l’année effective pour une URL directe sans paramètre year', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] })
+    vi.setSystemTime(new Date('2026-11-07T12:00:00'))
+
+    try {
+      await ensureSeed()
+      await db.schoolYears.put(
+        makeSchoolYear({
+          id: '2027-2028',
+          start: '2027-09-01',
+          period1End: '2028-01-31',
+          period2End: '2028-06-30',
+        }),
+      )
+      await updateSettings({ currentSchoolYearId: '2027-2028' })
+
+      const student = makeStudent({ firstName: 'Léa' })
+      await db.students.add(student)
+      const target = objective('lang-vocabulaire-01')
+      await createValidation({
+        studentId: student.id,
+        objective: target,
+        ageBand: 'from4',
+        date: '2026-11-07',
+        referentialVersion: REFERENTIAL_VERSION,
+      })
+
+      // URL directe : ni lien élève ni paramètre `year`.
+      renderApp({ route: `/bilans/${student.id}` })
+
+      expect(
+        await screen.findByRole('heading', { level: 1, name: 'Bilan de Léa' }),
+      ).toBeInTheDocument()
+      expect(await screen.findByText(target.label)).toBeInTheDocument()
+      expect(screen.getByText(/Bilan 1 · 2026-2027/)).toBeInTheDocument()
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
   it('ignore une initiale de nom vide dans l’aperçu', async () => {
     const { studentId } = await setUp({ lastNameInitial: '' })
 

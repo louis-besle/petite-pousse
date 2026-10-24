@@ -78,8 +78,10 @@ export function schoolYearIdForDate(date: string): string {
  * que la maîtresse a explicitement ouverte. Sinon, une réussite datée du jour est
  * classée d'après sa date (`schoolYearIdForDate`), donc l'écran doit suivre
  * l'année qui contient cette date pour ne pas masquer ce qui vient d'être noté.
- * À défaut, on garde l'année préférée, puis la plus récente (`years` est trié du
- * plus récent au plus ancien par `useSchoolYears`).
+ * En juillet-août, aucune année ne contient la date (elle finit au 30 juin) :
+ * on retombe alors sur l'année de `schoolYearIdForDate`, celle où la réussite
+ * serait réellement classée. À défaut seulement, on garde l'année préférée, puis
+ * la plus récente (`years` est trié du plus récent au plus ancien).
  */
 export function resolveCurrentSchoolYearId(
   years: SchoolYear[],
@@ -105,6 +107,11 @@ export function resolveCurrentSchoolYearId(
     (year) => date >= year.start && date <= year.period2End,
   )
   if (containing !== undefined) return containing.id
+
+  // Juillet-août tombe dans le creux entre deux années : c'est pourtant
+  // l'année précédente qui reçoit la réussite via `schoolYearIdForDate`.
+  const dateYearId = schoolYearIdForDate(date)
+  if (years.some((year) => year.id === dateYearId)) return dateYearId
 
   return preferred?.id ?? years[0]?.id
 }

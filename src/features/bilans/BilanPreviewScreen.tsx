@@ -8,7 +8,9 @@ import { useStudents } from '@/db/students'
 import { useValidationsForYear } from '@/db/validations'
 import { buildBilanModel } from '@/domain/bilan'
 import { referential } from '@/domain/referential'
+import { resolveCurrentSchoolYearId } from '@/domain/schoolYear'
 import type { Photo } from '@/domain/types'
+import { todayIso } from '@/lib/date'
 import { sharePdf } from '@/lib/share'
 import { Button } from '@/ui/Button'
 import { Icon } from '@/ui/icons'
@@ -57,11 +59,19 @@ export function BilanPreviewScreen() {
   const knownYearIds = years.map((year) => year.id)
   knownYearIds.sort((a, b) => b.localeCompare(a))
 
-  // Année demandée si elle existe, sinon année courante, sinon la plus récente.
+  // Année demandée si elle existe, sinon l'année effective (celle d'une
+  // réussite datée d'aujourd'hui), sinon l'année des réglages, sinon la plus
+  // récente. Une URL directe sans `?year` ne doit pas rater la réussite du jour
+  // quand le passage d'année est décalé.
   const requestedYearId = searchParams.get('year')
   const settingsYearId = settings?.currentSchoolYearId
+  const effectiveCurrentYearId = resolveCurrentSchoolYearId(
+    years,
+    settingsYearId,
+    todayIso(),
+  )
   const selectedYearId =
-    [requestedYearId, settingsYearId].find(
+    [requestedYearId, effectiveCurrentYearId, settingsYearId].find(
       (candidate): candidate is string =>
         candidate !== null && candidate !== undefined && knownYearIds.includes(candidate),
     ) ?? knownYearIds[0]

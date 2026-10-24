@@ -95,10 +95,18 @@ describe('resolveCurrentSchoolYearId', () => {
 
   it('garde l’année préférée en retard quand la date tombe dans le creux de juillet', () => {
     // Juillet n'appartient à aucune borne [start, period2End] : on retombe sur
-    // l'année préférée, qui est aussi celle de `schoolYearIdForDate`.
+    // l'année de `schoolYearIdForDate`, ici l'année préférée.
     expect(
       resolveCurrentSchoolYearId(years, '2025-2026', '2026-07-15'),
     ).toBe('2025-2026')
+  })
+
+  it('rattache juillet à l’année de la date même quand l’année préférée est en avance', () => {
+    // Une réussite du 15 juillet 2027 est classée en 2026-2027, pas dans
+    // l'année 2027-2028 que les réglages ont ouverte en avance.
+    expect(
+      resolveCurrentSchoolYearId(years, '2027-2028', '2027-07-15'),
+    ).toBe('2026-2027')
   })
 
   it('suit l’année qui contient la date sans préférence', () => {
