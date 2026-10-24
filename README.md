@@ -28,7 +28,7 @@ npm run typecheck         # TypeScript
 
 Le déploiement est un build statique Vite, configuré par `vercel.ts` (framework `vite`, sortie `dist/`). Le routage par hash ne nécessite aucune réécriture serveur.
 
-Le projet Vercel n'est pas encore relié à GitHub et la branche de développement n'est pas poussée : toute mise à jour de la production passe donc par un déploiement manuel, avec `npx vercel@latest deploy --prod --project carnet-de-reussites`. Une intégration Git remplacerait plus tard cette commande.
+Le projet Vercel est relié au dépôt GitHub : chaque push sur `main` déploie automatiquement la production, et les autres branches créent des déploiements de prévisualisation. Si nécessaire, un déploiement manuel reste possible avec `npx vercel@latest deploy --prod --project carnet-de-reussites`.
 
 ## Contenu
 
