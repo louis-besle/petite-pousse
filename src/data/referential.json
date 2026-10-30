@@ -6721,7 +6721,7 @@
       "id": "evar-relations-4",
       "competencyId": "evar-relations",
       "domainId": "evar",
-      "label": "Identifier une personne de confiance (adulte, enfant), apprendre à faire appel à elle.",
+      "label": "Identifier une personne de confiance (adulte, enfant), apprendre à faire appel à eux.",
       "ageBands": [
         "from4"
       ],
@@ -6785,7 +6785,7 @@
       "id": "evar-societe-5",
       "competencyId": "evar-societe",
       "domainId": "evar",
-      "label": "Découvrir les ressemblances et les différences entre les autres et soi, respecter les autres dans leur différence, être respecté par eux.",
+      "label": "Découvrir les ressemblances et les différences entre les autres et soi, respecter les autres dans leur différence ; être respecté par eux.",
       "ageBands": [
         "from5"
       ],
