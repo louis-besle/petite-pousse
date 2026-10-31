@@ -5,13 +5,13 @@ Périmètre : les six domaines de `scripts/referential/source/objectives.csv` et
 référentiel généré `src/data/referential.json` (version `2026.1.0`).
 
 > **Ajout EVAR (version `2026.2.0`).** Les neuf objectifs du programme EVAR
-> (BO n°6 du 6 février 2025) ont été ajoutés après cette vérification. Les
-> comptes 398 objectifs / 37 compétences / six domaines ci-dessous décrivent
-> donc la version `2026.1.0` vérifiée, pas la version courante
-> `2026.2.0` (407 objectifs / 40 compétences / sept catégories). La
-> reproductibilité du CSV vers le JSON est désormais couverte par
-> `scripts/referential/build.test.ts`. La vérification éditoriale EVAR contre
-> l’annexe du BO n°6 reste à consigner séparément.
+> (BO n°6 du 6 février 2025) ont été ajoutés après la vérification initiale.
+> Les comptes 398 objectifs / 37 compétences / six domaines ci-dessous décrivent
+> donc la version `2026.1.0` vérifiée. La version courante `2026.2.0` compte
+> 407 objectifs / 40 compétences / sept catégories. La reproductibilité du CSV
+> vers le JSON est couverte par `scripts/referential/build.test.ts`. La
+> vérification éditoriale EVAR contre l’annexe du BO n°6 est consignée dans la
+> section « Vérification EVAR » ci-dessous.
 
 ## Sources
 
@@ -27,6 +27,11 @@ référentiel généré `src/data/referential.json` (version `2026.1.0`).
   - Copie locale non commitée :
     `.superpowers/sdd/2026-11-06-livret-suivi-apprentissage/tools/programme-cycle-1-consolide.pdf`
     (dossier ignoré par git, vérifié avec `git check-ignore`).
+- **BO n°6 du 6 février 2025**, programme d’éducation à la vie affective et
+  relationnelle à l’école maternelle :
+  <https://www.education.gouv.fr/bo/2025/Hebdo6/MENE2503064A>
+  - PDF officiel :
+    <https://www.education.gouv.fr/sites/default/files/document/Programme%20d%E2%80%99%C3%A9ducation%20%C3%A0%20la%20vie%20affective%20et%20relationnelle%20%C3%A0%20l%E2%80%99%C3%A9cole%20maternelle-405258.pdf>
 
 Les `source_page` sont des **numéros de page du PDF** (page PDF 6 = folio « 5 »).
 La page PDF 52 est blanche (folio « 51 » seul), ce qui a été confirmé sur le PDF.
@@ -74,24 +79,63 @@ d’exemple** (une par tranche déclarée) sont retrouvées verbatim dans la mê
 compétence et la même tranche. Aucun texte inventé, reformulé ou attribué à une
 autre tranche.
 
+## Vérification EVAR (2026-11-16)
+
+Le programme EVAR a été vérifié séparément contre l’annexe du **BO n°6 du
+6 février 2025** (PDF officiel ci-dessus), après extraction du texte avec
+`pdftotext -layout -enc UTF-8` et normalisation des seuls artefacts de mise en
+page : espaces, sauts de ligne et apostrophes typographiques.
+
+La comparaison porte sur les **trois intitulés d’axe** et les **neuf objectifs
+d’apprentissage**, répartis en trois tranches d’âge. Les `example` du CSV sont
+des reformulations pédagogiques destinées à l’interface : ils ne sont pas
+présentés comme des citations verbatim du BO.
+
+| `objective_id` | Axe | Tranche | Libellé vérifié | Verdict |
+|---|---|---|---|---|
+| `evar-corps-avant4` | Se connaître, vivre et grandir avec son corps | before4 | Connaître son corps et comprendre ce qu’est l’intimité. | conforme |
+| `evar-corps-4` | Se connaître, vivre et grandir avec son corps | from4 | Connaître son corps et identifier des émotions. | conforme |
+| `evar-corps-5` | Se connaître, vivre et grandir avec son corps | from5 | Connaître son corps, ses sensations et ses émotions. | conforme |
+| `evar-relations-avant4` | Rencontrer les autres et construire des relations, s’y épanouir | before4 | Apprendre à exprimer son accord ou son refus, apprendre à envisager et à respecter un refus. | conforme |
+| `evar-relations-4` | Rencontrer les autres et construire des relations, s’y épanouir | from4 | Identifier une personne de confiance (adulte, enfant), apprendre à faire appel à eux. | conforme |
+| `evar-relations-5` | Rencontrer les autres et construire des relations, s’y épanouir | from5 | Identifier différents types de sentiments dans sa relation à l’autre. | conforme |
+| `evar-societe-avant4` | Trouver sa place dans la société, y être libre et responsable | before4 | Appréhender et comprendre l’égalité entre les filles et les garçons et la liberté d’être soi-même. | conforme |
+| `evar-societe-4` | Trouver sa place dans la société, y être libre et responsable | from4 | Vivre l’égalité entre les filles et les garçons. Découvrir les différentes structures familiales et les respecter. | conforme |
+| `evar-societe-5` | Trouver sa place dans la société, y être libre et responsable | from5 | Découvrir les ressemblances et les différences entre les autres et soi, respecter les autres dans leur différence ; être respecté par eux. | conforme |
+
+**Bilan EVAR : 9/9 objectifs conformes, 3/3 axes conformes, trois objectifs par
+tranche d’âge.** Deux écarts ont été corrigés pendant cette vérification :
+
+1. `evar-relations-4` disait « apprendre à faire appel à elle » ; le texte
+   officiel emploie « à eux ».
+2. `evar-societe-5` séparait « dans leur différence » et « être respecté par
+   eux » par une virgule ; le texte officiel emploie un point-virgule.
+
+Après correction, `npm run referential:build` régénère le JSON à l’identique et
+`npm run referential:check` passe avec **407 objectifs, 40 compétences,
+7 domaines** et les occurrences **119 / 142 / 165** pour les trois tranches
+d’âge.
+
 ## Comptes
 
-| Indicateur | Valeur |
-|---|---:|
-| Objectifs uniques (`objective_id`) | 398 |
-| Compétences (`competency_id`) | 37 |
-| Domaines | 6 |
-| Occurrences avant 4 ans | 116 |
-| Occurrences à partir de 4 ans | 139 |
-| Occurrences à partir de 5 ans | 162 |
+| Indicateur | 2026.1.0 | 2026.2.0 |
+|---|---:|---:|
+| Objectifs uniques (`objective_id`) | 398 | 407 |
+| Compétences (`competency_id`) | 37 | 40 |
+| Domaines | 6 | 7 |
+| Occurrences avant 4 ans | 116 | 119 |
+| Occurrences à partir de 4 ans | 139 | 142 |
+| Occurrences à partir de 5 ans | 162 | 165 |
 
-- Le CSV et le JSON concordent : 398 objectifs, 37 compétences, 6 domaines,
-  version `2026.1.0`.
+- Le CSV et le JSON concordent pour les deux versions : `2026.1.0` (398
+  objectifs, 37 compétences, 6 domaines) et `2026.2.0` (407 objectifs,
+  40 compétences, 7 domaines).
 - Aucun `objective_id` en double ; aucun couple
   `(competency_id, objective_label)` en double.
 - Les cibles **114/140/162 sont des garde-fous, pas un objectif à atteindre** :
-  les écarts constatés sont +2 / −1 / 0. Aucun objectif n’a été ajouté pour les
-  rejoindre.
+  les écarts de la version initiale sont +2 / −1 / 0. L’ajout EVAR (3 objectifs
+  par tranche) porte la version courante à +5 / +2 / +3. Aucun objectif n’a été
+  ajouté pour rejoindre les cibles.
 
 ## Pages
 
@@ -109,7 +153,7 @@ Plages contrôlées et pages réellement utilisées :
 Toutes les valeurs `source_page` sont dans leur plage. Les pages d’ouverture sans
 tableau (6-7, 22, 27, 36-37, 52 blanche, 59) sont conformes au PDF.
 
-## Commandes exécutées
+## Commandes exécutées (version 2026.1.0)
 
 | Commande | Résultat |
 |---|---|
@@ -120,6 +164,14 @@ tableau (6-7, 22, 27, 36-37, 52 blanche, 59) sont conformes au PDF.
 | `npm run typecheck` | PASS |
 | `npm run build` | PASS — 44 modules, bundle 317,80 kB (gzip 100,71 kB), build en 308 ms |
 | `git status --short` | vide (hors fichiers de cette vérification) |
+
+### Version 2026.2.0 (2026-11-16)
+
+| Commande | Résultat |
+|---|---|
+| `npm run referential:build` | PASS — « Wrote 407 objectives (40 competencies) » ; JSON régénéré depuis le CSV |
+| `npm run referential:check` | PASS — 407 objectifs, 7 domaines, 119/142/165 |
+| `npx vitest run scripts/referential/build.test.ts` | PASS — 14 tests, reproductibilité CSV → JSON |
 
 ## Ambiguïtés résiduelles et choix assumés
 
@@ -162,6 +214,8 @@ tableau (6-7, 22, 27, 36-37, 52 blanche, 59) sont conformes au PDF.
 
 Toutes les vérifications de contenu, de comptage, de pages, de source et de
 reproductibilité passent. Le référentiel est conforme au texte officiel
-consolidé.
+consolidé, y compris les neuf objectifs EVAR vérifiés contre l’annexe du
+BO n°6 du 6 février 2025.
 
-**Vérification indépendante : 20 objectifs échantillonnés, conformes au texte officiel.**
+**Vérification indépendante : 20 objectifs échantillonnés sur les six domaines
+2026, 9/9 objectifs EVAR, conformes au texte officiel.**
