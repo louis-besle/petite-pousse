@@ -223,8 +223,9 @@ describe('db', () => {
     expect(DB_NAME).toBe('carnet-de-reussites')
   })
 
-  it('expose les six tables du schéma', () => {
+  it('expose les sept tables du schéma', () => {
     expect(db.tables.map((table) => table.name).sort()).toEqual([
+      'customObjectives',
       'drafts',
       'photos',
       'schoolYears',
