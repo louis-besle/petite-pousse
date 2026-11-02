@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { addStudent } from './helpers'
+import { addStudent, captureWithPhoto, openDossier } from './helpers'
 
 test.describe('programme', () => {
   test('filtrer par niveau puis rechercher un objectif met la liste à jour', async ({
@@ -80,5 +80,58 @@ test.describe('programme', () => {
 
     await sheet.getByRole('button', { name: 'Terminer' }).click()
     await expect(sheet).toBeHidden()
+  })
+
+  test('ajoute un objectif, le valide, le retrouve au dossier puis le supprime', async ({
+    page,
+  }) => {
+    await addStudent(page, 'Lina', 'MS')
+
+    await page.getByRole('link', { name: 'Programme', exact: true }).click()
+    await page.getByRole('button', { name: 'Ajouter un objectif', exact: true }).click()
+
+    const form = page.getByRole('dialog', { name: 'Ajouter un objectif' })
+    await expect(form).toBeVisible()
+    await form.getByLabel('Intitulé', { exact: true }).fill('Compter jusqu’à douze')
+    await form
+      .getByRole('group', { name: 'Domaine', exact: true })
+      .getByRole('button', { name: 'Maths', exact: true })
+      .click()
+    await form
+      .getByRole('group', { name: 'Niveaux', exact: true })
+      .getByRole('button', { name: 'MS', exact: true })
+      .click()
+    await form
+      .getByLabel('Exemple en MS', { exact: true })
+      .fill('Réciter la comptine jusqu’à douze.')
+    await form.getByRole('button', { name: 'Ajouter l’objectif', exact: true }).click()
+
+    await expect(page.getByText('Objectif ajouté.')).toBeVisible()
+    // La recherche ouvre le domaine Maths, fermé par défaut. Elle vise
+    // l'intitulé complet : « douze » seul trouve aussi un objectif du référentiel.
+    await page.getByLabel('Rechercher un objectif', { exact: true }).fill('Compter jusqu')
+    const row = page.getByRole('button', {
+      name: /^Ouvrir l.objectif : Compter jusqu.à douze/,
+    })
+    await expect(row).toBeVisible()
+    await expect(page.getByText('Ajouté', { exact: true })).toBeVisible()
+
+    // La réussite est validée depuis la capture.
+    await captureWithPhoto(page, 'Lina', 'Compter jusqu’à douze')
+    await openDossier(page, 'Lina')
+    await expect(page.getByText('Compter jusqu’à douze')).toBeVisible()
+
+    // Suppression : la ligne disparaît, la réussite reste au dossier.
+    await page.getByRole('link', { name: 'Programme', exact: true }).click()
+    await page.getByLabel('Rechercher un objectif', { exact: true }).fill('Compter jusqu')
+    await row.click()
+    const sheet = page.getByRole('dialog', { name: /Compter jusqu.à douze/ })
+    await sheet.getByRole('button', { name: 'Supprimer l’objectif', exact: true }).click()
+    await page.getByRole('button', { name: 'Supprimer définitivement', exact: true }).click()
+
+    await expect(row).toHaveCount(0)
+    await expect(page.getByText('Aucun objectif ne correspond.')).toBeVisible()
+    await openDossier(page, 'Lina')
+    await expect(page.getByText('Compter jusqu’à douze')).toBeVisible()
   })
 })

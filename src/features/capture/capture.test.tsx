@@ -2,6 +2,7 @@
 import { Blob as NodeBlob } from 'node:buffer'
 import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { createCustomObjective } from '@/db/customObjectives'
 import { db } from '@/db/db'
 import { getCaptureDraft, saveCaptureDraft } from '@/db/drafts'
 import { ensureSeed } from '@/db/seed'
@@ -604,5 +605,59 @@ describe('PhotoScreen', () => {
     expect(
       await screen.findByRole('heading', { level: 1, name: "Choisir l'objectif" }),
     ).toBeInTheDocument()
+  })
+})
+
+describe('objectifs personnalisés en capture', () => {
+  it('propose un objectif ajouté au niveau de l’élève et le valide', async () => {
+    await ensureSeed()
+    const student = await addStudent('Léa', 'MS')
+    const created = await createCustomObjective({
+      label: 'Compter jusqu’à douze',
+      domainId: 'maths',
+      ageBands: ['from4'],
+      examples: { from4: 'Réciter la comptine jusqu’à douze.' },
+    })
+    await seedDraft(student.id)
+
+    const user = userEvent.setup()
+    renderApp({ route: '/capture/objective' })
+
+    const card = await screen.findByRole('button', {
+      name: /Compter jusqu’à douze/,
+    })
+    expect(within(card).getByText('Ajouté')).toBeInTheDocument()
+
+    await user.click(card)
+    await user.click(screen.getByRole('button', { name: /Valider la réussite/ }))
+
+    await waitFor(async () => {
+      const stored = await db.validations.toArray()
+      expect(stored).toHaveLength(1)
+      expect(stored[0]).toMatchObject({
+        studentId: student.id,
+        objectiveId: created.id,
+        snapshot: { objectiveLabel: 'Compter jusqu’à douze', ageBand: 'from4' },
+      })
+    })
+  })
+
+  it('ne propose pas un objectif ajouté pour un autre niveau', async () => {
+    await ensureSeed()
+    const student = await addStudent('Léa', 'PS')
+    await createCustomObjective({
+      label: 'Compter jusqu’à douze',
+      domainId: 'maths',
+      ageBands: ['from4'],
+      examples: { from4: 'Réciter la comptine jusqu’à douze.' },
+    })
+    await seedDraft(student.id)
+
+    renderApp({ route: '/capture/objective' })
+
+    expect(
+      await screen.findByRole('heading', { level: 1, name: /Choisir l.objectif/ }),
+    ).toBeInTheDocument()
+    expect(screen.queryByText('Compter jusqu’à douze')).not.toBeInTheDocument()
   })
 })

@@ -1,8 +1,10 @@
+import Dexie from 'dexie'
 import { renderHook, waitFor } from '@testing-library/react'
 import { REFERENTIAL_VERSION } from '@/domain/referential'
 import { defaultSchoolYear, schoolYearIdForDate } from '@/domain/schoolYear'
-import type { SchoolYear } from '@/domain/types'
-import { DB_NAME, db } from './db'
+import type { SchoolYear, Validation } from '@/domain/types'
+import { makeStudent } from '@/test/fixtures'
+import { DB_NAME, PetitePousseDB, db } from './db'
 import { ensureSeed, localTodayIso } from './seed'
 import { getSettings, updateSettings, useSettings } from './settings'
 
@@ -223,8 +225,9 @@ describe('db', () => {
     expect(DB_NAME).toBe('carnet-de-reussites')
   })
 
-  it('expose les six tables du schéma', () => {
+  it('expose les sept tables du schéma', () => {
     expect(db.tables.map((table) => table.name).sort()).toEqual([
+      'customObjectives',
       'drafts',
       'photos',
       'schoolYears',
@@ -232,5 +235,66 @@ describe('db', () => {
       'students',
       'validations',
     ])
+  })
+
+  it('conserve les données d’une base v1 en ajoutant customObjectives', async () => {
+    const name = 'carnet-de-reussites-migration-test'
+    const legacy = new Dexie(name)
+    legacy.version(1).stores({
+      students: 'id, section, firstName',
+      schoolYears: 'id, start',
+      validations:
+        'id, studentId, objectiveId, date, schoolYearId, &[studentId+objectiveId]',
+      photos: 'id, validationId',
+      settings: 'id',
+      drafts: 'id',
+    })
+
+    const student = makeStudent({ firstName: 'Léa', section: 'MS' })
+    const validation: Validation = {
+      id: 'validation-1',
+      studentId: student.id,
+      objectiveId: 'lang-vocabulaire-01',
+      schoolYearId: '2026-2027',
+      date: '2026-11-10',
+      snapshot: {
+        objectiveLabel: 'Comprendre, mémoriser et raconter',
+        domainId: 'langage',
+        domainLabel: 'Langage',
+        ageBand: 'from4',
+        example: 'Raconter une histoire entendue.',
+        referentialVersion: REFERENTIAL_VERSION,
+      },
+      createdAt: '2026-11-10T10:00:00.000Z',
+    }
+
+    await legacy.open()
+    await legacy.table('students').add(student)
+    await legacy.table('validations').add(validation)
+    legacy.close()
+
+    const upgraded = new PetitePousseDB(name)
+
+    try {
+      await upgraded.open()
+
+      expect(await upgraded.students.get(student.id)).toEqual(student)
+      expect(await upgraded.validations.get(validation.id)).toEqual(validation)
+      expect(upgraded.tables.map((table) => table.name)).toContain(
+        'customObjectives',
+      )
+      expect(
+        await upgraded.validations
+          .where('[studentId+objectiveId]')
+          .equals([student.id, validation.objectiveId])
+          .count(),
+      ).toBe(1)
+      await expect(
+        upgraded.validations.add({ ...validation, id: 'validation-2' }),
+      ).rejects.toThrow()
+    } finally {
+      upgraded.close()
+      await Dexie.delete(name)
+    }
   })
 })

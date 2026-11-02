@@ -1,6 +1,7 @@
 import Dexie, { type EntityTable } from 'dexie'
 import type {
   CaptureDraft,
+  CustomObjective,
   Photo,
   SchoolYear,
   Settings,
@@ -27,6 +28,7 @@ export class PetitePousseDB extends Dexie {
   photos!: EntityTable<Photo, 'id'>
   settings!: EntityTable<SettingsRecord, 'id'>
   drafts!: EntityTable<CaptureDraft, 'id'>
+  customObjectives!: EntityTable<CustomObjective, 'id'>
 
   constructor(name: string = DB_NAME) {
     super(name)
@@ -38,6 +40,10 @@ export class PetitePousseDB extends Dexie {
       photos: 'id, validationId',
       settings: 'id',
       drafts: 'id',
+    })
+
+    this.version(2).stores({
+      customObjectives: 'id, domainId',
     })
   }
 }

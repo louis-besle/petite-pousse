@@ -42,6 +42,12 @@ export interface Objective {
   source: { bo: string; page?: number; table?: string }
 }
 
+/** Objectif ajouté par l'enseignante, stocké hors du référentiel officiel. */
+export interface CustomObjective extends Objective {
+  createdAt: string
+  updatedAt: string
+}
+
 export interface ValidationSnapshot {
   objectiveLabel: string
   domainId: Domain['id']
