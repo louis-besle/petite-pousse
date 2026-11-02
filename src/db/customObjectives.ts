@@ -24,19 +24,19 @@ export interface CustomObjectiveInput {
 
 const OBJECTIVE_NOT_FOUND_ERROR = 'Objectif introuvable.'
 
-/** Clé de comparaison d'un intitulé : casse, accents et espaces répétés ignorés. */
+/** Clé de comparaison d’un intitulé : casse, accents et espaces répétés ignorés. */
 function duplicateKey(value: string): string {
   return normalizeSearch(value).replace(/\s+/g, ' ')
 }
 
-/** Déduplique les tranches d'âge et les remet dans l'ordre officiel. */
+/** Déduplique les tranches d’âge et les remet dans l’ordre officiel. */
 function normalizeAgeBands(ageBands: AgeBand[]): AgeBand[] {
   const bands = new Set(ageBands)
   return AGE_BANDS.filter((band) => bands.has(band))
 }
 
 /**
- * Applique les règles métier sur une saisie : intitulé, tranches d'âge puis
+ * Applique les règles métier sur une saisie : intitulé, tranches d’âge puis
  * exemples. Renvoie les valeurs nettoyées, prêtes à être enregistrées.
  */
 function cleanInput(input: CustomObjectiveInput): {
@@ -76,8 +76,8 @@ function cleanInput(input: CustomObjectiveInput): {
 }
 
 /**
- * Refuse un intitulé déjà porté dans le même domaine, qu'il soit officiel ou
- * personnalisé. L'identifiant en cours d'édition est ignoré pour permettre de
+ * Refuse un intitulé déjà porté dans le même domaine, qu’il soit officiel ou
+ * personnalisé. L’identifiant en cours d’édition est ignoré pour permettre de
  * conserver son propre intitulé.
  */
 async function ensureNoDuplicate(
@@ -129,7 +129,7 @@ export async function createCustomObjective(
 }
 
 /**
- * Modifie un objectif personnalisé existant. L'identifiant et la date de
+ * Modifie un objectif personnalisé existant. L’identifiant et la date de
  * création sont conservés, la date de modification est réécrite.
  */
 export async function updateCustomObjective(
