@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { createValidation } from '@/db/validations'
 import { AlreadyValidatedError } from '@/domain/errors'
+import { isCustomObjective } from '@/domain/objectives'
 import { AGE_BAND_LABELS } from '@/features/dossier/labels'
 import {
   REFERENTIAL_VERSION,
@@ -33,6 +34,10 @@ export interface ObjectiveSheetProps {
   allValidations: Validation[]
   onClose: () => void
   onValidated: (student: Student) => void
+  /** Ouvert seulement pour un objectif personnalisé : ouvre le formulaire d'édition. */
+  onEdit?: () => void
+  /** Ouvert seulement pour un objectif personnalisé : demande la suppression. */
+  onDelete?: () => void
 }
 
 /**
@@ -46,6 +51,8 @@ export function ObjectiveSheet({
   allValidations,
   onClose,
   onValidated,
+  onEdit,
+  onDelete,
 }: ObjectiveSheetProps) {
   const { showToast } = useToast()
   const [pickerOpen, setPickerOpen] = useState(false)
@@ -105,7 +112,9 @@ export function ObjectiveSheet({
   return (
     <Sheet open title={objective.label} onClose={onClose}>
       <p className={styles.sheetMeta}>
-        <span className={styles.sheetDomain}>{domain.longLabel}</span>
+        <span className={styles.sheetDomain}>
+          {isCustomObjective(objective) ? 'Objectif ajouté' : domain.longLabel}
+        </span>
         <span className={styles.sheetLevels}>{levels}</span>
       </p>
 
@@ -216,6 +225,18 @@ export function ObjectiveSheet({
           <Icon name="plus" size={18} />
           Valider pour un élève
         </Button>
+        {onEdit === undefined ? null : (
+          <Button variant="dark" fullWidth onClick={onEdit}>
+            <Icon name="pencil" size={18} />
+            Modifier l’objectif
+          </Button>
+        )}
+        {onDelete === undefined ? null : (
+          <Button variant="danger" fullWidth onClick={onDelete}>
+            <Icon name="trash" size={18} />
+            Supprimer l’objectif
+          </Button>
+        )}
         <Button variant="ghost" fullWidth onClick={onClose}>
           Fermer
         </Button>

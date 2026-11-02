@@ -1,5 +1,6 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { createCustomObjective } from '@/db/customObjectives'
 import { db } from '@/db/db'
 import { ensureSeed } from '@/db/seed'
 import { updateSettings } from '@/db/settings'
@@ -457,5 +458,198 @@ describe('ProgrammeScreen', () => {
         `${psObjectives.length} objectifs · 2 validations`,
       ),
     )
+  })
+})
+
+describe('objectifs personnalisés', () => {
+  async function addCustomObjectiveFromUi(user: ReturnType<typeof userEvent.setup>) {
+    await user.click(
+      screen.getByRole('button', { name: 'Ajouter un objectif' }),
+    )
+    const dialog = await screen.findByRole('dialog', { name: 'Ajouter un objectif' })
+
+    await user.type(within(dialog).getByLabelText('Intitulé'), 'Compter jusqu’à douze')
+    await user.click(
+      within(within(dialog).getByRole('group', { name: 'Domaine' })).getByRole('button', { name: 'Maths' }),
+    )
+    await user.click(
+      within(within(dialog).getByRole('group', { name: 'Niveaux' })).getByRole('button', { name: 'MS' }),
+    )
+    await user.type(
+      within(dialog).getByLabelText('Exemple en MS'),
+      'Réciter la comptine jusqu’à douze.',
+    )
+    await user.click(within(dialog).getByRole('button', { name: 'Ajouter l’objectif' }))
+
+    return dialog
+  }
+
+  it('ajoute un objectif, le range en fin de domaine et le marque « Ajouté »', async () => {
+    const user = userEvent.setup()
+    renderApp({ route: '/programme' })
+
+    const dialog = await addCustomObjectiveFromUi(user)
+    await waitFor(() => expect(dialog).not.toBeInTheDocument())
+    expect(await screen.findByText('Objectif ajouté.')).toBeInTheDocument()
+
+    // La recherche ouvre le domaine Maths, fermé par défaut.
+    await searchObjective('douze')
+    const maths = await screen.findByRole('region', { name: 'Maths' })
+    const row = within(maths).getByText('Compter jusqu’à douze').closest('li')!
+    expect(within(row).getByText('Ajouté')).toBeInTheDocument()
+    expect(within(row).getByText('MS')).toBeInTheDocument()
+
+    const stored = await db.customObjectives.toArray()
+    expect(stored).toHaveLength(1)
+    expect(stored[0]).toMatchObject({
+      label: 'Compter jusqu’à douze',
+      domainId: 'maths',
+      ageBands: ['from4'],
+    })
+  })
+
+  it('refuse un intitulé déjà pris et annonce l’erreur', async () => {
+    const official = referential.objectives.find(
+      (objective) => objective.domainId === 'maths',
+    )!
+
+    const user = userEvent.setup()
+    renderApp({ route: '/programme' })
+    await user.click(
+      screen.getByRole('button', { name: 'Ajouter un objectif' }),
+    )
+
+    const dialog = await screen.findByRole('dialog', { name: 'Ajouter un objectif' })
+    await user.type(within(dialog).getByLabelText('Intitulé'), official.label)
+    await user.click(
+      within(within(dialog).getByRole('group', { name: 'Domaine' })).getByRole('button', { name: 'Maths' }),
+    )
+    await user.click(
+      within(within(dialog).getByRole('group', { name: 'Niveaux' })).getByRole('button', { name: 'MS' }),
+    )
+    await user.type(within(dialog).getByLabelText('Exemple en MS'), 'Un exemple.')
+    await user.click(within(dialog).getByRole('button', { name: 'Ajouter l’objectif' }))
+
+    expect(await within(dialog).findByRole('alert')).toHaveTextContent(
+      'Un objectif porte déjà cet intitulé dans ce domaine.',
+    )
+    expect(await db.customObjectives.count()).toBe(0)
+  })
+
+  it('modifie un objectif ajouté depuis sa fiche', async () => {
+    const created = await createCustomObjective({
+      label: 'Compter jusqu’à douze',
+      domainId: 'maths',
+      ageBands: ['from4'],
+      examples: { from4: 'Réciter la comptine.' },
+    })
+    await db.students.add(makeStudent({ firstName: 'Léa', section: 'MS' }))
+
+    const user = userEvent.setup()
+    renderApp({ route: '/programme' })
+    await searchObjective('douze')
+    await screen.findByText(created.label)
+    await openObjective(user, created.label)
+
+    const sheet = await screen.findByRole('dialog')
+    expect(within(sheet).getByText('Objectif ajouté')).toBeInTheDocument()
+    await user.click(within(sheet).getByRole('button', { name: 'Modifier l’objectif' }))
+
+    const form = await screen.findByRole('dialog', { name: 'Modifier l’objectif' })
+    const label = within(form).getByLabelText('Intitulé')
+    await user.clear(label)
+    await user.type(label, 'Compter jusqu’à vingt')
+    await user.click(within(form).getByRole('button', { name: 'Enregistrer' }))
+
+    await waitFor(() =>
+      expect(screen.queryByRole('dialog', { name: 'Modifier l’objectif' }))
+        .not.toBeInTheDocument(),
+    )
+    expect(await screen.findByText('Compter jusqu’à vingt')).toBeInTheDocument()
+    expect((await db.customObjectives.get(created.id))?.label).toBe(
+      'Compter jusqu’à vingt',
+    )
+  })
+
+  it('supprime après confirmation et laisse la réussite dans le dossier', async () => {
+    const created = await createCustomObjective({
+      label: 'Compter jusqu’à douze',
+      domainId: 'maths',
+      ageBands: ['from4'],
+      examples: { from4: 'Réciter la comptine.' },
+    })
+    const student = await addStudent('Léa', 'MS')
+    await createValidation({
+      studentId: student.id,
+      objective: created,
+      ageBand: 'from4',
+      date: '2026-11-10',
+      referentialVersion: REFERENTIAL_VERSION,
+    })
+
+    const user = userEvent.setup()
+    renderApp({ route: '/programme' })
+    await searchObjective('douze')
+    await screen.findByText(created.label)
+    await openObjective(user, created.label)
+    await user.click(
+      within(await screen.findByRole('dialog')).getByRole('button', {
+        name: 'Supprimer l’objectif',
+      }),
+    )
+
+    const confirm = await screen.findByRole('dialog', {
+      name: /Supprimer « Compter jusqu’à douze »/,
+    })
+    await user.click(within(confirm).getByRole('button', { name: 'Supprimer définitivement' }))
+
+    await waitFor(() => expect(screen.queryByText(created.label)).not.toBeInTheDocument())
+    expect(await db.customObjectives.count()).toBe(0)
+    expect(await db.validations.count()).toBe(1)
+  })
+
+  it('signale un objectif supprimé entre-temps au moment d’enregistrer', async () => {
+    const created = await createCustomObjective({
+      label: 'Compter jusqu’à douze',
+      domainId: 'maths',
+      ageBands: ['from4'],
+      examples: { from4: 'Réciter la comptine.' },
+    })
+
+    const user = userEvent.setup()
+    renderApp({ route: '/programme' })
+    await searchObjective('douze')
+    await screen.findByText(created.label)
+    await openObjective(user, created.label)
+    await user.click(
+      within(await screen.findByRole('dialog')).getByRole('button', {
+        name: 'Modifier l’objectif',
+      }),
+    )
+
+    const form = await screen.findByRole('dialog', { name: 'Modifier l’objectif' })
+    await db.customObjectives.delete(created.id)
+    await user.click(within(form).getByRole('button', { name: 'Enregistrer' }))
+
+    expect(await within(form).findByRole('alert')).toHaveTextContent(
+      'Objectif introuvable.',
+    )
+  })
+
+  it('ne propose ni modification ni suppression sur un objectif officiel', async () => {
+    await db.students.add(makeStudent({ firstName: 'Léa', section: 'MS' }))
+    const user = userEvent.setup()
+    renderApp({ route: '/programme' })
+    await searchObjective('memoriser')
+    await screen.findByText(LANGAGE_1.label)
+    await openObjective(user, LANGAGE_1.label)
+
+    const sheet = await screen.findByRole('dialog')
+    expect(
+      within(sheet).queryByRole('button', { name: 'Modifier l’objectif' }),
+    ).not.toBeInTheDocument()
+    expect(
+      within(sheet).queryByRole('button', { name: 'Supprimer l’objectif' }),
+    ).not.toBeInTheDocument()
   })
 })
