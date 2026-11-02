@@ -11,6 +11,9 @@ import type { CaptureDraft, Objective, Section, ValidationSnapshot } from '@/dom
 import { makeStudent } from '@/test/fixtures'
 import { renderApp } from '@/test/render'
 
+// Le rendu complet de la capture est lourd sous charge parallèle : 15 s par test.
+vi.setConfig({ testTimeout: 15_000 })
+
 /**
  * Le `Blob` de jsdom est perdu par le clone structuré de fake-indexeddb ;
  * celui de Node survit et permet de vérifier les données relues.

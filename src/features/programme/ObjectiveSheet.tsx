@@ -112,9 +112,10 @@ export function ObjectiveSheet({
   return (
     <Sheet open title={objective.label} onClose={onClose}>
       <p className={styles.sheetMeta}>
-        <span className={styles.sheetDomain}>
-          {isCustomObjective(objective) ? 'Objectif ajouté' : domain.longLabel}
-        </span>
+        <span className={styles.sheetDomain}>{domain.longLabel}</span>
+        {isCustomObjective(objective) ? (
+          <span className={styles.sheetLevels}>Objectif ajouté</span>
+        ) : null}
         <span className={styles.sheetLevels}>{levels}</span>
       </p>
 

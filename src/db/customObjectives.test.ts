@@ -82,6 +82,13 @@ describe('createCustomObjective', () => {
       createCustomObjective(input({ label: 'Écrire son prénom', domainId: 'maths' })),
     ).resolves.toBeDefined()
   })
+
+  it('ignore les apostrophes typographiques dans la comparaison', async () => {
+    await createCustomObjective(input({ label: 'L’objectif du jour' }))
+    await expect(
+      createCustomObjective(input({ label: "L'objectif du jour" })),
+    ).rejects.toBeInstanceOf(DuplicateObjectiveError)
+  })
 })
 
 describe('updateCustomObjective', () => {
@@ -156,6 +163,24 @@ describe('deleteCustomObjective', () => {
 
     expect(await db.customObjectives.get(created.id)).toBeUndefined()
     expect(await db.validations.count()).toBe(1)
+  })
+
+  it('libère l’intitulé, qui peut être recréé dans le même domaine', async () => {
+    const created = await createCustomObjective(
+      input({ label: 'Compter jusqu’à douze' }),
+    )
+
+    await deleteCustomObjective(created.id)
+
+    const recreated = await createCustomObjective(
+      input({ label: 'Compter jusqu’à douze' }),
+    )
+
+    expect(recreated.id).not.toBe(created.id)
+    expect(await db.customObjectives.count()).toBe(1)
+    expect((await db.customObjectives.get(recreated.id))?.label).toBe(
+      'Compter jusqu’à douze',
+    )
   })
 })
 

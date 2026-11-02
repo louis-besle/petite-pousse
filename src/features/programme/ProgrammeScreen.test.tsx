@@ -1,4 +1,4 @@
-import { fireEvent, screen, waitFor, within } from '@testing-library/react'
+import { act, fireEvent, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createCustomObjective } from '@/db/customObjectives'
 import { db } from '@/db/db'
@@ -11,6 +11,9 @@ import { schoolYearIdForDate } from '@/domain/schoolYear'
 import { todayIso } from '@/lib/date'
 import { makeSchoolYear, makeStudent } from '@/test/fixtures'
 import { renderApp } from '@/test/render'
+
+// Le rendu complet de Programme est lourd sous charge parallèle : 15 s par test.
+vi.setConfig({ testTimeout: 15_000 })
 
 const LANGAGE_1 = objective('lang-vocabulaire-01')
 const LANGAGE_2 = objective('lang-vocabulaire-02')
@@ -552,6 +555,8 @@ describe('objectifs personnalisés', () => {
     await openObjective(user, created.label)
 
     const sheet = await screen.findByRole('dialog')
+    const mathsDomain = referential.domains.find((domain) => domain.id === 'maths')!
+    expect(within(sheet).getByText(mathsDomain.longLabel)).toBeInTheDocument()
     expect(within(sheet).getByText('Objectif ajouté')).toBeInTheDocument()
     await user.click(within(sheet).getByRole('button', { name: 'Modifier l’objectif' }))
 
@@ -628,7 +633,9 @@ describe('objectifs personnalisés', () => {
     )
 
     const form = await screen.findByRole('dialog', { name: 'Modifier l’objectif' })
-    await db.customObjectives.delete(created.id)
+    await act(async () => {
+      await db.customObjectives.delete(created.id)
+    })
     await user.click(within(form).getByRole('button', { name: 'Enregistrer' }))
 
     expect(await within(form).findByRole('alert')).toHaveTextContent(

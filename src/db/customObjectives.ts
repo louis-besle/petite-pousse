@@ -24,9 +24,11 @@ export interface CustomObjectiveInput {
 
 const OBJECTIVE_NOT_FOUND_ERROR = 'Objectif introuvable.'
 
-/** Clé de comparaison d’un intitulé : casse, accents et espaces répétés ignorés. */
+/** Clé de comparaison d’un intitulé : casse, accents, apostrophes et espaces répétés ignorés. */
 function duplicateKey(value: string): string {
-  return normalizeSearch(value).replace(/\s+/g, ' ')
+  return normalizeSearch(value)
+    .replace(/[’‘]/g, "'")
+    .replace(/\s+/g, ' ')
 }
 
 /** Déduplique les tranches d’âge et les remet dans l’ordre officiel. */
@@ -50,7 +52,9 @@ function cleanInput(input: CustomObjectiveInput): {
     throw new Error('L’intitulé est obligatoire.')
   }
   if (label.length > MAX_OBJECTIVE_LABEL_LENGTH) {
-    throw new Error('L’intitulé ne peut pas dépasser 160 caractères.')
+    throw new Error(
+      `L’intitulé ne peut pas dépasser ${MAX_OBJECTIVE_LABEL_LENGTH} caractères.`,
+    )
   }
 
   const ageBands = normalizeAgeBands(input.ageBands)
@@ -66,7 +70,7 @@ function cleanInput(input: CustomObjectiveInput): {
     }
     if (example.length > MAX_OBJECTIVE_EXAMPLE_LENGTH) {
       throw new Error(
-        `L’exemple en ${sectionForAgeBand(band)} ne peut pas dépasser 200 caractères.`,
+        `L’exemple en ${sectionForAgeBand(band)} ne peut pas dépasser ${MAX_OBJECTIVE_EXAMPLE_LENGTH} caractères.`,
       )
     }
     examples[band] = example
@@ -109,23 +113,28 @@ export async function createCustomObjective(
   input: CustomObjectiveInput,
 ): Promise<CustomObjective> {
   const cleaned = cleanInput(input)
-  await ensureNoDuplicate(cleaned.label, cleaned.domainId)
 
-  const now = new Date().toISOString()
-  const record: CustomObjective = {
-    id: `custom-${crypto.randomUUID()}`,
-    competencyId: 'custom',
-    domainId: cleaned.domainId,
-    label: cleaned.label,
-    ageBands: cleaned.ageBands,
-    examples: cleaned.examples,
-    source: CUSTOM_OBJECTIVE_SOURCE,
-    createdAt: now,
-    updatedAt: now,
-  }
+  return db.transaction('rw', db.customObjectives, async () => {
+    // Contrôle et insertion dans la même transaction : deux onglets ne peuvent
+    // pas enregistrer le même intitulé en même temps.
+    await ensureNoDuplicate(cleaned.label, cleaned.domainId)
 
-  await db.customObjectives.add(record)
-  return record
+    const now = new Date().toISOString()
+    const record: CustomObjective = {
+      id: `custom-${crypto.randomUUID()}`,
+      competencyId: 'custom',
+      domainId: cleaned.domainId,
+      label: cleaned.label,
+      ageBands: cleaned.ageBands,
+      examples: cleaned.examples,
+      source: CUSTOM_OBJECTIVE_SOURCE,
+      createdAt: now,
+      updatedAt: now,
+    }
+
+    await db.customObjectives.add(record)
+    return record
+  })
 }
 
 /**
@@ -155,7 +164,9 @@ export async function updateCustomObjective(
 
 /** Supprime un objectif personnalisé ; les validations ne sont jamais touchées. */
 export async function deleteCustomObjective(id: string): Promise<void> {
-  await db.customObjectives.delete(id)
+  await db.transaction('rw', db.customObjectives, async () => {
+    await db.customObjectives.delete(id)
+  })
 }
 
 /** Objectifs personnalisés, triés par date de création puis par identifiant. */
