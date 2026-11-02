@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createValidation } from '@/db/validations'
 import { AlreadyValidatedError } from '@/domain/errors'
 import { AGE_BAND_LABELS } from '@/features/dossier/labels'
@@ -25,6 +25,8 @@ import styles from './programme.module.css'
 
 const ALREADY_VALIDATED_MESSAGE = 'Cet objectif est déjà validé pour cet élève.'
 const STORAGE_ERROR_MESSAGE = 'La réussite n’a pas pu être enregistrée. Réessaie.'
+/** Clé du bouton de fermeture dans la carte des éléments focalisables. */
+const TERMINER_KEY = 'terminer'
 
 export interface ObjectiveSheetProps {
   objective: Objective
@@ -38,7 +40,10 @@ export interface ObjectiveSheetProps {
 /**
  * Fiche d'un objectif du programme : exemples par tranche d'âge, élèves qui
  * l'ont déjà validé (toutes années confondues, l'index Dexie étant unique par
- * élève et objectif) et validation rapide sans photo.
+ * élève et objectif) et validation rapide sans photo, élève après élève.
+ *
+ * La fiche reste ouverte après chaque validation : la liste des élèves se met
+ * à jour en direct et l'enseignant enchaîne sur les suivants avant de fermer.
  */
 export function ObjectiveSheet({
   objective,
@@ -48,9 +53,23 @@ export function ObjectiveSheet({
   onValidated,
 }: ObjectiveSheetProps) {
   const { showToast } = useToast()
-  const [pickerOpen, setPickerOpen] = useState(false)
   const [sectionFilter, setSectionFilter] = useState<SectionFilter>('all')
   const [busyStudentId, setBusyStudentId] = useState<string>()
+  const [focusTick, setFocusTick] = useState(0)
+
+  // Le bouton d'un élève validé se désactive : sans reprise de focus, le clavier
+  // et les lecteurs d'écran perdraient leur position dans la fiche. La cible est
+  // mémorisée dans une référence et appliquée après le rendu qui réactive les
+  // lignes (`busy` retombé), d'où le compteur qui déclenche l'effet.
+  const rowRefs = useRef(new Map<string, HTMLButtonElement>())
+  const focusRequest = useRef<string | null>(null)
+
+  useEffect(() => {
+    const target = focusRequest.current
+    if (target === null) return
+    focusRequest.current = null
+    rowRefs.current.get(target)?.focus()
+  }, [focusTick])
 
   const domain = domainById(referential, objective.domainId)
   const levels = objective.ageBands
@@ -72,6 +91,22 @@ export function ObjectiveSheet({
 
   const busy = busyStudentId !== undefined
 
+  /** Élève suivant encore à valider, en repartant du début de la liste. */
+  function nextStudentAfter(student: Student): string | undefined {
+    const index = pickerStudents.findIndex((candidate) => candidate.id === student.id)
+    if (index === -1) return undefined
+
+    const ordered = [
+      ...pickerStudents.slice(index + 1),
+      ...pickerStudents.slice(0, index),
+    ]
+
+    return ordered.find(
+      (candidate) =>
+        candidate.id !== student.id && !validatedStudentIds.has(candidate.id),
+    )?.id
+  }
+
   async function handleSelect(student: Student): Promise<void> {
     if (busy) return
 
@@ -90,6 +125,8 @@ export function ObjectiveSheet({
         referentialVersion: REFERENTIAL_VERSION,
       })
       onValidated(student)
+      focusRequest.current = nextStudentAfter(student) ?? TERMINER_KEY
+      setFocusTick((tick) => tick + 1)
     } catch (error) {
       if (error instanceof AlreadyValidatedError) {
         showToast(ALREADY_VALIDATED_MESSAGE)
@@ -150,74 +187,78 @@ export function ObjectiveSheet({
         )}
       </div>
 
-      {pickerOpen ? (
-        <section
-          id="programme-picker"
-          className={styles.picker}
-          aria-label="Choisir un élève"
-        >
-          <p className={styles.pickerTitle}>Choisir un élève</p>
+      <section className={styles.picker} aria-label="Choisir un ou plusieurs élèves">
+        <p className={styles.pickerTitle}>Valider des élèves</p>
 
-          <SectionFilterChips
-            value={sectionFilter}
-            onChange={setSectionFilter}
-            ariaLabel="Filtrer les élèves par section"
-            className={styles.pickerFilters}
-          />
+        <SectionFilterChips
+          value={sectionFilter}
+          onChange={setSectionFilter}
+          ariaLabel="Filtrer les élèves par section"
+          className={styles.pickerFilters}
+        />
 
-          {pickerStudents.length === 0 ? (
-            <p className={styles.pickerEmpty}>Aucun élève dans cette section.</p>
-          ) : (
-            <ul className={styles.pickerList}>
-              {pickerStudents.map((student) => {
-                const alreadyValidated = validatedStudentIds.has(student.id)
+        {pickerStudents.length === 0 ? (
+          <p className={styles.pickerEmpty}>Aucun élève dans cette section.</p>
+        ) : (
+          <ul className={styles.pickerList}>
+            {pickerStudents.map((student) => {
+              const alreadyValidated = validatedStudentIds.has(student.id)
 
-                return (
-                  <li key={student.id}>
-                    <button
-                      type="button"
-                      className={styles.pickerRow}
-                      disabled={alreadyValidated || busy}
-                      aria-label={`${studentFullName(student)}, section ${
-                        student.section
-                      }${alreadyValidated ? ', déjà validé' : ''}`}
-                      onClick={() => {
-                        void handleSelect(student)
-                      }}
-                    >
+              return (
+                <li key={student.id}>
+                  <button
+                    type="button"
+                    className={styles.pickerRow}
+                    ref={(node) => {
+                      if (node === null) rowRefs.current.delete(student.id)
+                      else rowRefs.current.set(student.id, node)
+                    }}
+                    disabled={alreadyValidated || busy}
+                    aria-busy={busyStudentId === student.id || undefined}
+                    onClick={() => {
+                      void handleSelect(student)
+                    }}
+                  >
+                    <span className={uiStyles.srOnly}>
+                      {`${studentFullName(student)}, section ${student.section}${
+                        alreadyValidated ? ', déjà validé' : ''
+                      }`}
+                    </span>
+                    {/* Le contenu visible est décoratif : le nom accessible est
+                        porté une seule fois par la ligne ci-dessus. */}
+                    <span className={styles.pickerAvatar} aria-hidden="true">
                       <Avatar
                         name={student.firstName}
                         section={student.section}
                         size="sm"
                       />
-                      <span className={styles.pickerName}>{student.firstName}</span>
-                      <span className={styles.pickerStatus}>
-                        {alreadyValidated ? 'déjà validé' : 'Valider'}
-                      </span>
-                      {alreadyValidated ? null : <Icon name="plus" size={16} />}
-                    </button>
-                  </li>
-                )
-              })}
-            </ul>
-          )}
-        </section>
-      ) : null}
+                    </span>
+                    <span className={styles.pickerName} aria-hidden="true">
+                      {student.firstName}
+                    </span>
+                    <span className={styles.pickerStatus} aria-hidden="true">
+                      {alreadyValidated ? 'déjà validé' : 'Valider'}
+                    </span>
+                    {alreadyValidated ? null : <Icon name="plus" size={16} />}
+                  </button>
+                </li>
+              )
+            })}
+          </ul>
+        )}
+      </section>
 
       <SheetActions>
         <Button
-          variant="dark"
+          ref={(node) => {
+            if (node === null) rowRefs.current.delete(TERMINER_KEY)
+            else rowRefs.current.set(TERMINER_KEY, node)
+          }}
+          variant="ghost"
           fullWidth
-          disabled={busy}
-          aria-expanded={pickerOpen}
-          aria-controls={pickerOpen ? 'programme-picker' : undefined}
-          onClick={() => setPickerOpen((previous) => !previous)}
+          onClick={onClose}
         >
-          <Icon name="plus" size={18} />
-          Valider pour un élève
-        </Button>
-        <Button variant="ghost" fullWidth onClick={onClose}>
-          Fermer
+          Terminer
         </Button>
       </SheetActions>
     </Sheet>

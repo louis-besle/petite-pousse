@@ -104,8 +104,8 @@ L’onglet **Programme** donne accès au référentiel embarqué : **407 objecti
 
 1. Touchez un objectif pour ouvrir sa fiche : domaine complet, niveaux et **exemples de réussite** par tranche d’âge (« Avant 4 ans », « À partir de 4 ans », « À partir de 5 ans »).
 2. La fiche indique les élèves qui ont déjà validé l’objectif, ou « Aucun élève n’a encore validé cet objectif. ».
-3. Touchez **Valider pour un élève**, filtrez éventuellement par section, puis touchez **Valider** sur la ligne de l’élève. Une ligne déjà validée affiche **déjà validé** et reste inactive.
-4. La validation rapide enregistre la réussite **sans photo**, à la date du jour, et affiche « Réussite ajoutée à Léa. » ; la photo pourra être ajoutée depuis le dossier. Touchez **Fermer** pour revenir au programme.
+3. La fiche liste directement les élèves : filtrez éventuellement par section, puis touchez **Valider** sur la ligne de l’élève. La fiche reste ouverte après chaque validation : la ligne passe à **déjà validé**, les compteurs se mettent à jour et vous pouvez enchaîner sur les élèves suivants.
+4. La validation rapide enregistre la réussite **sans photo**, à la date du jour, et affiche « Réussite ajoutée à Léa. » ; la photo pourra être ajoutée depuis le dossier. Touchez **Terminer** pour revenir au programme.
 
 Les compteurs suivent l’année sélectionnée. Les objectifs déjà validés le restent indépendamment de l’année affichée.
 

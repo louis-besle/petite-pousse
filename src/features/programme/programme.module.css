@@ -351,6 +351,11 @@
   cursor: not-allowed;
 }
 
+.pickerAvatar {
+  display: flex;
+  flex: none;
+}
+
 .pickerName {
   min-width: 0;
   flex: 1;

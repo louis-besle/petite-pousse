@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, ReactNode } from 'react'
+import type { ButtonHTMLAttributes, ReactNode, Ref } from 'react'
 import styles from './Button.module.css'
 
 export type ButtonVariant = 'primary' | 'ghost' | 'danger' | 'dark'
@@ -13,6 +13,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant
   fullWidth?: boolean
   children?: ReactNode
+  ref?: Ref<HTMLButtonElement>
 }
 
 export function Button({
@@ -21,11 +22,13 @@ export function Button({
   className,
   type = 'button',
   children,
+  ref,
   ...rest
 }: ButtonProps) {
   return (
     <button
       {...rest}
+      ref={ref}
       type={type}
       data-variant={variant}
       className={[styles.button, fullWidth ? styles.fullWidth : '', className]

@@ -194,9 +194,8 @@ export function ProgrammeScreen() {
     })
   }
 
-  /** La fiche est fermée par la validation rapide ; le compteur doit suivre. */
+  /** La fiche reste ouverte : on peut valider plusieurs élèves d'affilée. */
   function handleValidated(student: Student): void {
-    setSelectedObjectiveId(undefined)
     showToast(`Réussite ajoutée à ${student.firstName}.`)
 
     // `ensureSeed` ne fait jamais avancer `settings.currentSchoolYearId` : la
