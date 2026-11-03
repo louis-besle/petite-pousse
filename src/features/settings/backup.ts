@@ -16,6 +16,7 @@ import { schoolYearIdForDate } from '@/domain/schoolYear'
 import { isCalendarDate } from '@/lib/date'
 import {
   SECTIONS,
+  type CustomObjective,
   type Photo,
   type SchoolYear,
   type Settings,
@@ -23,8 +24,12 @@ import {
   type Validation,
 } from '@/domain/types'
 
-/** Version du format `data.json` produit par cette version de l'application. */
-const BACKUP_SCHEMA_VERSION = 1
+/**
+ * Version du format `data.json` produite par cette version de l'application.
+ * La lecture accepte encore les archives v1, qui ne contiennent pas d'objectifs
+ * personnalisés.
+ */
+const BACKUP_SCHEMA_VERSION = 2
 
 /** Un rappel apparaît aussi après ce nombre de nouvelles réussites. */
 const REMIND_AFTER_NEW_VALIDATIONS = 50
@@ -155,6 +160,7 @@ export interface BackupData {
   students: Student[]
   validations: Validation[]
   photos: BackupPhotoMetadata[]
+  customObjectives: CustomObjective[]
 }
 
 /** Octets d'une photo et de sa vignette, relus depuis le ZIP. */
@@ -241,6 +247,9 @@ const schoolYearSchema = z.object({
   period2End: z.string().min(1),
 })
 
+const ageBandSchema = z.enum(AGE_BANDS)
+const domainIdSchema = z.enum(DOMAIN_IDS)
+
 const studentSchema = z.object({
   id: z.string().min(1),
   firstName: z.string().min(1),
@@ -251,9 +260,9 @@ const studentSchema = z.object({
 
 const validationSnapshotSchema = z.object({
   objectiveLabel: z.string().min(1),
-  domainId: z.enum(DOMAIN_IDS),
+  domainId: domainIdSchema,
   domainLabel: z.string().min(1),
-  ageBand: z.enum(AGE_BANDS),
+  ageBand: ageBandSchema,
   example: z.string().optional(),
   referentialVersion: z.string().min(1),
 })
@@ -292,6 +301,18 @@ const settingsSchema = z.object({
   schemaVersion: z.number().int(),
 })
 
+const customObjectiveSchema = z.object({
+  id: z.string().startsWith('custom-'),
+  competencyId: z.literal('custom'),
+  domainId: domainIdSchema,
+  label: z.string().min(1).max(160),
+  ageBands: z.array(ageBandSchema).min(1),
+  examples: z.partialRecord(ageBandSchema, z.string().min(1).max(200)),
+  source: z.object({ bo: z.string().min(1) }),
+  createdAt: z.string().min(1),
+  updatedAt: z.string().min(1),
+})
+
 const backupDataSchema = z.object({
   schemaVersion: z.number().int(),
   exportedAt: z.string().min(1),
@@ -300,6 +321,7 @@ const backupDataSchema = z.object({
   students: z.array(studentSchema),
   validations: z.array(validationSchema),
   photos: z.array(photoMetadataSchema),
+  customObjectives: z.array(customObjectiveSchema).default([]),
 })
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -567,6 +589,10 @@ function assertBackupIntegrity(data: BackupData): void {
     data.photos.map((photo) => photo.id),
     'photos',
   )
+  assertUniqueIds(
+    data.customObjectives.map((objective) => objective.id),
+    'objectifs ajoutés',
+  )
 
   const yearIds = new Set(data.schoolYears.map((year) => year.id))
   const studentIds = new Set(data.students.map((student) => student.id))
@@ -671,6 +697,19 @@ function assertBackupIntegrity(data: BackupData): void {
         `La sauvegarde est invalide : la date de création de la photo ` +
           `« ${photo.id} » est invalide.`,
       )
+    }
+  }
+
+  // Un objectif ajouté est inutilisable sans exemple pour chaque niveau qu’il
+  // déclare : la saisie de réussite s’appuie dessus.
+  for (const objective of data.customObjectives) {
+    for (const band of objective.ageBands) {
+      if (objective.examples[band] === undefined) {
+        throw new BackupReadError(
+          `La sauvegarde est invalide : l’objectif ajouté « ${objective.id} » ` +
+            `n’a pas d’exemple pour « ${band} ».`,
+        )
+      }
     }
   }
 }
@@ -848,14 +887,21 @@ export async function exportBackup(
     )
   }
 
-  const [settings, schoolYears, students, validations, photoRows] =
-    await Promise.all([
-      db.settings.get(SETTINGS_ID),
-      db.schoolYears.toArray(),
-      db.students.toArray(),
-      db.validations.toArray(),
-      db.photos.toArray(),
-    ])
+  const [
+    settings,
+    schoolYears,
+    students,
+    validations,
+    photoRows,
+    customObjectives,
+  ] = await Promise.all([
+    db.settings.get(SETTINGS_ID),
+    db.schoolYears.toArray(),
+    db.students.toArray(),
+    db.validations.toArray(),
+    db.photos.toArray(),
+    db.customObjectives.toArray(),
+  ])
 
   if (!settings) {
     throw new Error(
@@ -890,6 +936,7 @@ export async function exportBackup(
     students,
     validations,
     photos: photoMetadata,
+    customObjectives,
   }
 
   const totalFiles = 2 + (encrypting ? 1 : 0) + photoRows.length * 2
@@ -1049,7 +1096,9 @@ export async function readBackup(
   if (rawData.schemaVersion > BACKUP_SCHEMA_VERSION) {
     throw new BackupReadError(SCHEMA_TOO_RECENT)
   }
-  if (rawData.schemaVersion < BACKUP_SCHEMA_VERSION) {
+  // Les archives v1 restent lisibles : leur `data.json` n’a simplement pas de
+  // champ `customObjectives`, que le schéma complète avec un tableau vide.
+  if (rawData.schemaVersion < 1) {
     throw new BackupReadError(SCHEMA_TOO_OLD)
   }
 
@@ -1164,6 +1213,7 @@ export async function restoreBackup(
       db.validations,
       db.photos,
       db.drafts,
+      db.customObjectives,
     ],
     async () => {
       await db.settings.clear()
@@ -1172,6 +1222,7 @@ export async function restoreBackup(
       await db.validations.clear()
       await db.photos.clear()
       await db.drafts.clear()
+      await db.customObjectives.clear()
       report(0.15)
 
       await db.settings.put({ ...data.settings, id: SETTINGS_ID })
@@ -1191,6 +1242,13 @@ export async function restoreBackup(
         await db.validations.bulkPut(data.validations)
       }
       report(0.7)
+
+      // Une archive v1 n’a pas d’objectifs ajoutés : la table vient d’être
+      // vidée et le reste, ce qui évite de ressusciter d’anciens objectifs.
+      if (data.customObjectives.length > 0) {
+        await db.customObjectives.bulkPut(data.customObjectives)
+      }
+      report(0.75)
 
       const photoRecords: Photo[] = data.photos.map((metadata) => {
         const files = filesById.get(metadata.id)
