@@ -30,7 +30,7 @@ test.describe('programme', () => {
     await expect(scander).toBeVisible()
   })
 
-  test('valider pour un élève met à jour le compteur et désactive les élèves déjà validés', async ({
+  test('valider plusieurs élèves d’affilée met à jour le compteur et désactive les élèves déjà validés', async ({
     page,
   }) => {
     await addStudent(page, 'Noah', 'MS')
@@ -53,38 +53,32 @@ test.describe('programme', () => {
       sheet.getByText(/Aucun élève n.a encore validé cet objectif/),
     ).toBeVisible()
 
-    await sheet.getByRole('button', { name: 'Valider pour un élève' }).click()
+    const rowItem = page.getByRole('listitem').filter({ has: objectiveRow })
+    const progress = rowItem.getByRole('progressbar')
+
     await sheet.getByRole('button', { name: 'Noah, section MS', exact: true }).click()
 
     await expect(page.getByText('Réussite ajoutée à Noah.')).toBeVisible()
-    await expect(sheet).toBeHidden()
-
-    // Le compteur de la ligne suit la validation (1 élève sur 2 en MS).
-    const rowItem = page.getByRole('listitem').filter({ has: objectiveRow })
-    await expect(rowItem.getByText('1 élève', { exact: true })).toBeVisible()
-    const progress = rowItem.getByRole('progressbar')
-    await expect(progress).toHaveAttribute('aria-valuenow', '1')
-    await expect(progress).toHaveAttribute('aria-valuemax', '2')
-
-    // Réouverture : Noah figure dans les élèves ayant validé et reste désactivé.
-    await objectiveRow.click()
+    // La fiche reste ouverte : on enchaîne sur Mila.
     await expect(sheet).toBeVisible()
     await expect(sheet.getByText('Déjà validé par 1 élève')).toBeVisible()
     await expect(
-      sheet.getByRole('list', { name: 'Élèves ayant validé cet objectif' }),
-    ).toContainText('Noah')
-
-    await sheet.getByRole('button', { name: 'Valider pour un élève' }).click()
-    await expect(
       sheet.getByRole('button', { name: 'Noah, section MS, déjà validé', exact: true }),
     ).toBeDisabled()
-    const mila = sheet.getByRole('button', { name: 'Mila, section MS', exact: true })
-    await expect(mila).toBeEnabled()
+    await expect(rowItem.getByText('1 élève', { exact: true })).toBeVisible()
+    await expect(progress).toHaveAttribute('aria-valuenow', '1')
+    await expect(progress).toHaveAttribute('aria-valuemax', '2')
 
-    await mila.click()
+    await sheet.getByRole('button', { name: 'Mila, section MS', exact: true }).click()
+
     await expect(page.getByText('Réussite ajoutée à Mila.')).toBeVisible()
+    await expect(sheet).toBeVisible()
+    await expect(sheet.getByText('Déjà validé par 2 élèves')).toBeVisible()
 
     await expect(rowItem.getByText('2 élèves', { exact: true })).toBeVisible()
     await expect(progress).toHaveAttribute('aria-valuenow', '2')
+
+    await sheet.getByRole('button', { name: 'Terminer' }).click()
+    await expect(sheet).toBeHidden()
   })
 })

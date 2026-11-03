@@ -16,6 +16,10 @@ applique le [versionnage sémantique](https://semver.org/lang/fr/).
 
 ### Modifié
 
+- **Programme** : la fiche d’un objectif permet de valider plusieurs élèves
+  d’affilée. Elle reste ouverte après chaque validation, la ligne de l’élève
+  passe à « déjà validé », les compteurs se mettent à jour en direct et le focus
+  suit l’élève suivant ; **Terminer** referme la fiche.
 - **README** actualisé : état de la version, fonctionnalités, commandes de
   vérification, accessibilité, limites connues et licence.
 - **Navigation** : trois onglets **Classe / Programme / Bilans**. Le profil, les
