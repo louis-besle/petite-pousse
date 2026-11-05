@@ -58,7 +58,8 @@ applique le [versionnage sémantique](https://semver.org/lang/fr/).
   restent actives au retour depuis l'aperçu d'un élève, y compris avec le bouton
   Retour du navigateur.
 - **Accessibilité** : contraste de la barre de navigation stabilisé pendant les
-  changements de route.
+  changements de route, et le conteneur principal ne dessine plus d'anneau de
+  focus après une navigation au clavier.
 
 ### Tests
 
