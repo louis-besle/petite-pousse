@@ -1,4 +1,4 @@
-import { fireEvent, screen, waitFor, within } from '@testing-library/react'
+import { act, fireEvent, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { db } from '@/db/db'
 import { ensureSeed } from '@/db/seed'
@@ -130,6 +130,79 @@ describe('BilansScreen', () => {
       'href',
       `/bilans/${lea.id}?period=2&year=2026-2027`,
     )
+  })
+
+  it('restaure la période et l’année depuis l’URL', async () => {
+    await setUpYear()
+    const lea = await addStudent('Léa')
+    await addValidation(lea.id, 'lang-vocabulaire-02', '2027-02-01')
+
+    renderApp({ route: '/bilans?period=2&year=2026-2027' })
+
+    await screen.findByRole('button', { name: /^Bilan 2/ })
+    expect(periodCard(2)).toHaveAttribute('aria-pressed', 'true')
+    expect(periodCard(1)).toHaveAttribute('aria-pressed', 'false')
+    expect(studentRow('Léa')).toHaveAttribute(
+      'href',
+      `/bilans/${lea.id}?period=2&year=2026-2027`,
+    )
+  })
+
+  it('conserve le bilan 2 après le retour depuis un aperçu', async () => {
+    await setUpYear()
+    const lea = await addStudent('Léa')
+    const user = userEvent.setup()
+
+    renderApp({ route: '/bilans' })
+    await screen.findByRole('button', { name: /^Bilan 2/ })
+
+    await user.click(periodCard(2))
+    await waitFor(() =>
+      expect(periodCard(2)).toHaveAttribute('aria-pressed', 'true'),
+    )
+    await user.click(studentRow('Léa'))
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Bilan de Léa' }),
+    ).toBeInTheDocument()
+
+    await user.click(screen.getByRole('link', { name: 'Retour aux bilans' }))
+
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Bilans' }),
+    ).toBeInTheDocument()
+    await screen.findByRole('button', { name: /^Bilan 2/ })
+    expect(periodCard(2)).toHaveAttribute('aria-pressed', 'true')
+    expect(studentRow('Léa')).toHaveAttribute(
+      'href',
+      `/bilans/${lea.id}?period=2&year=2026-2027`,
+    )
+  })
+
+  it('conserve le bilan 2 avec le retour arrière du navigateur', async () => {
+    await setUpYear()
+    await addStudent('Léa')
+    const user = userEvent.setup()
+
+    const { router } = renderApp({ route: '/bilans' })
+    await screen.findByRole('button', { name: /^Bilan 2/ })
+
+    await user.click(periodCard(2))
+    await waitFor(() =>
+      expect(periodCard(2)).toHaveAttribute('aria-pressed', 'true'),
+    )
+    await user.click(studentRow('Léa'))
+    await screen.findByRole('heading', { level: 1, name: 'Bilan de Léa' })
+
+    await act(async () => {
+      await router.navigate(-1)
+    })
+
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Bilans' }),
+    ).toBeInTheDocument()
+    await screen.findByRole('button', { name: /^Bilan 2/ })
+    expect(periodCard(2)).toHaveAttribute('aria-pressed', 'true')
+    expect(router.state.location.search).toBe('?period=2&year=2026-2027')
   })
 
   it('choisit l’année de la date du jour quand les réglages sont en avance', async () => {

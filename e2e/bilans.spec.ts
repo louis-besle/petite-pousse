@@ -158,6 +158,59 @@ test.describe('bilans', () => {
     },
   )
 
+  test('conserve le bilan 2 au retour depuis un aperçu', async ({ page }) => {
+    // Même horloge figée : la période par défaut est le bilan 1.
+    await page.clock.setFixedTime(new Date('2026-11-07T10:00:00'))
+
+    await addStudent(page, 'Léa', 'MS')
+    await openClass(page)
+
+    const students = await readDb(page, 'students')
+    expect(students).toHaveLength(1)
+    const studentId = String(students[0]?.id)
+
+    await seedValidation(page, {
+      studentId,
+      objectiveId: 'lang-vocabulaire-02',
+      date: '2027-02-01',
+    })
+
+    await gotoRoute(page, '/bilans')
+    const period1 = page.getByRole('button', { name: /^Bilan 1/ })
+    const period2 = page.getByRole('button', { name: /^Bilan 2/ })
+    await expect(period1).toHaveAttribute('aria-pressed', 'true')
+
+    // La sélection est écrite dans l'URL, donc partageable et restaurable.
+    await period2.click()
+    await expect(period2).toHaveAttribute('aria-pressed', 'true')
+    await expect(page).toHaveURL(/#\/bilans\?period=2&year=2026-2027$/)
+
+    const row = page.getByRole('link', {
+      name: /^Léa, section MS, 1 réussite pour le bilan 2/,
+    })
+    await row.click()
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Bilan de Léa', exact: true }),
+    ).toBeVisible()
+    await expect(
+      page.getByRole('article', { name: 'Aperçu de la feuille A4 de Léa' }),
+    ).toContainText('Bilan 2 · 2026-2027')
+
+    // Retour par le lien de l'écran : la période reste le bilan 2.
+    await page.getByRole('link', { name: 'Retour aux bilans' }).click()
+    await expect(period2).toHaveAttribute('aria-pressed', 'true')
+    await expect(page).toHaveURL(/#\/bilans\?period=2&year=2026-2027$/)
+
+    // Retour par l'historique du navigateur : même sélection.
+    await row.click()
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Bilan de Léa', exact: true }),
+    ).toBeVisible()
+    await page.goBack()
+    await expect(period2).toHaveAttribute('aria-pressed', 'true')
+    await expect(page).toHaveURL(/#\/bilans\?period=2&year=2026-2027$/)
+  })
+
   test('génère le lot de bilans de la classe en un ZIP', async ({ page }) => {
     test.setTimeout(180_000)
 
