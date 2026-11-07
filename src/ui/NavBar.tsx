@@ -10,13 +10,12 @@ interface NavItem {
 }
 
 const ITEMS: NavItem[] = [
-  { to: '/', label: 'Élèves', icon: 'users', end: true },
+  { to: '/', label: 'Classe', icon: 'users', end: true },
   { to: '/programme', label: 'Programme', icon: 'grid' },
   { to: '/bilans', label: 'Bilans', icon: 'file' },
-  { to: '/settings', label: 'Profil', icon: 'user' },
 ]
 
-/** Navigation basse : Élèves / Programme / Bilans / Profil, actif en encre. */
+/** Navigation basse : Classe / Programme / Bilans, actif en encre. */
 export function NavBar() {
   return (
     <nav className={styles.nav} aria-label="Navigation principale">

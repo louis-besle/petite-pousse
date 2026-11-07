@@ -7,5 +7,5 @@ it('affiche l’écran classe et la navigation sur la racine', () => {
   expect(screen.getByRole('heading', { level: 1, name: 'Bonjour, Maîtresse' })).toBeInTheDocument()
 
   const nav = screen.getByRole('navigation', { name: 'Navigation principale' })
-  expect(within(nav).getByRole('link', { name: 'Élèves' })).toBeInTheDocument()
+  expect(within(nav).getByRole('link', { name: 'Classe' })).toBeInTheDocument()
 })
