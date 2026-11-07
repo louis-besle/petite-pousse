@@ -38,7 +38,7 @@ test.describe('sauvegardes', () => {
 
     await gotoRoute(page, '/settings')
     await expect(
-      page.getByRole('heading', { level: 1, name: 'Réglages', exact: true }),
+      page.getByRole('heading', { level: 1, name: 'Profil', exact: true }),
     ).toBeVisible()
     await dismissPrivacy(page)
 

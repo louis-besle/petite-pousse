@@ -19,6 +19,7 @@ function renderShell(path: string) {
         <Route element={<AppShell />}>
           <Route path="/" element={<p>Ma classe</p>} />
           <Route path="/programme" element={<p>Les six domaines</p>} />
+          <Route path="/settings" element={<p>Mon profil</p>} />
           <Route path="/capture/*" element={<p>Capture en cours</p>} />
           <Route path="/success/:validationId" element={<p>C’est noté</p>} />
         </Route>
@@ -28,7 +29,7 @@ function renderShell(path: string) {
 }
 
 describe('NavBar', () => {
-  it('expose les trois destinations de l’application', () => {
+  it('expose les quatre destinations de l’application', () => {
     renderNav('/')
 
     const nav = screen.getByRole('navigation', { name: 'Navigation principale' })
@@ -38,6 +39,10 @@ describe('NavBar', () => {
       '/programme',
     )
     expect(within(nav).getByRole('link', { name: 'Bilans' })).toHaveAttribute('href', '/bilans')
+    expect(within(nav).getByRole('link', { name: 'Profil' })).toHaveAttribute(
+      'href',
+      '/settings',
+    )
   })
 
   it('marque le lien actif avec aria-current="page" sur /programme', () => {
@@ -49,6 +54,16 @@ describe('NavBar', () => {
     )
     expect(screen.getByRole('link', { name: 'Élèves' })).not.toHaveAttribute('aria-current')
     expect(screen.getByRole('link', { name: 'Bilans' })).not.toHaveAttribute('aria-current')
+    expect(screen.getByRole('link', { name: 'Profil' })).not.toHaveAttribute('aria-current')
+  })
+
+  it('marque Profil comme actif sur /settings', () => {
+    renderNav('/settings')
+
+    expect(screen.getByRole('link', { name: 'Profil' })).toHaveAttribute(
+      'aria-current',
+      'page',
+    )
   })
 
   it('marque Élèves comme actif sur la racine', () => {
@@ -64,6 +79,12 @@ describe('AppShell', () => {
     renderShell('/programme')
 
     expect(document.title).toBe('Programme · Petite pousse')
+  })
+
+  it('nomme l’onglet de profil dans le titre de page', () => {
+    renderShell('/settings')
+
+    expect(document.title).toBe('Profil · Petite pousse')
   })
 
   it('place le focus sur le contenu après un changement de route', async () => {

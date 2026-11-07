@@ -82,9 +82,12 @@ export function ClassScreen() {
         <div className={styles.brandline}>
           <FlowerMark size={19} />
           <span className={styles.brandWord}>Petite pousse</span>
-          <Link to="/settings" className={styles.teacherLink}>
-            <span>{teacherInitial}</span>
-            <span className={styles.srOnly}>Ouvrir les réglages</span>
+          <Link
+            to="/settings"
+            className={styles.teacherLink}
+            aria-label="Ouvrir le profil"
+          >
+            <span aria-hidden="true">{teacherInitial}</span>
           </Link>
         </div>
 
@@ -108,7 +111,7 @@ export function ClassScreen() {
           <Icon name="download" size={16} />
           <span>
             <strong>Sauvegarde conseillée.</strong> Pense à exporter tes données
-            depuis les réglages.
+            depuis ton profil.
           </span>
         </Link>
       ) : null}
@@ -174,13 +177,6 @@ export function ClassScreen() {
             </ul>
           )}
 
-          <Link to="/students" className={styles.manageLink}>
-            <Icon name="pencil" size={14} />
-            Gérer les élèves
-          </Link>
-          <Link to="/settings" className={styles.settingsLink}>
-            Réglages
-          </Link>
         </>
       )}
 

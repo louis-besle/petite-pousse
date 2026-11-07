@@ -32,7 +32,7 @@
 | Programme | `/programme` |
 | Bilans | `/bilans` |
 | Aperçu du bilan A4 | `/bilans/:studentId?period=1&year=2026-2027` |
-| Réglages | `/settings` |
+| Profil | `/settings` |
 | Succès | `/success/:validationId` |
 | Page introuvable | `/inconnu` |
 
