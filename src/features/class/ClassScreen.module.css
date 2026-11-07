@@ -310,55 +310,6 @@
 }
 
 /* ------------------------------------------------------------------ */
-/* Lien de gestion                                                     */
-/* ------------------------------------------------------------------ */
-
-.manageLink {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  align-self: center;
-  gap: 6px;
-  min-height: var(--tap-target);
-  padding: 0 12px;
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 800;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.manageLink:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: 2px;
-  border-radius: var(--radius-sm);
-}
-
-/* Second accès aux réglages, sous « Gérer les élèves ». */
-.settingsLink {
-  display: inline-flex;
-  align-items: center;
-  align-self: center;
-  justify-content: center;
-  min-height: var(--tap-target);
-  margin-top: -8px;
-  padding: 0 12px;
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 800;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.settingsLink:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: 2px;
-  border-radius: var(--radius-sm);
-}
-
-/* ------------------------------------------------------------------ */
 /* Appel à l'action fixe, au-dessus de la navigation basse            */
 /* ------------------------------------------------------------------ */
 

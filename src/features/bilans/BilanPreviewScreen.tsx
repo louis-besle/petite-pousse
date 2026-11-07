@@ -37,6 +37,16 @@ function parsePeriod(value: string | null): 1 | 2 {
 }
 
 /**
+ * Retour aux bilans en conservant la sélection. L'année est omise tant que la
+ * liste des années n'est pas chargée ; la période, elle, est toujours connue.
+ */
+function bilansPath(period: 1 | 2, yearId: string | undefined): string {
+  const params = new URLSearchParams({ period: String(period) })
+  if (yearId !== undefined) params.set('year', yearId)
+  return `/bilans?${params.toString()}`
+}
+
+/**
  * Aperçu A4 d'un élève et génération du PDF réel.
  *
  * L'élève vient du chemin, la période et l'année des paramètres de requête.
@@ -76,6 +86,7 @@ export function BilanPreviewScreen() {
         candidate !== null && candidate !== undefined && knownYearIds.includes(candidate),
     ) ?? knownYearIds[0]
   const year = years.find((candidate) => candidate.id === selectedYearId)
+  const backTo = bilansPath(period, selectedYearId ?? requestedYearId ?? undefined)
 
   const validations = useValidationsForYear(selectedYearId ?? '')
 
@@ -110,7 +121,7 @@ export function BilanPreviewScreen() {
     return (
       <section className={styles.screen}>
         <div className={styles.topBar}>
-          <Link to="/bilans" className={styles.backLink} aria-label="Retour aux bilans">
+          <Link to={backTo} className={styles.backLink} aria-label="Retour aux bilans">
             <Icon name="back" size={18} />
           </Link>
           <h1 className={styles.title}>Bilan</h1>
@@ -128,7 +139,7 @@ export function BilanPreviewScreen() {
     return (
       <section className={styles.screen}>
         <div className={styles.topBar}>
-          <Link to="/bilans" className={styles.backLink} aria-label="Retour aux bilans">
+          <Link to={backTo} className={styles.backLink} aria-label="Retour aux bilans">
             <Icon name="back" size={18} />
           </Link>
           <h1 className={styles.title}>Élève introuvable</h1>
@@ -136,7 +147,7 @@ export function BilanPreviewScreen() {
         <p className={styles.emptyText}>
           Ce dossier n’existe plus ou n’a pas pu être chargé.
         </p>
-        <Link to="/bilans" className={styles.inlineLink}>
+        <Link to={backTo} className={styles.inlineLink}>
           Retour aux bilans
         </Link>
       </section>
@@ -147,7 +158,7 @@ export function BilanPreviewScreen() {
     return (
       <section className={styles.screen}>
         <div className={styles.topBar}>
-          <Link to="/bilans" className={styles.backLink} aria-label="Retour aux bilans">
+          <Link to={backTo} className={styles.backLink} aria-label="Retour aux bilans">
             <Icon name="back" size={18} />
           </Link>
           <h1 className={styles.title}>Bilan indisponible</h1>
@@ -155,7 +166,7 @@ export function BilanPreviewScreen() {
         <p className={styles.emptyText}>
           Aucune année scolaire n’est enregistrée pour préparer ce bilan.
         </p>
-        <Link to="/bilans" className={styles.inlineLink}>
+        <Link to={backTo} className={styles.inlineLink}>
           Retour aux bilans
         </Link>
       </section>
@@ -217,7 +228,7 @@ export function BilanPreviewScreen() {
   return (
     <section className={styles.screen}>
       <div className={styles.topBar}>
-        <Link to="/bilans" className={styles.backLink} aria-label="Retour aux bilans">
+        <Link to={backTo} className={styles.backLink} aria-label="Retour aux bilans">
           <Icon name="back" size={18} />
         </Link>
         <h1 className={styles.title}>Bilan de {bilanStudent.firstName}</h1>

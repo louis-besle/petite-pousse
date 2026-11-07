@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { db } from '@/db/db'
 import { useSchoolYears } from '@/db/schoolYears'
 import { useSettings } from '@/db/settings'
@@ -38,6 +38,13 @@ function successLabel(count: number): string {
 /** « 1 élève », « 2 élèves ». */
 function studentCountLabel(count: number): string {
   return `${count} élève${count > 1 ? 's' : ''}`
+}
+
+/** Période lue dans l'URL : seules les valeurs 1 et 2 sont acceptées. */
+function parsePeriod(value: string | null): 1 | 2 | undefined {
+  if (value === '1') return 1
+  if (value === '2') return 2
+  return undefined
 }
 
 /**
@@ -125,9 +132,8 @@ export function BilansScreen() {
   const schoolYears = useSchoolYears()
   const students = useStudents()
   const { showToast } = useToast()
+  const [searchParams, setSearchParams] = useSearchParams()
 
-  const [yearChoice, setYearChoice] = useState<string>()
-  const [periodChoice, setPeriodChoice] = useState<1 | 2>()
   const [editingCutover, setEditingCutover] = useState(false)
   const [batchBusy, setBatchBusy] = useState(false)
   const [batchProgress, setBatchProgress] = useState<BatchProgress | null>(null)
@@ -143,9 +149,11 @@ export function BilansScreen() {
   const yearIds = years.map((year) => year.id)
   yearIds.sort((a, b) => b.localeCompare(a))
 
+  // L'année et la période vivent dans l'URL : revenir depuis un bilan, par le
+  // lien de retour ou par l'historique du navigateur, restaure la sélection.
   // Si l'année des réglages n'existe plus dans la base, on retombe sur l'année
   // connue la plus récente au lieu de rester bloqué sur le chargement.
-  const requestedYear = yearChoice ?? currentYearId
+  const requestedYear = searchParams.get('year') ?? currentYearId
   const selectedYearId =
     requestedYear !== undefined && yearIds.includes(requestedYear)
       ? requestedYear
@@ -192,7 +200,7 @@ export function BilansScreen() {
   })
 
   const defaultPeriod = periodForDate(today, year) ?? 1
-  const selectedPeriod = periodChoice ?? defaultPeriod
+  const selectedPeriod = parsePeriod(searchParams.get('period')) ?? defaultPeriod
   const selectedRange = periodRange(year, selectedPeriod)
 
   // Compteurs de la période sélectionnée, regroupés en une seule passe.
@@ -205,9 +213,25 @@ export function BilansScreen() {
   }
 
   function handleYearChange(nextYearId: string): void {
-    setYearChoice(nextYearId)
-    // La période par défaut appartient à l'année : on la recalcule.
-    setPeriodChoice(undefined)
+    const nextParams = new URLSearchParams(searchParams)
+    nextParams.set('year', nextYearId)
+    // La période par défaut appartient à l'année : on la laisse recalculer.
+    nextParams.delete('period')
+    setSearchParams(nextParams)
+  }
+
+  function handlePeriodChange(nextPeriod: 1 | 2): void {
+    if (
+      searchParams.get('period') === String(nextPeriod) &&
+      searchParams.get('year') === batchYear.id
+    ) {
+      return
+    }
+
+    const nextParams = new URLSearchParams(searchParams)
+    nextParams.set('period', String(nextPeriod))
+    nextParams.set('year', batchYear.id)
+    setSearchParams(nextParams)
   }
 
   /**
@@ -294,7 +318,7 @@ export function BilansScreen() {
                   className={styles.periodCard}
                   aria-pressed={selected}
                   disabled={batchBusy}
-                  onClick={() => setPeriodChoice(item.period)}
+                  onClick={() => handlePeriodChange(item.period)}
                 >
                   <span className={styles.periodMarker} aria-hidden="true">
                     {selected ? <Icon name="check" size={14} /> : null}

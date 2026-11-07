@@ -251,7 +251,7 @@ guillemets sont les textes attendus dans l’interface.
 
 ### Étape 11 — Export de sauvegarde
 
-- **Action :** ouvrir « Réglages », activer « Exporter une sauvegarde ».
+- **Action :** ouvrir « Profil », activer « Exporter une sauvegarde ».
   Variante : cocher « Protéger par un mot de passe », saisir un mot de passe de
   8 caractères minimum et sa confirmation, puis exporter.
 - **Attendu :** le bouton est annoncé avec son état (désactivé pendant

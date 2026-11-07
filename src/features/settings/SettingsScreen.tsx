@@ -1,4 +1,5 @@
 import { useId, useState, type FormEvent } from 'react'
+import { Link } from 'react-router-dom'
 import { PeriodEditor } from '@/features/bilans/PeriodEditor'
 import {
   startNextSchoolYear,
@@ -15,6 +16,7 @@ import type { SchoolYear, Settings, Validation } from '@/domain/types'
 import { formatLongDate, todayIso } from '@/lib/date'
 import { Button } from '@/ui/Button'
 import { ConfirmSheet } from '@/ui/ConfirmSheet'
+import { Icon } from '@/ui/icons'
 import { InstallHint, isIosDevice, useIsStandalone } from '@/ui/InstallHint'
 import { Sheet } from '@/ui/Sheet'
 import { useToast } from '@/ui/useToast'
@@ -300,9 +302,9 @@ function InstallSection() {
 }
 
 /**
- * Réglages : école et classe, année scolaire, dates de bilan, stockage,
- * confidentialité et version. La notice de confidentialité s'ouvre au premier
- * lancement, puis uniquement via « Relire la notice ».
+ * Profil : gestion des élèves, école et classe, année scolaire, dates de bilan,
+ * stockage, confidentialité et version. La notice de confidentialité s'ouvre au
+ * premier lancement, puis uniquement via « Relire la notice ».
  */
 export function SettingsScreen() {
   const { settings, error } = useSettingsState()
@@ -339,11 +341,24 @@ export function SettingsScreen() {
   return (
     <section className={styles.screen}>
       <header className={styles.header}>
-        <h1 className={styles.title}>Réglages</h1>
+        <h1 className={styles.title}>Profil</h1>
         <p className={styles.subtitle}>
           Ta classe, ton année et les données gardées sur cet appareil.
         </p>
       </header>
+
+      <section className={styles.card} aria-labelledby="students-heading">
+        <h2 id="students-heading" className={styles.sectionTitle}>
+          Les élèves
+        </h2>
+        <p className={styles.hint}>
+          Ajoute, modifie ou supprime les enfants de la classe.
+        </p>
+        <Link to="/students" className={styles.studentsLink}>
+          <Icon name="users" size={18} />
+          Gérer les élèves
+        </Link>
+      </section>
 
       {settings === undefined ? (
         error ? (

@@ -189,8 +189,22 @@ describe('BilanPreviewScreen', () => {
     const links = screen.getAllByRole('link', { name: 'Retour aux bilans' })
     expect(links.length).toBeGreaterThan(0)
     for (const link of links) {
-      expect(link).toHaveAttribute('href', '/bilans')
+      expect(link).toHaveAttribute(
+        'href',
+        '/bilans?period=1&year=2026-2027',
+      )
     }
+  })
+
+  it('retourne aux bilans en conservant la période et l’année', async () => {
+    const { studentId } = await setUp()
+
+    renderApp({ route: `/bilans/${studentId}?period=2&year=2026-2027` })
+
+    await screen.findByRole('heading', { level: 1, name: 'Bilan de Léa' })
+    expect(
+      screen.getByRole('link', { name: 'Retour aux bilans' }),
+    ).toHaveAttribute('href', '/bilans?period=2&year=2026-2027')
   })
 
   it('génère le PDF puis le partage avec un nom de fichier normalisé', async () => {

@@ -24,7 +24,7 @@ function titleFor(pathname: string): string {
   if (pathname === '/programme') return 'Programme'
   if (pathname === '/bilans') return 'Bilans'
   if (/^\/bilans\/[^/]+$/.test(pathname)) return 'Aperçu du bilan'
-  if (pathname === '/settings') return 'Réglages'
+  if (pathname === '/settings') return 'Profil'
   return 'Page introuvable'
 }
 

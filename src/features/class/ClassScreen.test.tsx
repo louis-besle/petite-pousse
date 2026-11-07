@@ -61,10 +61,18 @@ describe('ClassScreen', () => {
     ).toBeInTheDocument()
     expect(screen.getByText(new RegExp(formatLongDate(todayIso())))).toBeInTheDocument()
     expect(screen.getByText('2026-2027')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Gérer les élèves/ })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Ouvrir le profil' })).toHaveAttribute(
       'href',
-      '/students',
+      '/settings',
     )
+    // La gestion des élèves et les réglages ont quitté l'écran classe pour le
+    // profil, accessible par la navigation basse.
+    expect(
+      screen.queryByRole('link', { name: /Gérer les élèves/ }),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('link', { name: 'Réglages' }),
+    ).not.toBeInTheDocument()
   })
 
   it('suit l’année de la date du jour quand les réglages sont en avance', async () => {

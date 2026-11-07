@@ -146,12 +146,12 @@ const AUDIT_CASES: AuditCase[] = [
     },
   },
   {
-    label: 'réglages',
-    title: 'Réglages · Petite pousse',
+    label: 'profil',
+    title: 'Profil · Petite pousse',
     route: () => '/settings',
     ready: async (page) => {
       await expect(
-        page.getByRole('heading', { level: 1, name: 'Réglages' }),
+        page.getByRole('heading', { level: 1, name: 'Profil' }),
       ).toBeVisible()
     },
   },
@@ -227,7 +227,7 @@ const AUDIT_CASES: AuditCase[] = [
   },
   {
     label: 'notice de confidentialité',
-    title: 'Réglages · Petite pousse',
+    title: 'Profil · Petite pousse',
     route: () => '/settings',
     ready: async (page) => {
       await page.getByRole('button', { name: 'Relire la notice' }).click()
@@ -236,7 +236,7 @@ const AUDIT_CASES: AuditCase[] = [
   },
   {
     label: 'sauvegarde chiffrée',
-    title: 'Réglages · Petite pousse',
+    title: 'Profil · Petite pousse',
     route: () => '/settings',
     ready: async (page) => {
       await page

@@ -111,6 +111,19 @@ afterEach(() => {
 })
 
 describe('SettingsScreen', () => {
+  it('regroupe la gestion des élèves dans le profil', async () => {
+    acknowledgePrivacy()
+
+    renderApp({ route: '/settings' })
+
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Profil' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('link', { name: 'Gérer les élèves' }),
+    ).toHaveAttribute('href', '/students')
+  })
+
   it('enregistre l’école, la classe et l’enseignante en supprimant les espaces superflus', async () => {
     acknowledgePrivacy()
     const user = userEvent.setup()
@@ -371,7 +384,7 @@ describe('SettingsScreen', () => {
 
     first.unmount()
     renderApp({ route: '/settings' })
-    await screen.findByRole('heading', { level: 1, name: 'Réglages' })
+    await screen.findByRole('heading', { level: 1, name: 'Profil' })
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   })

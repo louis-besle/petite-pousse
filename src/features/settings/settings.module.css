@@ -73,6 +73,47 @@
   letter-spacing: -0.02em;
 }
 
+/* Accès à la gestion des élèves depuis le profil, au même niveau qu'une action
+   secondaire forte : fond encre et texte crème (13,48:1). */
+.studentsLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: var(--tap-target);
+  padding: 0 22px;
+  border-radius: var(--radius-pill);
+  background-color: var(--ink);
+  color: var(--cream);
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  box-shadow: 0 3px 0 rgba(47, 42, 36, 0.28);
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 0.16s ease,
+    transform 0.16s ease,
+    box-shadow 0.16s ease;
+}
+
+.studentsLink:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.studentsLink:active {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+
+@media (hover: hover) {
+  .studentsLink:hover {
+    background-color: color-mix(in srgb, var(--ink) 92%, var(--cream));
+  }
+}
+
 .hint {
   color: var(--muted);
   font-size: 12.5px;
