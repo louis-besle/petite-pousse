@@ -587,7 +587,7 @@ function navActive(){
 function navHTML(){
   const a = navActive();
   return `<nav class="nav" aria-label="Navigation principale">
-    <button class="${a==='class'?'active':''}" data-action="nav" data-screen="class">${icon('users',18)}<span>Élèves</span></button>
+    <button class="${a==='class'?'active':''}" data-action="nav" data-screen="class">${icon('users',18)}<span>Classe</span></button>
     <button class="${a==='programme'?'active':''}" data-action="nav" data-screen="programme">${icon('grid',18)}<span>Programme</span></button>
     <button class="${a==='bilans'?'active':''}" data-action="nav" data-screen="bilans">${icon('file',18)}<span>Bilans</span></button>
   </nav>`;

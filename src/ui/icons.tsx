@@ -7,7 +7,6 @@ export type IconName =
   | 'search'
   | 'check'
   | 'users'
-  | 'user'
   | 'grid'
   | 'file'
   | 'chevron'
@@ -45,12 +44,6 @@ const PATHS: Record<IconName, ReactNode> = {
       <path d="M16 19v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 4 17.5V19" />
       <circle cx="10" cy="7.5" r="3.5" />
       <path d="M20 19v-1.5a3.5 3.5 0 0 0-2.6-3.4M15.5 4.2a3.5 3.5 0 0 1 0 6.6" />
-    </>
-  ),
-  user: (
-    <>
-      <circle cx="12" cy="8" r="4" />
-      <path d="M4 21v-1.5A5.5 5.5 0 0 1 9.5 14h5a5.5 5.5 0 0 1 5.5 5.5V21" />
     </>
   ),
   grid: (

@@ -29,20 +29,19 @@ function renderShell(path: string) {
 }
 
 describe('NavBar', () => {
-  it('expose les quatre destinations de l’application', () => {
+  it('expose les trois destinations de l’application', () => {
     renderNav('/')
 
     const nav = screen.getByRole('navigation', { name: 'Navigation principale' })
-    expect(within(nav).getByRole('link', { name: 'Élèves' })).toHaveAttribute('href', '/')
+    expect(within(nav).getByRole('link', { name: 'Classe' })).toHaveAttribute('href', '/')
     expect(within(nav).getByRole('link', { name: 'Programme' })).toHaveAttribute(
       'href',
       '/programme',
     )
     expect(within(nav).getByRole('link', { name: 'Bilans' })).toHaveAttribute('href', '/bilans')
-    expect(within(nav).getByRole('link', { name: 'Profil' })).toHaveAttribute(
-      'href',
-      '/settings',
-    )
+    expect(
+      within(nav).queryByRole('link', { name: 'Profil' }),
+    ).not.toBeInTheDocument()
   })
 
   it('marque le lien actif avec aria-current="page" sur /programme', () => {
@@ -52,24 +51,14 @@ describe('NavBar', () => {
       'aria-current',
       'page',
     )
-    expect(screen.getByRole('link', { name: 'Élèves' })).not.toHaveAttribute('aria-current')
+    expect(screen.getByRole('link', { name: 'Classe' })).not.toHaveAttribute('aria-current')
     expect(screen.getByRole('link', { name: 'Bilans' })).not.toHaveAttribute('aria-current')
-    expect(screen.getByRole('link', { name: 'Profil' })).not.toHaveAttribute('aria-current')
   })
 
-  it('marque Profil comme actif sur /settings', () => {
-    renderNav('/settings')
-
-    expect(screen.getByRole('link', { name: 'Profil' })).toHaveAttribute(
-      'aria-current',
-      'page',
-    )
-  })
-
-  it('marque Élèves comme actif sur la racine', () => {
+  it('marque Classe comme actif sur la racine', () => {
     renderNav('/')
 
-    expect(screen.getByRole('link', { name: 'Élèves' })).toHaveAttribute('aria-current', 'page')
+    expect(screen.getByRole('link', { name: 'Classe' })).toHaveAttribute('aria-current', 'page')
     expect(screen.getByRole('link', { name: 'Programme' })).not.toHaveAttribute('aria-current')
   })
 })

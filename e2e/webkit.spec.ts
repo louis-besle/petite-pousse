@@ -104,7 +104,7 @@ test.describe('WebKit — parcours iPhone', () => {
     expect(overflow).toBeLessThanOrEqual(1)
 
     // Retour par la navigation : le focus suit le nouvel écran.
-    await page.getByRole('link', { name: 'Élèves', exact: true }).click()
+    await page.getByRole('link', { name: 'Classe', exact: true }).click()
     await expect(page.locator('#main')).toBeFocused()
     await expect(page).toHaveTitle('La classe · Petite pousse')
   })

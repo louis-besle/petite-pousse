@@ -131,9 +131,9 @@ Les tranches d'âge ne sont pas des sections rigides. Le texte dit « à partir 
 - Filtres : Toute la classe / PS / MS / GS.
 - Cartes élèves : deux colonnes sur téléphone, trois ou quatre sur iPad ; initiale colorée, prénom, pastille de section, nombre de réussites de l'année.
 - Couleur de section : PS rose, MS moutarde, GS sauge. La pastille porte toujours la lettre, pas seulement la couleur.
-- Lien « Gérer les élèves » sous la liste.
+- Accès au profil par l'avatar de l'enseignante.
 - Bouton flottant « Prendre une photo ».
-- Navigation basse : Élèves / Programme / Bilans.
+- Navigation basse : Classe / Programme / Bilans.
 
 ### 6.2 Nouvelle réussite (3 étapes)
 
@@ -196,9 +196,9 @@ Depuis le dossier, deux entrées permettent de court-circuiter la photo :
 - La suppression est définitive, sans archive, conformément à la décision de l'enseignante ; elle inclut les réussites de toutes les années.
 - Éditer un élève (prénom, initiale, section) est inclus pour corriger une faute ou un changement de section.
 
-### 6.7 Réglages
+### 6.7 Profil
 
-Accessibles par l'avatar de l'enseignante (rond « M ») ou depuis « Gérer les élèves ».
+Accessible par l'avatar de l'enseignante (rond « M »). La gestion des élèves se trouve dans cet écran.
 
 - École, classe, prénom de l'enseignante (pour l'en-tête du PDF).
 - Année scolaire en cours, avec l'action « Passer à l'année suivante » : elle change le libellé et ouvre de nouvelles dates de bilan, sans supprimer aucune donnée.
