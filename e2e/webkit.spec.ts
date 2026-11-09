@@ -6,6 +6,7 @@ import {
   openClass,
   readDb,
   seedValidation,
+  waitForActiveNavColors,
 } from './helpers'
 
 /**
@@ -50,8 +51,10 @@ async function seed(page: Page): Promise<Seed> {
 async function expectNoAxeViolations(page: Page, label: string): Promise<void> {
   // Axe peut surprendre une animation ou une transition en cours et calculer
   // un contraste transitoire qui n'existe pas à l'état stable. On force le
-  // rendu « mouvement réduit », déjà supporté par l'application, avant le scan.
+  // rendu « mouvement réduit », puis on attend les couleurs finales de
+  // l'onglet actif avant le scan.
   await page.emulateMedia({ reducedMotion: 'reduce' })
+  await waitForActiveNavColors(page)
 
   const results = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze()
   const details = results.violations.map((violation) => {

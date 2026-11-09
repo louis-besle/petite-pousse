@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type Page } from '@playwright/test'
-import { addStudent, gotoRoute, readDb, seedDraft, seedValidation } from './helpers'
+import { addStudent, gotoRoute, readDb, seedDraft, seedValidation, waitForActiveNavColors } from './helpers'
 
 /**
  * Horloge figée au 7 novembre 2026 : l'année amorcée est toujours 2026-2027 et
@@ -257,8 +257,10 @@ async function resetFocus(page: Page): Promise<void> {
 
 async function expectNoAxeViolations(page: Page, label: string): Promise<void> {
   // Même précaution que dans le smoke WebKit : aucune animation ou transition
-  // ne doit être capturée à mi-parcours par le calcul de contraste.
+  // ne doit être capturée à mi-parcours, et l'onglet actif doit avoir ses
+  // couleurs finales avant le calcul de contraste.
   await page.emulateMedia({ reducedMotion: 'reduce' })
+  await waitForActiveNavColors(page)
 
   const results = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze()
   const details = results.violations.map((violation) => {
