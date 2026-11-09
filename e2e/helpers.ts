@@ -43,6 +43,64 @@ export async function openClass(page: Page): Promise<void> {
 }
 
 /**
+ * Attend que l'onglet actif de la navigation basse ait ses couleurs finales.
+ *
+ * WebKit peut exposer brièvement la couleur héritée de l'état inactif alors
+ * que le fond actif est déjà appliqué. Axe lirait alors un contraste
+ * transitoire qui n'existe pas à l'état stable. On attend le couple réellement
+ * attendu — texte crème sur fond encre — sans délai arbitraire.
+ *
+ * Certaines routes, comme le dossier d'un élève, n'activent aucun des trois
+ * onglets : dans ce cas, il n'y a rien à attendre.
+ */
+export async function waitForActiveNavColors(page: Page): Promise<void> {
+  const hasActiveTab = await page.evaluate(
+    () =>
+      document.querySelector(
+        'nav[aria-label="Navigation principale"] a[aria-current="page"]',
+      ) !== null,
+  )
+  if (!hasActiveTab) return
+
+  const expected = await page.evaluate(() => {
+    const labelProbe = document.createElement('span')
+    labelProbe.style.color = 'var(--cream)'
+    const backgroundProbe = document.createElement('span')
+    backgroundProbe.style.color = 'var(--ink)'
+    document.body.append(labelProbe, backgroundProbe)
+
+    const label = getComputedStyle(labelProbe).color
+    const background = getComputedStyle(backgroundProbe).color
+
+    labelProbe.remove()
+    backgroundProbe.remove()
+    return { label, background }
+  })
+
+  await expect
+    .poll(
+      () =>
+        page.evaluate(() => {
+          const active = document.querySelector<HTMLElement>(
+            'nav[aria-label="Navigation principale"] a[aria-current="page"]',
+          )
+          const label = active?.querySelector('span')
+          if (!active || !label) return null
+
+          return {
+            label: getComputedStyle(label).color,
+            background: getComputedStyle(active).backgroundColor,
+          }
+        }),
+      {
+        message:
+          'La navigation active doit avoir ses couleurs finales avant le scan axe.',
+      },
+    )
+    .toEqual(expected)
+}
+
+/**
  * Ajoute un élève depuis la gestion des élèves, puis attend sa ligne.
  * Le contexte Playwright étant neuf pour chaque test, l'élève est le premier.
  */
