@@ -6,92 +6,6 @@
   padding-bottom: 12px;
 }
 
-/* Texte lu par les lecteurs d'écran mais absent de l'affichage. */
-.srOnly {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  clip-path: inset(50%);
-  white-space: nowrap;
-  border: 0;
-}
-
-/* ------------------------------------------------------------------ */
-/* En-tête                                                             */
-/* ------------------------------------------------------------------ */
-
-.header {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.title {
-  font-family: var(--font-title);
-  font-size: clamp(32px, 8.5vw, 40px);
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: -0.035em;
-}
-
-.subtitle {
-  color: var(--muted);
-  font-size: 12.5px;
-  font-weight: 600;
-  line-height: 1.4;
-}
-
-.loading {
-  padding: 18px 0;
-  color: var(--muted);
-  font-size: 13px;
-  font-weight: 600;
-  line-height: 1.45;
-}
-
-/* ------------------------------------------------------------------ */
-/* Sélecteur d'année                                                   */
-/* ------------------------------------------------------------------ */
-
-.yearRow {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.yearLabel {
-  color: var(--muted);
-  font-size: 9px;
-  font-weight: 800;
-  line-height: 1.2;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.yearSelect {
-  min-height: var(--tap-target);
-  margin-left: auto;
-  padding: 0 10px;
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius-pill);
-  background-color: var(--card);
-  color: var(--ink);
-  font-family: var(--font-body);
-  font-size: 11.5px;
-  font-weight: 700;
-  line-height: 1.2;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.yearSelect:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: 2px;
-}
-
 /* ------------------------------------------------------------------ */
 /* Cartes de période                                                   */
 /* ------------------------------------------------------------------ */
@@ -306,21 +220,6 @@
   text-transform: uppercase;
 }
 
-.list {
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  background-color: var(--card);
-  box-shadow: var(--shadow-card);
-  list-style: none;
-}
-
-.list > li + li {
-  border-top: 1px solid var(--line);
-}
-
 .studentRow {
   display: flex;
   align-items: center;
@@ -377,57 +276,6 @@
   place-items: center;
   flex: none;
   color: var(--faint);
-}
-
-/* ------------------------------------------------------------------ */
-/* État vide                                                           */
-/* ------------------------------------------------------------------ */
-
-.empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 28px 20px;
-  border: 1px dashed var(--line);
-  border-radius: var(--radius-lg);
-  background-color: var(--card);
-  text-align: center;
-}
-
-.emptyTitle {
-  font-family: var(--font-title);
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
-}
-
-.emptyText {
-  max-width: 34ch;
-  color: var(--muted);
-  font-size: 13px;
-  font-weight: 600;
-  line-height: 1.45;
-}
-
-.emptyLink {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: var(--tap-target);
-  padding: 0 12px;
-  color: var(--ink);
-  font-size: 13px;
-  font-weight: 800;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.emptyLink:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: 2px;
-  border-radius: var(--radius-sm);
 }
 
 /* ------------------------------------------------------------------ */

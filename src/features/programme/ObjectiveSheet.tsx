@@ -2,49 +2,29 @@ import { useState } from 'react'
 import { createValidation } from '@/db/validations'
 import { AlreadyValidatedError } from '@/domain/errors'
 import { AGE_BAND_LABELS } from '@/features/dossier/labels'
-import { REFERENTIAL_VERSION, ageBandForSection, domainById, referential } from '@/domain/referential'
-import type { AgeBand, Objective, Section, Student, Validation } from '@/domain/types'
+import {
+  REFERENTIAL_VERSION,
+  ageBandForSection,
+  domainById,
+  referential,
+  sectionForAgeBand,
+} from '@/domain/referential'
+import type { Objective, Student, Validation } from '@/domain/types'
 import { todayIso } from '@/lib/date'
+import { studentCountLabel, studentFullName, studentInitials } from '@/lib/text'
 import { Avatar } from '@/ui/Avatar'
 import { Button } from '@/ui/Button'
-import { Chip } from '@/ui/Chip'
+import { ExampleBlock } from '@/ui/ExampleBlock'
 import { Icon } from '@/ui/icons'
+import { SectionFilterChips, type SectionFilter } from '@/ui/SectionFilterChips'
 import { Sheet } from '@/ui/Sheet'
+import { SheetActions } from '@/ui/SheetActions'
+import uiStyles from '@/ui/ui.module.css'
 import { useToast } from '@/ui/useToast'
 import styles from './programme.module.css'
 
-type SectionFilter = 'all' | Section
-
-const SECTION_FILTERS: { value: SectionFilter; label: string }[] = [
-  { value: 'all', label: 'Tous' },
-  { value: 'PS', label: 'PS' },
-  { value: 'MS', label: 'MS' },
-  { value: 'GS', label: 'GS' },
-]
-
-const SECTION_BY_AGE_BAND: Record<AgeBand, Section> = {
-  before4: 'PS',
-  from4: 'MS',
-  from5: 'GS',
-}
-
 const ALREADY_VALIDATED_MESSAGE = 'Cet objectif est déjà validé pour cet élève.'
 const STORAGE_ERROR_MESSAGE = 'La réussite n’a pas pu être enregistrée. Réessaie.'
-
-/** Initiale du prénom + initiale du nom quand elle existe : « LM ». */
-function pupilInitials(student: Student): string {
-  const firstInitial = student.firstName.trim().charAt(0).toUpperCase()
-  const lastInitial = student.lastNameInitial?.trim().charAt(0).toUpperCase() ?? ''
-
-  return `${firstInitial}${lastInitial}`
-}
-
-/** Nom accessible complet : « Léa M. » quand l'initiale du nom est connue. */
-function pupilFullName(student: Student): string {
-  return student.lastNameInitial === undefined
-    ? student.firstName
-    : `${student.firstName} ${student.lastNameInitial}.`
-}
 
 export interface ObjectiveSheetProps {
   objective: Objective
@@ -74,7 +54,7 @@ export function ObjectiveSheet({
 
   const domain = domainById(referential, objective.domainId)
   const levels = objective.ageBands
-    .map((band) => SECTION_BY_AGE_BAND[band])
+    .map((band) => sectionForAgeBand(band))
     .join(' · ')
 
   const validatedStudentIds = new Set(
@@ -135,10 +115,9 @@ export function ObjectiveSheet({
           if (example === undefined) return null
 
           return (
-            <div key={band} className={styles.exampleBlock}>
-              <p className={styles.exampleLabel}>{AGE_BAND_LABELS[band]}</p>
-              <p className={styles.exampleText}>{example}</p>
-            </div>
+            <ExampleBlock key={band} label={AGE_BAND_LABELS[band]}>
+              {example}
+            </ExampleBlock>
           )
         })}
       </div>
@@ -147,9 +126,7 @@ export function ObjectiveSheet({
         <p className={styles.validatedTitle}>
           {validatedStudents.length === 0
             ? 'Aucun élève n’a encore validé cet objectif.'
-            : `Déjà validé par ${validatedStudents.length} élève${
-                validatedStudents.length > 1 ? 's' : ''
-              }`}
+            : `Déjà validé par ${studentCountLabel(validatedStudents.length)}`}
         </p>
 
         {validatedStudents.length === 0 ? null : (
@@ -164,9 +141,9 @@ export function ObjectiveSheet({
                   data-section={student.section}
                   aria-hidden="true"
                 >
-                  {pupilInitials(student)}
+                  {studentInitials(student)}
                 </span>
-                <span className={styles.srOnly}>{pupilFullName(student)}</span>
+                <span className={uiStyles.srOnly}>{studentFullName(student)}</span>
               </li>
             ))}
           </ul>
@@ -181,21 +158,12 @@ export function ObjectiveSheet({
         >
           <p className={styles.pickerTitle}>Choisir un élève</p>
 
-          <div
+          <SectionFilterChips
+            value={sectionFilter}
+            onChange={setSectionFilter}
+            ariaLabel="Filtrer les élèves par section"
             className={styles.pickerFilters}
-            role="group"
-            aria-label="Filtrer les élèves par section"
-          >
-            {SECTION_FILTERS.map((item) => (
-              <Chip
-                key={item.value}
-                active={sectionFilter === item.value}
-                onClick={() => setSectionFilter(item.value)}
-              >
-                {item.label}
-              </Chip>
-            ))}
-          </div>
+          />
 
           {pickerStudents.length === 0 ? (
             <p className={styles.pickerEmpty}>Aucun élève dans cette section.</p>
@@ -210,7 +178,7 @@ export function ObjectiveSheet({
                       type="button"
                       className={styles.pickerRow}
                       disabled={alreadyValidated || busy}
-                      aria-label={`${pupilFullName(student)}, section ${
+                      aria-label={`${studentFullName(student)}, section ${
                         student.section
                       }${alreadyValidated ? ', déjà validé' : ''}`}
                       onClick={() => {
@@ -236,7 +204,7 @@ export function ObjectiveSheet({
         </section>
       ) : null}
 
-      <div className={styles.sheetActions}>
+      <SheetActions>
         <Button
           variant="dark"
           fullWidth
@@ -251,7 +219,7 @@ export function ObjectiveSheet({
         <Button variant="ghost" fullWidth onClick={onClose}>
           Fermer
         </Button>
-      </div>
+      </SheetActions>
     </Sheet>
   )
 }

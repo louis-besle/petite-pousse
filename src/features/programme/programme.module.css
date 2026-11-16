@@ -39,180 +39,8 @@
   gap: 8px;
 }
 
-.yearRow {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.yearLabel {
-  color: var(--muted);
-  font-size: 9px;
-  font-weight: 800;
-  line-height: 1.2;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.yearSelect {
-  min-height: var(--tap-target);
-  margin-left: auto;
-  padding: 0 10px;
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius-pill);
-  background-color: var(--card);
-  color: var(--ink);
-  font-family: var(--font-body);
-  font-size: 11.5px;
-  font-weight: 700;
-  line-height: 1.2;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.yearSelect:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: 2px;
-}
-
 .emptyGlobal {
   padding: 6px 2px;
-  color: var(--muted);
-  font-size: 12.5px;
-  font-weight: 600;
-  line-height: 1.45;
-}
-
-/* ------------------------------------------------------------------ */
-/* Accordéons de domaines                                              */
-/* ------------------------------------------------------------------ */
-
-.domains {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.domainBlock {
-  overflow: hidden;
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  background-color: var(--card);
-  box-shadow: var(--shadow-card);
-}
-
-/* Le titre porte le bouton : on neutralise la typographie du h2 global. */
-.domainHeading {
-  margin: 0;
-  font-family: var(--font-body);
-  font-weight: 400;
-  line-height: normal;
-  letter-spacing: normal;
-}
-
-.domainHead {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  min-height: 56px;
-  padding: 12px 14px;
-  color: var(--ink);
-  text-align: left;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.domainHead:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: -3px;
-}
-
-.domainIcon {
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  flex: none;
-  border-radius: 10px;
-  background-color: var(--paper);
-  color: var(--muted);
-}
-
-.domainIcon[data-domain='langage'] {
-  background-color: var(--d-langage-soft);
-  color: var(--d-langage-ink);
-}
-
-.domainIcon[data-domain='maths'] {
-  background-color: var(--d-maths-soft);
-  color: var(--d-maths-ink);
-}
-
-.domainIcon[data-domain='corps'] {
-  background-color: var(--d-corps-soft);
-  color: var(--d-corps-ink);
-}
-
-.domainIcon[data-domain='arts'] {
-  background-color: var(--d-arts-soft);
-  color: var(--d-arts-ink);
-}
-
-.domainIcon[data-domain='temps'] {
-  background-color: var(--d-temps-soft);
-  color: var(--d-temps-ink);
-}
-
-.domainIcon[data-domain='vivant'] {
-  background-color: var(--d-vivant-soft);
-  color: var(--d-vivant-ink);
-}
-
-.domainIcon[data-domain='evar'] {
-  background-color: var(--d-evar-soft);
-  color: var(--d-evar-ink);
-}
-
-.domainText {
-  display: flex;
-  min-width: 0;
-  flex: 1;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.domainTitle {
-  font-family: var(--font-title);
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-}
-
-.domainCount {
-  color: var(--muted);
-  font-size: 9.5px;
-  font-weight: 700;
-  line-height: 1.2;
-}
-
-.chevron {
-  display: grid;
-  place-items: center;
-  flex: none;
-  color: var(--muted);
-  transition: transform 0.18s ease;
-}
-
-.chevron[data-open='true'] {
-  transform: rotate(90deg);
-}
-
-.domainBody {
-  padding: 0 10px 10px;
-}
-
-.domainEmpty {
-  padding: 12px;
   color: var(--muted);
   font-size: 12.5px;
   font-weight: 600;
@@ -223,50 +51,37 @@
 /* Lignes d'objectifs                                                  */
 /* ------------------------------------------------------------------ */
 
-.rows {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
 .rowItem {
   border-radius: 12px;
   transition: background-color 0.16s ease;
 }
 
 /* Couleur de la barre, alignée sur le domaine. */
-.rowItem[data-domain='langage'],
-.domainBlock[data-domain='langage'] {
+.rowItem[data-domain='langage'] {
   --domain-color: var(--d-langage);
 }
 
-.rowItem[data-domain='maths'],
-.domainBlock[data-domain='maths'] {
+.rowItem[data-domain='maths'] {
   --domain-color: var(--d-maths);
 }
 
-.rowItem[data-domain='corps'],
-.domainBlock[data-domain='corps'] {
+.rowItem[data-domain='corps'] {
   --domain-color: var(--d-corps);
 }
 
-.rowItem[data-domain='arts'],
-.domainBlock[data-domain='arts'] {
+.rowItem[data-domain='arts'] {
   --domain-color: var(--d-arts);
 }
 
-.rowItem[data-domain='temps'],
-.domainBlock[data-domain='temps'] {
+.rowItem[data-domain='temps'] {
   --domain-color: var(--d-temps);
 }
 
-.rowItem[data-domain='vivant'],
-.domainBlock[data-domain='vivant'] {
+.rowItem[data-domain='vivant'] {
   --domain-color: var(--d-vivant);
 }
 
-.rowItem[data-domain='evar'],
-.domainBlock[data-domain='evar'] {
+.rowItem[data-domain='evar'] {
   --domain-color: var(--d-evar);
 }
 
@@ -403,30 +218,6 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-}
-
-.exampleBlock {
-  padding: 11px 13px;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  background-color: var(--card);
-}
-
-.exampleLabel {
-  color: var(--muted);
-  font-size: 9px;
-  font-weight: 800;
-  line-height: 1.2;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.exampleText {
-  margin-top: 5px;
-  color: var(--muted);
-  font-size: 11.5px;
-  font-weight: 600;
-  line-height: 1.5;
 }
 
 .validatedBlock {
@@ -580,37 +371,4 @@
   line-height: 1.2;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-}
-
-.sheetActions {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 18px;
-}
-
-/* ------------------------------------------------------------------ */
-/* États                                                               */
-/* ------------------------------------------------------------------ */
-
-.loading {
-  padding: 18px 0;
-  color: var(--muted);
-  font-size: 13px;
-  font-weight: 600;
-  line-height: 1.45;
-}
-
-/* Texte lu par les lecteurs d'écran mais invisible à l'œil. */
-.srOnly {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  clip-path: inset(50%);
-  white-space: nowrap;
-  border: 0;
 }

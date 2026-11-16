@@ -1,43 +1,12 @@
 import type { BilanEntry, BilanModel } from '@/domain/bilan'
-import type { Domain } from '@/domain/types'
-import { formatShortDate } from '@/lib/date'
+import { formatPeriodRange, formatShortDate } from '@/lib/date'
+import { studentFullName, successLabel } from '@/lib/text'
 import { usePhotoThumb } from '@/lib/usePhoto'
+import { domainIcon } from '@/ui/domainIcon'
 import { FlowerMark } from '@/ui/FlowerMark'
-import { Icon, type IconName } from '@/ui/icons'
+import { Icon } from '@/ui/icons'
 import type { BilanPdfMeta } from './pdf'
 import styles from './preview.module.css'
-
-const DOMAIN_ICONS: Record<Domain['id'], IconName> = {
-  langage: 'book',
-  maths: 'shapes',
-  corps: 'ball',
-  arts: 'palette',
-  temps: 'clock',
-  vivant: 'leaf',
-  evar: 'heart',
-}
-
-/** « 1 réussite », « 2 réussites ». */
-function successLabel(count: number): string {
-  return `${count} réussite${count > 1 ? 's' : ''}`
-}
-
-/** « Léa » ou « Léa M. » selon que l'initiale est renseignée. */
-function studentLabel(model: BilanModel): string {
-  const { student } = model
-  const initial = student.lastNameInitial?.trim()
-
-  return initial === undefined || initial === ''
-    ? student.firstName
-    : `${student.firstName} ${initial}.`
-}
-
-/** « 1 sept. 2026 → 31 janv. 2027 ». */
-function periodPill(model: BilanModel): string {
-  return `${formatShortDate(model.start)} ${model.start.slice(0, 4)} → ${formatShortDate(
-    model.end,
-  )} ${model.end.slice(0, 4)}`
-}
 
 function SheetEntry({ entry }: { entry: BilanEntry }) {
   const thumbUrl = usePhotoThumb(entry.photo?.id)
@@ -51,7 +20,7 @@ function SheetEntry({ entry }: { entry: BilanEntry }) {
           data-domain={entry.domainId}
           aria-hidden="true"
         >
-          <Icon name={hasPhoto ? 'camera' : (DOMAIN_ICONS[entry.domainId] ?? 'file')} size={15} />
+          <Icon name={hasPhoto ? 'camera' : domainIcon(entry.domainId)} size={15} />
         </span>
       ) : (
         <img
@@ -135,12 +104,12 @@ export function BilanSheet({ model, meta }: BilanSheetProps) {
 
         <div className={styles.sheetStudent}>
           <div>
-            <p className={styles.sheetName}>{studentLabel(model)}</p>
+            <p className={styles.sheetName}>{studentFullName(model.student)}</p>
             <p className={styles.sheetMeta}>
               {model.student.section} · {successLabel(model.total)}
             </p>
           </div>
-          <span className={styles.sheetPeriod}>{periodPill(model)}</span>
+          <span className={styles.sheetPeriod}>{formatPeriodRange(model.start, model.end)}</span>
         </div>
 
         {model.total === 0 ? (

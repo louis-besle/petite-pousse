@@ -25,3 +25,25 @@ export function buildPhoto(validationId: string, photo: CompressedPhoto): Photo 
 export async function deletePhotosForValidation(validationId: string): Promise<void> {
   await db.photos.where('validationId').equals(validationId).delete()
 }
+
+/**
+ * Charge en une passe les photos des validations fournies.
+ * Utilisable dans une transaction de lecture ou hors transaction.
+ */
+export async function loadPhotosForValidations(
+  validations: readonly { photoId?: string }[],
+): Promise<Map<string, Photo>> {
+  const photoIds: string[] = []
+  for (const validation of validations) {
+    if (validation.photoId !== undefined) photoIds.push(validation.photoId)
+  }
+
+  const photos = new Map<string, Photo>()
+  if (photoIds.length === 0) return photos
+
+  for (const photo of await db.photos.bulkGet(photoIds)) {
+    if (photo !== undefined) photos.set(photo.id, photo)
+  }
+
+  return photos
+}

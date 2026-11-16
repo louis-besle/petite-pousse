@@ -247,8 +247,19 @@ const AGE_BAND_BY_SECTION: Record<Section, AgeBand> = {
   GS: 'from5',
 }
 
+const SECTION_BY_AGE_BAND: Record<AgeBand, Section> = {
+  before4: 'PS',
+  from4: 'MS',
+  from5: 'GS',
+}
+
 export function ageBandForSection(section: Section): AgeBand {
   return AGE_BAND_BY_SECTION[section]
+}
+
+/** Section correspondant à une tranche d'âge du référentiel. */
+export function sectionForAgeBand(ageBand: AgeBand): Section {
+  return SECTION_BY_AGE_BAND[ageBand]
 }
 
 export function objectivesForSection(ref: Referential, section: Section): Objective[] {

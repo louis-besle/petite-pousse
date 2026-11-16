@@ -13,11 +13,13 @@ import {
   resolveCurrentSchoolYearId,
 } from '@/domain/schoolYear'
 import type { SchoolYear, Settings, Validation } from '@/domain/types'
-import { formatLongDate, todayIso } from '@/lib/date'
+import { formatLongDateOrdinal, todayIso } from '@/lib/date'
 import { Button } from '@/ui/Button'
 import { ConfirmSheet } from '@/ui/ConfirmSheet'
 import { Icon } from '@/ui/icons'
 import { InstallHint, isIosDevice, useIsStandalone } from '@/ui/InstallHint'
+import { LoadingText } from '@/ui/LoadingText'
+import { ScreenHeader } from '@/ui/ScreenHeader'
 import { Sheet } from '@/ui/Sheet'
 import { useToast } from '@/ui/useToast'
 import { BackupPanel } from './BackupPanel'
@@ -37,12 +39,6 @@ const READ_ERROR =
   'Les données de l’année n’ont pas pu être lues. Le stockage local de cet appareil ' +
   'est peut-être indisponible. Le formulaire et le stockage restent utilisables ; ' +
   'ferme puis rouvre l’application pour réessayer.'
-
-/** « 2026-09-01 » → « 1er septembre 2026 ». */
-function dayLabel(date: string): string {
-  const formatted = formatLongDate(date)
-  return formatted.startsWith('1 ') ? `1er${formatted.slice(1)}` : formatted
-}
 
 function hasAcknowledgedPrivacy(): boolean {
   try {
@@ -241,13 +237,15 @@ function BilanDatesSection({ year, validations }: BilanDatesSectionProps) {
           <div className={styles.rangeRow}>
             <dt className={styles.rangeLabel}>Bilan 1</dt>
             <dd className={styles.rangeValue}>
-              {dayLabel(period1.start)} → {dayLabel(period1.end)}
+              {formatLongDateOrdinal(period1.start)} →{' '}
+              {formatLongDateOrdinal(period1.end)}
             </dd>
           </div>
           <div className={styles.rangeRow}>
             <dt className={styles.rangeLabel}>Bilan 2</dt>
             <dd className={styles.rangeValue}>
-              {dayLabel(period2.start)} → {dayLabel(period2.end)}
+              {formatLongDateOrdinal(period2.start)} →{' '}
+              {formatLongDateOrdinal(period2.end)}
             </dd>
           </div>
         </dl>
@@ -340,12 +338,10 @@ export function SettingsScreen() {
 
   return (
     <section className={styles.screen}>
-      <header className={styles.header}>
-        <h1 className={styles.title}>Profil</h1>
-        <p className={styles.subtitle}>
-          Ta classe, ton année et les données gardées sur cet appareil.
-        </p>
-      </header>
+      <ScreenHeader
+        title="Profil"
+        subtitle="Ta classe, ton année et les données gardées sur cet appareil."
+      />
 
       <section className={styles.card} aria-labelledby="students-heading">
         <h2 id="students-heading" className={styles.sectionTitle}>
@@ -366,9 +362,7 @@ export function SettingsScreen() {
             {LOAD_ERROR}
           </p>
         ) : (
-          <p className={styles.loading} role="status">
-            Chargement des réglages…
-          </p>
+          <LoadingText>Chargement des réglages…</LoadingText>
         )
       ) : (
         <>
@@ -397,9 +391,7 @@ export function SettingsScreen() {
               {READ_ERROR}
             </p>
           ) : schoolYears === undefined ? (
-            <p className={styles.loading} role="status">
-              Chargement des dates de bilan…
-            </p>
+            <LoadingText>Chargement des dates de bilan…</LoadingText>
           ) : currentYear === undefined ? (
             <p className={styles.warning}>
               Les dates de l’année en cours sont introuvables. Vérifie l’année

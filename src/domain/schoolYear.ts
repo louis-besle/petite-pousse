@@ -1,33 +1,9 @@
 import { addDays, format, parseISO } from 'date-fns'
+import { assertCalendarDate } from '@/lib/date'
 import type { SchoolYear } from './types'
 
 /** Une date du domaine est toujours une chaîne `YYYY-MM-DD`, jamais un timestamp. */
-const DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/
 const SCHOOL_YEAR_ID_PATTERN = /^(\d{4})-(\d{4})$/
-
-function daysInMonth(year: number, month: number): number {
-  return new Date(Date.UTC(year, month, 0)).getUTCDate()
-}
-
-function isDateString(value: string): boolean {
-  const match = DATE_PATTERN.exec(value)
-  if (!match) return false
-
-  const year = Number(match[1])
-  const month = Number(match[2])
-  const day = Number(match[3])
-
-  return month >= 1 && month <= 12 && day >= 1 && day <= daysInMonth(year, month)
-}
-
-function assertDateString(value: string, field: string): string {
-  if (typeof value !== 'string' || !isDateString(value)) {
-    throw new Error(
-      `Date invalide pour ${field} : "${String(value)}". Format attendu YYYY-MM-DD.`,
-    )
-  }
-  return value
-}
 
 /** Valide `YYYY-YYYY` et retourne l'année de début (septembre). */
 function parseSchoolYearId(id: string): number {
@@ -46,9 +22,9 @@ function parseSchoolYearId(id: string): number {
 
 function assertSchoolYear(year: SchoolYear): void {
   parseSchoolYearId(year.id)
-  assertDateString(year.start, 'year.start')
-  assertDateString(year.period1End, 'year.period1End')
-  assertDateString(year.period2End, 'year.period2End')
+  assertCalendarDate(year.start, 'year.start')
+  assertCalendarDate(year.period1End, 'year.period1End')
+  assertCalendarDate(year.period2End, 'year.period2End')
 
   if (year.start > year.period1End || year.period1End >= year.period2End) {
     throw new Error(
@@ -62,7 +38,7 @@ function assertSchoolYear(year: SchoolYear): void {
  * en septembre, juillet et août à celle qui vient de s'écouler.
  */
 export function schoolYearIdForDate(date: string): string {
-  assertDateString(date, 'date')
+  assertCalendarDate(date, 'date')
 
   const calendarYear = Number(date.slice(0, 4))
   const month = Number(date.slice(5, 7))
@@ -88,7 +64,7 @@ export function resolveCurrentSchoolYearId(
   preferredId: string | undefined,
   date: string,
 ): string | undefined {
-  assertDateString(date, 'date')
+  assertCalendarDate(date, 'date')
 
   const preferred =
     preferredId === undefined
@@ -141,7 +117,7 @@ export function nextSchoolYearId(id: string): string {
  */
 export function periodForDate(date: string, year: SchoolYear): 1 | 2 | null {
   assertSchoolYear(year)
-  assertDateString(date, 'date')
+  assertCalendarDate(date, 'date')
 
   if (date < year.start || date > year.period2End) return null
   return date <= year.period1End ? 1 : 2

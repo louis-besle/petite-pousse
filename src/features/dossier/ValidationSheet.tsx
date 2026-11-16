@@ -1,14 +1,15 @@
-import { useRef, useState, type ChangeEvent } from 'react'
+import { useState } from 'react'
 import { addPhotoToValidation, deleteValidation, updateValidationDate } from '@/db/validations'
-import { ImageDecodeError } from '@/domain/errors'
-import type { CompressedPhoto, Validation } from '@/domain/types'
-import { compressImage } from '@/lib/image'
+import type { Validation } from '@/domain/types'
 import { usePhoto } from '@/lib/usePhoto'
+import { usePhotoFileInput } from '@/lib/usePhotoFileInput'
 import { Button } from '@/ui/Button'
 import { ConfirmSheet } from '@/ui/ConfirmSheet'
+import { ExampleBlock } from '@/ui/ExampleBlock'
 import { Field } from '@/ui/Field'
 import { Icon } from '@/ui/icons'
 import { Sheet } from '@/ui/Sheet'
+import { SheetActions } from '@/ui/SheetActions'
 import { useToast } from '@/ui/useToast'
 import styles from './dossier.module.css'
 import { AGE_BAND_LABELS } from './labels'
@@ -39,13 +40,21 @@ export function ValidationSheet({ validation, onClose }: ValidationSheetProps) {
   const { showToast } = useToast()
   const photoUrl = usePhoto(validation.photoId)
   const [savingDate, setSavingDate] = useState(false)
-  const [savingPhoto, setSavingPhoto] = useState(false)
   const [removing, setRemoving] = useState(false)
   const [confirmOpen, setConfirmOpen] = useState(false)
-  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const { snapshot } = validation
   const hasPhoto = validation.photoId !== undefined
+
+  const { inputRef, openPicker, busy, handleChange } = usePhotoFileInput({
+    preparationError: PHOTO_PREPARATION_ERROR,
+    saveError: PHOTO_STORAGE_ERROR,
+    logLabel: 'Enregistrement de la photo impossible.',
+    onPhoto: async (photo) => {
+      await addPhotoToValidation(validation.id, photo)
+      showToast(hasPhoto ? PHOTO_REPLACED_MESSAGE : PHOTO_ADDED_MESSAGE)
+    },
+  })
 
   async function handleDateChange(nextDate: string): Promise<void> {
     if (nextDate === '' || nextDate === validation.date) return
@@ -60,40 +69,6 @@ export function ValidationSheet({ validation, onClose }: ValidationSheetProps) {
       showToast(DATE_UPDATE_ERROR)
     } finally {
       setSavingDate(false)
-    }
-  }
-
-  function openFilePicker(): void {
-    fileInputRef.current?.click()
-  }
-
-  async function handleFileChange(event: ChangeEvent<HTMLInputElement>): Promise<void> {
-    const input = event.currentTarget
-    const file = input.files?.[0]
-    // Permet de reprendre exactement le même fichier juste après.
-    input.value = ''
-
-    if (file === undefined) return
-
-    setSavingPhoto(true)
-    try {
-      let compressed: CompressedPhoto
-      try {
-        compressed = await compressImage(file)
-      } catch (error) {
-        showToast(
-          error instanceof ImageDecodeError ? error.message : PHOTO_PREPARATION_ERROR,
-        )
-        return
-      }
-
-      await addPhotoToValidation(validation.id, compressed)
-      showToast(hasPhoto ? PHOTO_REPLACED_MESSAGE : PHOTO_ADDED_MESSAGE)
-    } catch (error) {
-      console.error('Enregistrement de la photo impossible.', error)
-      showToast(PHOTO_STORAGE_ERROR)
-    } finally {
-      setSavingPhoto(false)
     }
   }
 
@@ -141,10 +116,9 @@ export function ValidationSheet({ validation, onClose }: ValidationSheetProps) {
         )}
 
         {snapshot.example === undefined ? null : (
-          <div className={styles.exampleBlock}>
-            <p className={styles.exampleLabel}>Exemple de réussite</p>
-            <p className={styles.exampleText}>{snapshot.example}</p>
-          </div>
+          <ExampleBlock label="Exemple de réussite" spaced>
+            {snapshot.example}
+          </ExampleBlock>
         )}
 
         <div className={styles.sheetField}>
@@ -159,15 +133,15 @@ export function ValidationSheet({ validation, onClose }: ValidationSheetProps) {
           />
         </div>
 
-        <div className={styles.sheetActions}>
+        <SheetActions>
           <Button
             variant="ghost"
             fullWidth
-            disabled={savingPhoto}
-            onClick={openFilePicker}
+            disabled={busy}
+            onClick={openPicker}
           >
             <Icon name="camera" size={18} />
-            {savingPhoto
+            {busy
               ? 'Enregistrement…'
               : hasPhoto
                 ? 'Remplacer la photo'
@@ -182,16 +156,16 @@ export function ValidationSheet({ validation, onClose }: ValidationSheetProps) {
             <Icon name="trash" size={18} />
             Retirer cette réussite
           </Button>
-        </div>
+        </SheetActions>
 
         <input
-          ref={fileInputRef}
+          ref={inputRef}
           type="file"
           accept="image/*"
           capture="environment"
           hidden
           onChange={(event) => {
-            void handleFileChange(event)
+            void handleChange(event)
           }}
         />
       </Sheet>

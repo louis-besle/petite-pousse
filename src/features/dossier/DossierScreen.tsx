@@ -7,14 +7,26 @@ import { useStudents } from '@/db/students'
 import { useValidationsForStudent } from '@/db/validations'
 import { ageBandForSection, referential } from '@/domain/referential'
 import { resolveCurrentSchoolYearId } from '@/domain/schoolYear'
-import type { Domain, Section, Validation } from '@/domain/types'
+import type { Section, Validation } from '@/domain/types'
 import { formatShortDate, todayIso } from '@/lib/date'
+import { sortedSchoolYearIds } from '@/lib/schoolYearSelection'
+import { successLabel } from '@/lib/text'
 import { usePhotoThumb } from '@/lib/usePhoto'
 import { Avatar } from '@/ui/Avatar'
+import {
+  DomainAccordion,
+  DomainAccordionEmpty,
+  DomainAccordionList,
+  DomainAccordionRows,
+} from '@/ui/DomainAccordion'
+import { domainIcon } from '@/ui/domainIcon'
 import { FlowerMark } from '@/ui/FlowerMark'
 import { Icon, type IconName } from '@/ui/icons'
 import { IconButton } from '@/ui/IconButton'
+import { LoadingText } from '@/ui/LoadingText'
+import { TopBar } from '@/ui/TopBar'
 import { useToast } from '@/ui/useToast'
+import { YearSelect } from '@/ui/YearSelect'
 import styles from './dossier.module.css'
 import { AGE_BAND_LABELS } from './labels'
 import { ValidationSheet } from './ValidationSheet'
@@ -22,26 +34,11 @@ import { ValidationSheet } from './ValidationSheet'
 const DRAFT_ERROR_MESSAGE =
   'Le brouillon n’a pas pu être enregistré. Vérifie l’espace de stockage.'
 
-const DOMAIN_ICONS: Record<Domain['id'], IconName> = {
-  langage: 'book',
-  maths: 'shapes',
-  corps: 'ball',
-  arts: 'palette',
-  temps: 'clock',
-  vivant: 'leaf',
-  evar: 'heart',
-}
-
 interface DomainGroup {
   id: string
   label: string
   icon: IconName
   validations: Validation[]
-}
-
-/** « 1 réussite », « 2 réussites ». */
-function successLabel(count: number): string {
-  return `${count} réussite${count > 1 ? 's' : ''}`
 }
 
 /** Date la plus récente d'abord, puis intitulé (ordre stable et lisible). */
@@ -131,6 +128,13 @@ export function DossierScreen() {
   const [draftBusy, setDraftBusy] = useState(false)
   const [selectedValidationId, setSelectedValidationId] = useState<string>()
 
+  // Bouton de retour commun aux deux en-têtes (dossier absent et dossier ouvert).
+  const backButton = (
+    <IconButton label="Retour" onClick={() => navigate('/')}>
+      <Icon name="back" size={18} />
+    </IconButton>
+  )
+
   // Le sélecteur attend la liste réelle : sans elle, sa valeur ne correspondrait
   // à aucune option alors que le contenu est déjà filtré sur l'année courante.
   const waitingForYears = schoolYears === undefined
@@ -138,9 +142,7 @@ export function DossierScreen() {
   if (students === undefined || validations === undefined || waitingForYears) {
     return (
       <section className={styles.screen}>
-        <p className={styles.loading} role="status">
-          Chargement du dossier…
-        </p>
+        <LoadingText>Chargement du dossier…</LoadingText>
       </section>
     )
   }
@@ -150,12 +152,10 @@ export function DossierScreen() {
   if (student === undefined) {
     return (
       <section className={styles.screen}>
-        <div className={styles.topBar}>
-          <IconButton label="Retour" onClick={() => navigate('/')}>
-            <Icon name="back" size={18} />
-          </IconButton>
-        </div>
-        <h1 className={styles.title}>Élève introuvable</h1>
+        <TopBar
+          left={backButton}
+          title="Élève introuvable"
+        />
         <p className={styles.emptyText}>
           Ce dossier n’existe plus ou n’a pas pu être chargé.
         </p>
@@ -174,13 +174,9 @@ export function DossierScreen() {
     settings?.currentSchoolYearId,
     todayIso(),
   )
-  const yearIds = years.map((year) => year.id)
   // Une année courante absente de la liste reste sélectionnable : le select ne
   // doit jamais basculer silencieusement sur une autre valeur.
-  if (currentYearId !== undefined && !yearIds.includes(currentYearId)) {
-    yearIds.push(currentYearId)
-  }
-  yearIds.sort((a, b) => b.localeCompare(a))
+  const yearIds = sortedSchoolYearIds(years, currentYearId)
 
   const requestedYear = yearChoice ?? currentYearId ?? yearIds[0] ?? 'all'
   const selectedYear =
@@ -209,7 +205,7 @@ export function DossierScreen() {
   const groups: DomainGroup[] = domains.map((domain) => ({
     id: domain.id,
     label: domain.label,
-    icon: DOMAIN_ICONS[domain.id],
+    icon: domainIcon(domain.id),
     validations: visibleValidations
       .filter((validation) => validation.snapshot.domainId === domain.id)
       .sort(compareValidations),
@@ -269,39 +265,28 @@ export function DossierScreen() {
 
   return (
     <section className={styles.screen}>
-      <div className={styles.topBar}>
-        <IconButton label="Retour" onClick={() => navigate('/')}>
-          <Icon name="back" size={18} />
-        </IconButton>
-        <h1 className={styles.title}>{student.firstName}</h1>
-        <Link to={bilanUrl} className={styles.bilanLink}>
-          <Icon name="file" size={14} />
-          Bilan
-        </Link>
-      </div>
+      <TopBar
+        left={backButton}
+        title={student.firstName}
+        right={
+          <Link to={bilanUrl} className={styles.bilanLink}>
+            <Icon name="file" size={14} />
+            Bilan
+          </Link>
+        }
+      />
 
       <p className={styles.subtitle}>
         {`${student.section} · ${successLabel(total)} ${yearSuffix}`}
       </p>
 
-      <div className={styles.yearRow}>
-        <label htmlFor="dossier-year" className={styles.yearLabel}>
-          Année scolaire
-        </label>
-        <select
-          id="dossier-year"
-          className={styles.yearSelect}
-          value={selectedYear}
-          onChange={(event) => setYearChoice(event.target.value)}
-        >
-          {yearIds.map((yearId) => (
-            <option key={yearId} value={yearId}>
-              {yearId}
-            </option>
-          ))}
-          <option value="all">Toutes les années</option>
-        </select>
-      </div>
+      <YearSelect
+        id="dossier-year"
+        yearIds={yearIds}
+        value={selectedYear}
+        onChange={setYearChoice}
+        includeAll
+      />
 
       <div
         className={styles.summary}
@@ -333,65 +318,41 @@ export function DossierScreen() {
         </div>
       </div>
 
-      <div className={styles.domains}>
+      <DomainAccordionList>
         {groups.map((group) => {
           const open = openDomainId === group.id
-          const regionId = `dossier-domain-${group.id}`
 
           return (
-            <section key={group.id} className={styles.domainBlock}>
-              <h2 className={styles.domainHeading}>
-                <button
-                  type="button"
-                  className={styles.domainHead}
-                  aria-expanded={open}
-                  aria-controls={open ? regionId : undefined}
-                  onClick={() => setOpenDomain(open ? '' : group.id)}
-                >
-                  <span className={styles.domainIcon} data-domain={group.id} aria-hidden="true">
-                    <Icon name={group.icon} size={17} />
-                  </span>
-                  <span className={styles.domainText}>
-                    <span className={styles.domainTitle}>{group.label}</span>
-                    <span className={styles.domainCount}>
-                      {successLabel(group.validations.length)}
-                    </span>
-                  </span>
-                  <span className={styles.chevron} data-open={open} aria-hidden="true">
-                    <Icon name="chevron" size={16} />
-                  </span>
-                </button>
-              </h2>
-
-              {open ? (
-                <div
-                  id={regionId}
-                  className={styles.domainBody}
-                  role="region"
-                  aria-label={group.label}
-                >
-                  {group.validations.length === 0 ? (
-                    <p className={styles.domainEmpty}>
-                      Aucune réussite dans ce domaine pour l’instant.
-                    </p>
-                  ) : (
-                    <ul className={styles.rows}>
-                      {group.validations.map((validation) => (
-                        <ValidationRow
-                          key={validation.id}
-                          validation={validation}
-                          section={student.section}
-                          onOpen={(opened) => setSelectedValidationId(opened.id)}
-                        />
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              ) : null}
-            </section>
+            <DomainAccordion
+              key={group.id}
+              id={group.id}
+              title={group.label}
+              icon={group.icon}
+              meta={successLabel(group.validations.length)}
+              open={open}
+              onToggle={() => setOpenDomain(open ? '' : group.id)}
+              regionPrefix="dossier"
+            >
+              {group.validations.length === 0 ? (
+                <DomainAccordionEmpty>
+                  Aucune réussite dans ce domaine pour l’instant.
+                </DomainAccordionEmpty>
+              ) : (
+                <DomainAccordionRows>
+                  {group.validations.map((validation) => (
+                    <ValidationRow
+                      key={validation.id}
+                      validation={validation}
+                      section={student.section}
+                      onOpen={(opened) => setSelectedValidationId(opened.id)}
+                    />
+                  ))}
+                </DomainAccordionRows>
+              )}
+            </DomainAccordion>
           )
         })}
-      </div>
+      </DomainAccordionList>
 
       <button
         type="button"

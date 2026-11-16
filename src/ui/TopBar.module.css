@@ -1,0 +1,17 @@
+.topBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: var(--tap-target);
+}
+
+.title {
+  min-width: 0;
+  overflow: hidden;
+  font-size: clamp(24px, 6.5vw, 30px);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

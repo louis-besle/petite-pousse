@@ -11,14 +11,16 @@ import {
 import { z } from 'zod'
 import { SETTINGS_ID, db, type SettingsRecord } from '@/db/db'
 import { updateSettings } from '@/db/settings'
-import { DOMAIN_IDS, referential } from '@/domain/referential'
+import { AGE_BANDS, DOMAIN_IDS, referential } from '@/domain/referential'
 import { schoolYearIdForDate } from '@/domain/schoolYear'
-import type {
-  Photo,
-  SchoolYear,
-  Settings,
-  Student,
-  Validation,
+import { isCalendarDate } from '@/lib/date'
+import {
+  SECTIONS,
+  type Photo,
+  type SchoolYear,
+  type Settings,
+  type Student,
+  type Validation,
 } from '@/domain/types'
 
 /** Version du format `data.json` produit par cette version de l'application. */
@@ -243,7 +245,7 @@ const studentSchema = z.object({
   id: z.string().min(1),
   firstName: z.string().min(1),
   lastNameInitial: z.string().optional(),
-  section: z.enum(['PS', 'MS', 'GS']),
+  section: z.enum(SECTIONS),
   createdAt: z.string().min(1),
 })
 
@@ -251,7 +253,7 @@ const validationSnapshotSchema = z.object({
   objectiveLabel: z.string().min(1),
   domainId: z.enum(DOMAIN_IDS),
   domainLabel: z.string().min(1),
-  ageBand: z.enum(['before4', 'from4', 'from5']),
+  ageBand: z.enum(AGE_BANDS),
   example: z.string().optional(),
   referentialVersion: z.string().min(1),
 })
@@ -520,20 +522,6 @@ interface ZipContents {
   manifest?: string
 }
 
-const CALENDAR_DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/
-
-function isValidCalendarDate(value: string): boolean {
-  const match = CALENDAR_DATE_PATTERN.exec(value)
-  if (!match) return false
-
-  const year = Number(match[1])
-  const month = Number(match[2])
-  const day = Number(match[3])
-
-  if (month < 1 || month > 12 || day < 1) return false
-  return day <= new Date(Date.UTC(year, month, 0)).getUTCDate()
-}
-
 function isValidTimestamp(value: string): boolean {
   return !Number.isNaN(new Date(value).getTime())
 }
@@ -596,9 +584,9 @@ function assertBackupIntegrity(data: BackupData): void {
 
   for (const year of data.schoolYears) {
     if (
-      !isValidCalendarDate(year.start) ||
-      !isValidCalendarDate(year.period1End) ||
-      !isValidCalendarDate(year.period2End)
+      !isCalendarDate(year.start) ||
+      !isCalendarDate(year.period1End) ||
+      !isCalendarDate(year.period2End)
     ) {
       throw new BackupReadError(
         `La sauvegarde est invalide : les bornes de l’année scolaire ` +
@@ -631,7 +619,7 @@ function assertBackupIntegrity(data: BackupData): void {
       )
     }
 
-    if (!isValidCalendarDate(validation.date)) {
+    if (!isCalendarDate(validation.date)) {
       throw new BackupReadError(
         `La sauvegarde est invalide : la date de la réussite ` +
           `« ${validation.id} » est invalide.`,
@@ -949,25 +937,21 @@ export async function exportBackup(
   }
 
   // Le chiffrement n'est pas compressé : `ZipPassThrough` évite un second
-  // passage sur les octets et garde une empreinte mémoire bornée.
-  async function addJson(
-    name: string,
-    bytes: Uint8Array<ArrayBuffer>,
-  ): Promise<void> {
-    if (encryption === undefined) {
-      addDeflated(name, bytes)
-      return
-    }
-    const key = encryption.key
-    addStored(name, await encryptBytes(key, bytes))
-  }
+  // passage sur les octets et garde une empreinte mémoire bornée. Seuls les
+  // fichiers JSON sont donc dégonflés, et seulement en clair.
+  type ZipEntryKind = 'json' | 'binary'
 
-  async function addBinary(
+  async function addEntry(
     name: string,
     bytes: Uint8Array<ArrayBuffer>,
+    kind: ZipEntryKind,
   ): Promise<void> {
     if (encryption === undefined) {
-      addStored(name, bytes)
+      if (kind === 'json') {
+        addDeflated(name, bytes)
+      } else {
+        addStored(name, bytes)
+      }
       return
     }
     const key = encryption.key
@@ -978,20 +962,27 @@ export async function exportBackup(
     if (encryption !== undefined) {
       addStored(MANIFEST_ENTRY, strToU8(JSON.stringify(encryption.manifest)))
     }
-    await addJson('data.json', new Uint8Array(strToU8(JSON.stringify(data))))
-    await addJson(
+    await addEntry(
+      'data.json',
+      new Uint8Array(strToU8(JSON.stringify(data))),
+      'json',
+    )
+    await addEntry(
       'referential.json',
       new Uint8Array(strToU8(JSON.stringify(referential))),
+      'json',
     )
 
     for (const photo of photoRows) {
-      await addBinary(
+      await addEntry(
         `photos/${photo.id}.jpg`,
         new Uint8Array(await photo.full.arrayBuffer()),
+        'binary',
       )
-      await addBinary(
+      await addEntry(
         `thumbs/${photo.id}.jpg`,
         new Uint8Array(await photo.thumb.arrayBuffer()),
+        'binary',
       )
     }
 

@@ -8,45 +8,32 @@ import {
   REFERENTIAL_VERSION,
   ageBandForSection,
   referential,
+  sectionForAgeBand,
 } from '@/domain/referential'
 import type {
   AgeBand,
   CaptureDraft,
   Domain,
   Objective,
-  Section,
   Student,
   Validation,
 } from '@/domain/types'
 import { formatShortDate, todayIso } from '@/lib/date'
-import { Avatar } from '@/ui/Avatar'
+import { normalizeSearch } from '@/lib/text'
 import { Button } from '@/ui/Button'
 import { Chip } from '@/ui/Chip'
 import { Field } from '@/ui/Field'
 import { Icon } from '@/ui/icons'
 import { IconButton } from '@/ui/IconButton'
+import { LoadingText } from '@/ui/LoadingText'
 import { useToast } from '@/ui/useToast'
 import styles from './capture.module.css'
+import { StudentRecap } from './StudentRecap'
 
 type DomainFilter = 'all' | Domain['id']
 
-const SECTION_BY_AGE_BAND: Record<AgeBand, Section> = {
-  before4: 'PS',
-  from4: 'MS',
-  from5: 'GS',
-}
-
 const ALREADY_VALIDATED_MESSAGE = 'Cet objectif est déjà validé pour cet élève.'
 const STORAGE_ERROR_MESSAGE = 'La réussite n’a pas pu être enregistrée. Réessaie.'
-
-/** Recherche insensible à la casse et aux accents (« coordonnee » trouve « coordonnée »). */
-function normalizeSearch(value: string): string {
-  return value
-    .trim()
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-}
 
 /**
  * Tranche retenue pour un objectif : celle de l'élève quand l'objectif la
@@ -112,9 +99,7 @@ export function ObjectiveScreen() {
   if (snapshot === undefined) {
     return (
       <section className={styles.screen}>
-        <p className={styles.loading} role="status">
-          Chargement des objectifs…
-        </p>
+        <LoadingText>Chargement des objectifs…</LoadingText>
       </section>
     )
   }
@@ -122,9 +107,7 @@ export function ObjectiveScreen() {
   if (snapshot.draft === null || snapshot.student === null) {
     return (
       <section className={styles.screen}>
-        <p className={styles.loading} role="status">
-          Retour au choix de l’élève…
-        </p>
+        <LoadingText>Retour au choix de l’élève…</LoadingText>
       </section>
     )
   }
@@ -233,14 +216,7 @@ export function ObjectiveScreen() {
         <span className={styles.stepPill}>3 / 3</span>
       </div>
 
-      <div
-        className={styles.recap}
-        role="group"
-        aria-label={`Élève ${student.firstName}, section ${student.section}`}
-      >
-        <span className={styles.recapAvatar} aria-hidden="true">
-          <Avatar name={student.firstName} section={student.section} size="md" />
-        </span>
+      <StudentRecap student={student}>
         <span className={styles.recapText}>
           <span className={styles.recapName}>
             {student.firstName} · {student.section}
@@ -250,7 +226,7 @@ export function ObjectiveScreen() {
             {hasPhoto ? 'Photo ajoutée' : 'Validation sans photo'}
           </span>
         </span>
-      </div>
+      </StudentRecap>
 
       {hasPhoto ? null : (
         <div className={`${styles.infoStrip} ${styles.infoStripNoPhoto}`}>
@@ -354,7 +330,7 @@ export function ObjectiveScreen() {
                         ? `Déjà validé · ${formatShortDate(validation.date)}`
                         : selected
                           ? 'Prêt à valider'
-                          : `${SECTION_BY_AGE_BAND[band]} · ${domain?.label ?? ''}`}
+                          : `${sectionForAgeBand(band)} · ${domain?.label ?? ''}`}
                     </span>
                   </span>
                 </button>

@@ -1,6 +1,6 @@
 import { useId, useState, type FormEvent } from 'react'
 import { createStudent, updateStudent } from '@/db/students'
-import type { Section, Student } from '@/domain/types'
+import { SECTIONS, type Section, type Student } from '@/domain/types'
 import { Button } from '@/ui/Button'
 import { Chip } from '@/ui/Chip'
 import { Field } from '@/ui/Field'
@@ -8,8 +8,6 @@ import { Icon } from '@/ui/icons'
 import { Sheet } from '@/ui/Sheet'
 import { useToast } from '@/ui/useToast'
 import styles from './students.module.css'
-
-const SECTIONS: Section[] = ['PS', 'MS', 'GS']
 
 const ADDED_MESSAGE = 'Élève ajouté.'
 const UPDATED_MESSAGE = 'Modifications enregistrées.'

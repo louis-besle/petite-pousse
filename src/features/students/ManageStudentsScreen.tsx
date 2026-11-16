@@ -3,11 +3,16 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { deleteStudentCascade, useStudents } from '@/db/students'
 import { useAllValidations } from '@/db/validations'
 import type { Student } from '@/domain/types'
+import { plural, studentCountLabel, successLabel } from '@/lib/text'
 import { Avatar } from '@/ui/Avatar'
 import { Button } from '@/ui/Button'
+import { CardList } from '@/ui/CardList'
 import { ConfirmSheet } from '@/ui/ConfirmSheet'
+import { EmptyState } from '@/ui/EmptyState'
 import { Icon } from '@/ui/icons'
 import { IconButton } from '@/ui/IconButton'
+import { LoadingText } from '@/ui/LoadingText'
+import uiStyles from '@/ui/ui.module.css'
 import { useToast } from '@/ui/useToast'
 import styles from './students.module.css'
 import { StudentFormSheet } from './StudentFormSheet'
@@ -15,26 +20,14 @@ import { StudentFormSheet } from './StudentFormSheet'
 const DELETED_MESSAGE = 'Élève supprimé.'
 const DELETE_ERROR = 'L’élève n’a pas pu être supprimé. Réessaie.'
 
-/** « 1 réussite », « 2 réussites ». */
-function successLabel(count: number): string {
-  return `${count} réussite${count > 1 ? 's' : ''}`
-}
-
-/** « 1 élève », « 2 élèves ». */
-function studentCountLabel(count: number): string {
-  return `${count} élève${count > 1 ? 's' : ''}`
-}
-
 /**
  * Phrase de confirmation : les comptes portent sur toutes les années et sur
  * les photos réellement attachées aux validations (une par validation maximum).
  */
 function deleteDescription(validationCount: number, photoCount: number): string {
-  return `Son dossier sera supprimé définitivement, avec ${validationCount} réussite${
-    validationCount > 1 ? 's' : ''
-  } et ${photoCount} photo${
-    photoCount > 1 ? 's' : ''
-  }. Cette action est irréversible.`
+  return `Son dossier sera supprimé définitivement, avec ${successLabel(
+    validationCount,
+  )} et ${plural(photoCount, 'photo', 'photos')}. Cette action est irréversible.`
 }
 
 /**
@@ -117,15 +110,13 @@ export function ManageStudentsScreen() {
       </Button>
 
       {!loaded ? (
-        <p className={styles.loading} role="status">
-          Chargement des élèves…
-        </p>
+        <LoadingText>Chargement des élèves…</LoadingText>
       ) : students.length === 0 ? (
-        <div className={styles.empty}>
-          <p className={styles.emptyTitle}>Aucun élève dans la classe</p>
-          <p className={styles.emptyText}>
-            Ajoute le premier élève pour commencer à remplir son dossier.
-          </p>
+        <EmptyState
+          className={styles.emptySpaced}
+          title="Aucun élève dans la classe"
+          text="Ajoute le premier élève pour commencer à remplir son dossier."
+        >
           <Button
             variant="ghost"
             fullWidth
@@ -134,12 +125,12 @@ export function ManageStudentsScreen() {
             <Icon name="plus" size={17} />
             Ajouter le premier élève
           </Button>
-        </div>
+        </EmptyState>
       ) : (
         <>
           <p className={styles.eyebrow}>Les élèves de la classe</p>
 
-          <ul className={styles.list}>
+          <CardList divided={false}>
             {students.map((student) => {
               const validationCount = validationCounts.get(student.id) ?? 0
 
@@ -150,7 +141,7 @@ export function ManageStudentsScreen() {
                     className={styles.rowMain}
                     onClick={() => setFormStudent(student)}
                   >
-                    <span className={styles.srOnly}>
+                    <span className={uiStyles.srOnly}>
                       {`Modifier ${student.firstName}, section ${student.section}, ${successLabel(validationCount)}`}
                     </span>
                     <span className={styles.rowAvatar} aria-hidden="true">
@@ -181,7 +172,7 @@ export function ManageStudentsScreen() {
                 </li>
               )
             })}
-          </ul>
+          </CardList>
 
           <p className={styles.note}>
             La suppression efface le dossier, les réussites et les photos de l’élève.

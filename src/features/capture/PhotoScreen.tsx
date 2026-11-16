@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ChangeEvent } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { db } from '@/db/db'
 import {
@@ -6,15 +6,15 @@ import {
   saveCaptureDraft,
   useCaptureDraft,
 } from '@/db/drafts'
-import { ImageDecodeError } from '@/domain/errors'
 import type { CaptureDraft, CompressedPhoto, Student } from '@/domain/types'
-import { compressImage } from '@/lib/image'
-import { Avatar } from '@/ui/Avatar'
+import { usePhotoFileInput } from '@/lib/usePhotoFileInput'
 import { Button } from '@/ui/Button'
 import { FlowerMark } from '@/ui/FlowerMark'
 import { Icon } from '@/ui/icons'
 import { IconButton } from '@/ui/IconButton'
+import { LoadingText } from '@/ui/LoadingText'
 import { useToast } from '@/ui/useToast'
+import { StudentRecap } from './StudentRecap'
 import styles from './capture.module.css'
 
 const PREPARING_MESSAGE = 'Préparation…'
@@ -50,9 +50,48 @@ export function PhotoScreen() {
   const { showToast } = useToast()
   const liveDraft = useCaptureDraft()
   const [snapshot, setSnapshot] = useState<PhotoSnapshot>()
-  const [busy, setBusy] = useState(false)
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  // État de l'enregistrement sans photo, distinct de celui du champ fichier.
+  const [validateBusy, setValidateBusy] = useState(false)
   const imageRef = useRef<HTMLImageElement>(null)
+
+  /**
+   * Écriture de la photo dans le brouillon courant. Un brouillon disparu ou
+   * réaffecté à un autre élève renvoie au choix de l'élève.
+   */
+  async function savePhoto(photo: CompressedPhoto): Promise<void> {
+    const current = await getCaptureDraft()
+
+    if (!current || current.studentId !== studentId) {
+      showToast('Le brouillon a changé. Choisis de nouveau l’élève.')
+      navigate('/capture', { replace: true })
+      return
+    }
+
+    await saveCaptureDraft({
+      id: 'current',
+      studentId: current.studentId,
+      createdAt: current.createdAt,
+      full: photo.full,
+      thumb: photo.thumb,
+      width: photo.width,
+      height: photo.height,
+    })
+  }
+
+  const {
+    inputRef,
+    openPicker,
+    busy: photoBusy,
+    handleChange,
+  } = usePhotoFileInput({
+    onPhoto: savePhoto,
+    preparationError: PHOTO_ERROR_MESSAGE,
+    saveError: DRAFT_ERROR_MESSAGE,
+    logLabel: 'Enregistrement du brouillon impossible.',
+  })
+
+  // L'écran reste occupé tant que l'une des deux écritures est en cours.
+  const busy = photoBusy || validateBusy
 
   // Lecture explicite initiale : elle distingue « chargement » de « aucun
   // brouillon ». Aucune redirection n'est décidée avant qu'elle ait répondu.
@@ -110,60 +149,8 @@ export function PhotoScreen() {
     return () => URL.revokeObjectURL(url)
   }, [full])
 
-  function openFilePicker(): void {
-    fileInputRef.current?.click()
-  }
-
-  async function handleFileChange(event: ChangeEvent<HTMLInputElement>): Promise<void> {
-    const input = event.currentTarget
-    const file = input.files?.[0]
-    // Permet de reprendre exactement le même fichier juste après.
-    input.value = ''
-
-    if (file === undefined) return
-
-    setBusy(true)
-    try {
-      let compressed: CompressedPhoto
-      try {
-        compressed = await compressImage(file)
-      } catch (error) {
-        showToast(
-          error instanceof ImageDecodeError ? error.message : PHOTO_ERROR_MESSAGE,
-        )
-        return
-      }
-
-      try {
-        const current = await getCaptureDraft()
-
-        if (!current || current.studentId !== studentId) {
-          showToast('Le brouillon a changé. Choisis de nouveau l’élève.')
-          navigate('/capture', { replace: true })
-          return
-        }
-
-        await saveCaptureDraft({
-          id: 'current',
-          studentId: current.studentId,
-          createdAt: current.createdAt,
-          full: compressed.full,
-          thumb: compressed.thumb,
-          width: compressed.width,
-          height: compressed.height,
-        })
-      } catch (error) {
-        // Quota IndexedDB, base fermée… : la photo n'est pas enregistrée.
-        console.error('Enregistrement du brouillon impossible.', error)
-        showToast(DRAFT_ERROR_MESSAGE)
-      }
-    } finally {
-      setBusy(false)
-    }
-  }
-
   async function validateWithoutPhoto(): Promise<void> {
-    setBusy(true)
+    setValidateBusy(true)
     try {
       const current = await getCaptureDraft()
 
@@ -184,16 +171,14 @@ export function PhotoScreen() {
       console.error('Enregistrement du brouillon impossible.', error)
       showToast(DRAFT_ERROR_MESSAGE)
     } finally {
-      setBusy(false)
+      setValidateBusy(false)
     }
   }
 
   if (snapshot === undefined || snapshot.student === null || draft == null) {
     return (
       <section className={styles.screen}>
-        <p className={styles.loading} role="status">
-          Chargement de la photo…
-        </p>
+        <LoadingText>Chargement de la photo…</LoadingText>
       </section>
     )
   }
@@ -205,7 +190,7 @@ export function PhotoScreen() {
     if (hasPhoto) {
       navigate('/capture/objective')
     } else {
-      openFilePicker()
+      openPicker()
     }
   }
 
@@ -219,19 +204,12 @@ export function PhotoScreen() {
         <span className={styles.stepPill}>2 / 3</span>
       </div>
 
-      <div
-        className={styles.recap}
-        role="group"
-        aria-label={`Élève ${student.firstName}, section ${student.section}`}
-      >
-        <span className={styles.recapAvatar} aria-hidden="true">
-          <Avatar name={student.firstName} section={student.section} size="md" />
-        </span>
+      <StudentRecap student={student}>
         <span className={styles.recapName}>{student.firstName}</span>
         <span className={styles.recapCheck} aria-hidden="true">
           <Icon name="check" size={14} />
         </span>
-      </div>
+      </StudentRecap>
 
       <div className={styles.viewfinder}>
         <div className={styles.frame}>
@@ -277,7 +255,7 @@ export function PhotoScreen() {
             <button
               type="button"
               className={styles.textAction}
-              onClick={openFilePicker}
+              onClick={openPicker}
               disabled={busy}
             >
               Reprendre
@@ -305,13 +283,13 @@ export function PhotoScreen() {
       </div>
 
       <input
-        ref={fileInputRef}
+        ref={inputRef}
         type="file"
         accept="image/*"
         capture="environment"
         hidden
         onChange={(event) => {
-          void handleFileChange(event)
+          void handleChange(event)
         }}
       />
 

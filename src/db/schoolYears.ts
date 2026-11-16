@@ -1,24 +1,13 @@
 import Dexie from 'dexie'
-import { format, isValid, parseISO } from 'date-fns'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { defaultSchoolYear, nextSchoolYearId, schoolYearIdForDate } from '@/domain/schoolYear'
 import type { SchoolYear } from '@/domain/types'
+import { assertCalendarDate } from '@/lib/date'
 import { SETTINGS_ID, db } from './db'
 import { ensureSeed } from './seed'
+import { useGuardedLiveQuery } from './useGuardedLiveQuery'
 
 const YEAR_NOT_FOUND_ERROR = 'Année scolaire introuvable.'
-const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/
-
-function assertDateString(value: string, field: string): void {
-  const parsed = DATE_PATTERN.test(value) ? parseISO(value) : null
-  const valid = parsed !== null && isValid(parsed) && format(parsed, 'yyyy-MM-dd') === value
-
-  if (!valid) {
-    throw new Error(
-      `Date invalide pour ${field} : "${String(value)}". Format attendu YYYY-MM-DD.`,
-    )
-  }
-}
 
 /**
  * Année scolaire d'une date, créée avec les bornes par défaut si elle manque.
@@ -73,11 +62,11 @@ export async function updateSchoolYearPeriods(
 
     const updated: SchoolYear = { ...existing }
     if (patch.period1End !== undefined) {
-      assertDateString(patch.period1End, 'period1End')
+      assertCalendarDate(patch.period1End, 'period1End')
       updated.period1End = patch.period1End
     }
     if (patch.period2End !== undefined) {
-      assertDateString(patch.period2End, 'period2End')
+      assertCalendarDate(patch.period2End, 'period2End')
       updated.period2End = patch.period2End
     }
 
@@ -144,15 +133,14 @@ export interface SchoolYearsState {
  * écrans qui doivent rester utilisables malgré une panne de stockage.
  */
 export function useSchoolYearsState(): SchoolYearsState {
-  const result = useLiveQuery(async () => {
-    try {
+  const { data, error } = useGuardedLiveQuery(
+    async () => {
       const years = await db.schoolYears.toArray()
-      return { years: years.sort((a, b) => b.start.localeCompare(a.start)), error: false }
-    } catch (error) {
-      console.error('Lecture des années scolaires impossible.', error)
-      return { years: undefined, error: true }
-    }
-  }, [])
+      return years.sort((a, b) => b.start.localeCompare(a.start))
+    },
+    [],
+    'Lecture des années scolaires impossible.',
+  )
 
-  return result ?? { years: undefined, error: false }
+  return { years: data, error }
 }

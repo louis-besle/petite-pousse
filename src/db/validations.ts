@@ -12,6 +12,7 @@ import type {
 import { db } from './db'
 import { buildPhoto, deletePhotosForValidation } from './photos'
 import { getOrCreateSchoolYear } from './schoolYears'
+import { useGuardedLiveQuery } from './useGuardedLiveQuery'
 
 export interface CreateValidationInput {
   studentId: string
@@ -174,20 +175,13 @@ export interface YearValidationsState {
  * Réservée aux écrans qui doivent rester utilisables malgré une panne.
  */
 export function useValidationsForYearState(yearId: string): YearValidationsState {
-  const result = useLiveQuery(async () => {
-    try {
-      const validations = await db.validations
-        .where('schoolYearId')
-        .equals(yearId)
-        .toArray()
-      return { validations, error: false }
-    } catch (error) {
-      console.error('Lecture des validations de l’année impossible.', error)
-      return { validations: undefined, error: true }
-    }
-  }, [yearId])
+  const { data, error } = useGuardedLiveQuery(
+    () => db.validations.where('schoolYearId').equals(yearId).toArray(),
+    [yearId],
+    'Lecture des validations de l’année impossible.',
+  )
 
-  return result ?? { validations: undefined, error: false }
+  return { validations: data, error }
 }
 
 /** Toutes les validations. `undefined` pendant le chargement initial. */

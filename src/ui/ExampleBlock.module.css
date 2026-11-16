@@ -1,0 +1,28 @@
+.exampleBlock {
+  padding: 11px 13px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background-color: var(--card);
+}
+
+/* Variante utilisée dans la fiche de réussite, où le bloc suit la photo. */
+.spaced {
+  margin-top: 14px;
+}
+
+.exampleLabel {
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.exampleText {
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.5;
+}
