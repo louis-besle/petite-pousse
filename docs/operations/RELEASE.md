@@ -2,8 +2,9 @@
 
 > **Ne pas exécuter ce runbook maintenant : aucune release 1.1.2 n'est planifiée.**
 > Ce document décrit la procédure à suivre le jour où une version est réellement
-> décidée. La dernière release publiée reste la **1.1.1** et `main` contient des
-> évolutions non versionnées.
+> décidée. La dernière release publiée reste la **1.1.1** ; `main` et `dev`
+> pointent pour l'instant sur le même commit, qui contient des évolutions non
+> versionnées.
 
 Application : **Petite pousse**, <https://carnet-de-reussites.vercel.app> — dépôt : <https://github.com/louis-besle/petite-pousse>.
 
@@ -11,10 +12,27 @@ L'identifiant Vercel et l'URL de production restent volontairement historiques
 (`carnet-de-reussites`) pour préserver les données locales des appareils déjà
 installés : ne pas les renommer pendant une release.
 
+## 0. Flux de branches
+
+| Branche | Rôle | Déploiement Vercel |
+| --- | --- | --- |
+| `dev` | Intégration de **tout ce qui n'est pas une release** : corrections, fonctionnalités, documentation, refactors. | Prévisualisation |
+| `main` | **État publié** : ne reçoit `dev` qu'au moment d'une release, avec le tag et la GitHub Release. | Production |
+
+- Les branches courtes partent de `dev` et leurs PR sont fusionnées dans `dev`.
+- **Ce runbook est le seul cas où `main` est mis à jour.** Hors release, aucune
+  fusion vers `main`, aucun tag, aucun bump de version : le travail s'arrête sur
+  `dev`.
+- Une release se prépare depuis `dev` (section 2), se fusionne dans `main`
+  (section 4), puis `main` est reporté dans `dev` pour que les deux branches
+  repartent du même commit versionné.
+
 ## 1. Prérequis
 
 - [ ] Release décidée : numéro de version choisi et validé (correctif,
       fonctionnalités ou rupture), avec accord explicite du mainteneur.
+- [ ] `dev` propre, synchronisé avec `origin` et CI verte : toutes les évolutions
+      prévues pour la version y sont fusionnées.
 - [ ] `main` propre et synchronisé avec `origin` :
 
   ```bash
@@ -40,7 +58,13 @@ installés : ne pas les renommer pendant une release.
 
 ## 2. Préparer la version
 
-- [ ] Créer une branche courte : `git switch -c release/x.y.z`.
+- [ ] Créer une branche courte depuis `dev` :
+
+  ```bash
+  git switch dev
+  git pull --ff-only
+  git switch -c release/x.y.z
+  ```
 - [ ] Mettre à jour `package.json` et `package-lock.json`, sans commit ni tag
       automatique : `npm version X.Y.Z --no-git-tag-version`.
 - [ ] Reporter le numéro dans `README.md` (section « État » et compteurs de tests).
@@ -85,6 +109,15 @@ npm run build
   ```
 
 - [ ] Fusionner dans `main`, puis `git switch main` et `git pull --ff-only`.
+
+- [ ] Reporter la fusion dans `dev` pour que les deux branches repartent du même
+      commit versionné (hors release, on ne fusionne que vers `dev`) :
+
+  ```bash
+  git switch dev
+  git merge --ff-only main
+  git push origin dev
+  ```
 
 ## 5. Vérifier la CI sur main
 

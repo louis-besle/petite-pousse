@@ -69,8 +69,21 @@ diff produit.
 
 ## Branches et pull requests
 
-- Créez une **branche courte** depuis `main`, par exemple
+Deux branches longues coexistent :
+
+| Branche | Rôle |
+| --- | --- |
+| `dev` | **Intégration au quotidien** : tout ce qui n'est pas une release se fusionne ici. C'est aussi la branche de départ des nouvelles branches courtes. |
+| `main` | **État publié** : reçoit `dev` uniquement lors d'une release, avec le tag et la GitHub Release correspondants. |
+
+- Créez une **branche courte** depuis `dev`, par exemple
   `fix/bilans-periode-url` ou `docs/guide-utilisateur`.
+- **Fusionnez la PR dans `dev`**, et non dans `main`, tant qu'il ne s'agit pas
+  d'une release. Un correctif, une fonctionnalité, une mise à jour de
+  documentation ou un refactor va sur `dev` ; `main` ne bouge qu'à la préparation
+  d'une version (voir [`docs/operations/RELEASE.md`](docs/operations/RELEASE.md)).
+- Ne fusionnez jamais directement `dev` dans `main` en dehors d'une release :
+  cela publierait en production des évolutions sans numéro de version ni tag.
 - Limitez chaque PR à un sujet : une correction, une fonctionnalité ou une mise à
   jour de documentation.
 - La **CI doit être verte** (jobs « Lint, types, unités et build », « Playwright
@@ -119,7 +132,7 @@ Le projet est distribué sous **licence MIT** (voir `LICENSE`). En proposant une
 contribution, vous acceptez qu'elle soit publiée sous cette même licence.
 
 - Travaillez sur votre propre fork ou une branche du dépôt, jamais directement
-  sur `main`.
+  sur `main` ni sur `dev`.
 - Ne supprimez pas de fonctionnalité, de donnée ou de fichier sans discussion
   préalable dans une issue.
 - Les données des familles ne doivent jamais quitter l'appareil : toute

@@ -16,7 +16,7 @@ PWA installable et utilisable hors ligne, couverte par **344 tests unitaires**, 
 - **Bilans** : la période et l’année choisies sont conservées dans l’URL et restent sélectionnées au retour depuis l’aperçu d’un élève, y compris avec le bouton Retour du navigateur.
 - **Accessibilité** : contraste de la navigation stabilisé et smoke WebKit fiabilisé.
 
-Ces évolutions sont déployées depuis `main`, mais ne sont pas encore couvertes par un tag de release : la dernière release GitHub reste la **1.1.1**.
+Ces évolutions sont sur `dev`, la branche d’intégration, et déjà sur `main` sans être taguées. À partir de maintenant, les nouveaux travaux se fusionnent dans `dev` ; `main` ne sera mise à jour qu’à la prochaine release, et la dernière release GitHub reste la **1.1.1**.
 
 ### Nouveautés de la v1.1
 
@@ -65,6 +65,8 @@ npm run referential:build    # régénère le référentiel depuis le CSV offici
 Le déploiement est un build statique Vite, configuré par `vercel.ts` (framework `vite`, sortie `dist/`). Le routage par hash ne nécessite aucune réécriture serveur.
 
 Le projet Vercel est relié au dépôt GitHub : chaque push sur `main` déploie automatiquement la production, et les autres branches créent des déploiements de prévisualisation. Si nécessaire, un déploiement manuel reste possible avec `npx vercel@latest deploy --prod --project carnet-de-reussites`.
+
+Les branches longues sont `dev` (intégration : tout ce qui n’est pas une release s’y fusionne) et `main` (état publié, mis à jour uniquement lors d’une release). Les nouvelles branches courtes partent de `dev` et leurs PR y sont fusionnées ; voir [`CONTRIBUTING.md`](CONTRIBUTING.md) et [`docs/operations/RELEASE.md`](docs/operations/RELEASE.md).
 
 ## Documentation
 

@@ -23,6 +23,10 @@ applique le [versionnage sémantique](https://semver.org/lang/fr/).
   l'enseignante ; l'onglet « Élèves » et l'onglet « Profil » séparés disparaissent.
 - **Documentation** : guide utilisateur, index de la documentation, runbook de
   release (`docs/operations/RELEASE.md`) et modèles légaux.
+- **Branches** : `dev` devient la branche d'intégration. Hors release, les
+  branches courtes partent de `dev` et leurs PR y sont fusionnées ; `main` n'est
+  mise à jour qu'au moment d'une release, avec son tag (voir `CONTRIBUTING.md` et
+  `docs/operations/RELEASE.md`).
 - **Audit d'accessibilité** révisé pour le référentiel `2026.2.0` et la
   navigation Classe / Programme / Bilans, avec réexécution des scans Chromium et
   WebKit.
