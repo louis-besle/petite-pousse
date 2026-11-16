@@ -6,6 +6,7 @@ import { useSettings } from '@/db/settings'
 import { useAllValidations } from '@/db/validations'
 import { todayIso } from '@/lib/date'
 import { downloadBlob } from '@/lib/share'
+import { plural } from '@/lib/text'
 import { Button } from '@/ui/Button'
 import { ConfirmSheet } from '@/ui/ConfirmSheet'
 import { Field } from '@/ui/Field'
@@ -43,10 +44,6 @@ const RESTORE_ERROR =
 
 type BackupPhase = 'idle' | 'estimating' | 'exporting' | 'reading' | 'restoring'
 
-function plural(count: number, singular: string, pluralForm: string): string {
-  return `${count} ${count > 1 ? pluralForm : singular}`
-}
-
 function summaryText(summary: BackupSummary): string {
   return [
     plural(summary.students, 'élève', 'élèves'),
@@ -63,6 +60,112 @@ function backupDateLabel(iso: string): string {
     return 'date inconnue'
   }
   return format(date, 'd MMMM yyyy', { locale: fr })
+}
+
+interface PasswordFieldProps {
+  label: string
+  type: 'text' | 'password'
+  autoComplete: string
+  value: string
+  disabled: boolean
+  onChange: (event: ChangeEvent<HTMLInputElement>) => void
+}
+
+/**
+ * Champ de mot de passe : l'étiquette visible en petites capitales et le
+ * libellé accessible de `Field` portent le même texte.
+ */
+function PasswordField({
+  label,
+  type,
+  autoComplete,
+  value,
+  disabled,
+  onChange,
+}: PasswordFieldProps) {
+  return (
+    <div className={styles.passwordField}>
+      <span className={styles.label} aria-hidden="true">
+        {label}
+      </span>
+      <Field
+        label={label}
+        type={type}
+        autoComplete={autoComplete}
+        value={value}
+        disabled={disabled}
+        onChange={onChange}
+      />
+    </div>
+  )
+}
+
+interface PasswordVisibilityButtonProps {
+  shown: boolean
+  disabled: boolean
+  onToggle: () => void
+}
+
+/** Bascule entre texte et mot de passe, l'état étant porté par `aria-pressed`. */
+function PasswordVisibilityButton({
+  shown,
+  disabled,
+  onToggle,
+}: PasswordVisibilityButtonProps) {
+  return (
+    <div className={styles.passwordActions}>
+      <Button
+        variant="ghost"
+        aria-pressed={shown}
+        disabled={disabled}
+        onClick={onToggle}
+      >
+        {shown ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+      </Button>
+    </div>
+  )
+}
+
+interface BackupProgressProps {
+  percent: number
+  label: string
+  status: string
+  /** Affiche aussi le pourcentage à droite de la barre. */
+  showValue?: boolean
+}
+
+/** Barre de progression et message d'état, annoncés poliment. */
+function BackupProgress({
+  percent,
+  label,
+  status,
+  showValue = false,
+}: BackupProgressProps) {
+  const bar = (
+    <progress
+      className={styles.progress}
+      value={percent}
+      max={100}
+      aria-label={label}
+      aria-valuetext={`${percent} %`}
+    />
+  )
+
+  return (
+    <div className={styles.backupProgress}>
+      {showValue ? (
+        <div className={styles.progressRow}>
+          {bar}
+          <span className={styles.progressValue}>{percent} %</span>
+        </div>
+      ) : (
+        bar
+      )}
+      <p className={styles.status} aria-live="polite">
+        {status}
+      </p>
+    </div>
+  )
 }
 
 /**
@@ -341,19 +444,14 @@ export function BackupPanel() {
 
           {protect ? (
             <>
-              <div className={styles.passwordField}>
-                <span className={styles.label} aria-hidden="true">
-                  Mot de passe
-                </span>
-                <Field
-                  label="Mot de passe"
-                  type={showPassword ? 'text' : 'password'}
-                  autoComplete="new-password"
-                  value={password}
-                  disabled={busy}
-                  onChange={(event) => setPassword(event.target.value)}
-                />
-              </div>
+              <PasswordField
+                label="Mot de passe"
+                type={showPassword ? 'text' : 'password'}
+                autoComplete="new-password"
+                value={password}
+                disabled={busy}
+                onChange={(event) => setPassword(event.target.value)}
+              />
 
               <div className={styles.passwordField}>
                 <span className={styles.label} aria-hidden="true">
@@ -369,16 +467,11 @@ export function BackupPanel() {
                 />
               </div>
 
-              <div className={styles.passwordActions}>
-                <Button
-                  variant="ghost"
-                  aria-pressed={showPassword}
-                  disabled={busy}
-                  onClick={() => setShowPassword((visible) => !visible)}
-                >
-                  {showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
-                </Button>
-              </div>
+              <PasswordVisibilityButton
+                shown={showPassword}
+                disabled={busy}
+                onToggle={() => setShowPassword((visible) => !visible)}
+              />
 
               {passwordTooShort ? (
                 <p className={styles.passwordHint}>
@@ -402,27 +495,20 @@ export function BackupPanel() {
 
         {phase === 'exporting' ||
         (phase === 'reading' && passwordRequest === undefined) ? (
-          <div className={styles.backupProgress}>
-            <div className={styles.progressRow}>
-              <progress
-                className={styles.progress}
-                value={percent}
-                max={100}
-                aria-label={
-                  phase === 'exporting'
-                    ? 'Progression de la sauvegarde'
-                    : 'Progression de la lecture'
-                }
-                aria-valuetext={`${percent} %`}
-              />
-              <span className={styles.progressValue}>{percent} %</span>
-            </div>
-            <p className={styles.status} aria-live="polite">
-              {phase === 'exporting'
+          <BackupProgress
+            percent={percent}
+            showValue
+            label={
+              phase === 'exporting'
+                ? 'Progression de la sauvegarde'
+                : 'Progression de la lecture'
+            }
+            status={
+              phase === 'exporting'
                 ? `Sauvegarde en cours… ${percent} %`
-                : `Lecture de la sauvegarde… ${percent} %`}
-            </p>
-          </div>
+                : `Lecture de la sauvegarde… ${percent} %`
+            }
+          />
         ) : null}
 
         <Button
@@ -501,33 +587,23 @@ export function BackupPanel() {
             pouvoir la lire.
           </p>
 
-          <div className={styles.passwordField}>
-            <span className={styles.label} aria-hidden="true">
-              Mot de passe
-            </span>
-            <Field
-              label="Mot de passe"
-              type={showImportPassword ? 'text' : 'password'}
-              autoComplete="current-password"
-              value={importPassword}
-              disabled={phase === 'reading'}
-              onChange={(event) => {
-                setImportPassword(event.target.value)
-                setImportError(undefined)
-              }}
-            />
-          </div>
+          <PasswordField
+            label="Mot de passe"
+            type={showImportPassword ? 'text' : 'password'}
+            autoComplete="current-password"
+            value={importPassword}
+            disabled={phase === 'reading'}
+            onChange={(event) => {
+              setImportPassword(event.target.value)
+              setImportError(undefined)
+            }}
+          />
 
-          <div className={styles.passwordActions}>
-            <Button
-              variant="ghost"
-              aria-pressed={showImportPassword}
-              disabled={phase === 'reading'}
-              onClick={() => setShowImportPassword((visible) => !visible)}
-            >
-              {showImportPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
-            </Button>
-          </div>
+          <PasswordVisibilityButton
+            shown={showImportPassword}
+            disabled={phase === 'reading'}
+            onToggle={() => setShowImportPassword((visible) => !visible)}
+          />
 
           {importError !== undefined ? (
             <p className={styles.passwordError} role="alert">
@@ -536,18 +612,11 @@ export function BackupPanel() {
           ) : null}
 
           {phase === 'reading' ? (
-            <div className={styles.backupProgress}>
-              <progress
-                className={styles.progress}
-                value={percent}
-                max={100}
-                aria-label="Progression de la lecture"
-                aria-valuetext={`${percent} %`}
-              />
-              <p className={styles.status} aria-live="polite">
-                Lecture de la sauvegarde… {percent} %
-              </p>
-            </div>
+            <BackupProgress
+              percent={percent}
+              label="Progression de la lecture"
+              status={`Lecture de la sauvegarde… ${percent} %`}
+            />
           ) : null}
 
           <div className={styles.formActions}>

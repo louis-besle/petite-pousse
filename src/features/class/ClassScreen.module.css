@@ -8,20 +8,6 @@
   padding-bottom: 48px;
 }
 
-/* Texte lu par les lecteurs d'écran mais absent de l'affichage. */
-.srOnly {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  clip-path: inset(50%);
-  white-space: nowrap;
-  border: 0;
-}
-
 /* ------------------------------------------------------------------ */
 /* En-tête                                                             */
 /* ------------------------------------------------------------------ */
@@ -151,14 +137,6 @@
   line-height: 1.45;
 }
 
-.loading {
-  padding: 18px 0;
-  color: var(--muted);
-  font-size: 13px;
-  font-weight: 600;
-  line-height: 1.45;
-}
-
 /* ------------------------------------------------------------------ */
 /* Grille d'élèves                                                     */
 /* ------------------------------------------------------------------ */
@@ -256,57 +234,6 @@
     transform: translateY(-2px);
     box-shadow: 0 7px 0 rgba(47, 42, 36, 0.05);
   }
-}
-
-/* ------------------------------------------------------------------ */
-/* État vide                                                           */
-/* ------------------------------------------------------------------ */
-
-.empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 28px 20px;
-  border: 1px dashed var(--line);
-  border-radius: var(--radius-lg);
-  background-color: var(--card);
-  text-align: center;
-}
-
-.emptyTitle {
-  font-family: var(--font-title);
-  font-size: 20px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.15;
-}
-
-.emptyText {
-  max-width: 34ch;
-  color: var(--muted);
-  font-size: 13px;
-  font-weight: 600;
-  line-height: 1.45;
-}
-
-.emptyLink {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: var(--tap-target);
-  padding: 0 12px;
-  color: var(--ink);
-  font-size: 13px;
-  font-weight: 800;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.emptyLink:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: 2px;
-  border-radius: var(--radius-sm);
 }
 
 /* ------------------------------------------------------------------ */

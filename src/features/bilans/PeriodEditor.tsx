@@ -1,9 +1,8 @@
 import { useId, useState, type FormEvent } from 'react'
-import { format, isValid, parseISO } from 'date-fns'
 import { updateSchoolYearPeriods } from '@/db/schoolYears'
 import { countValidationsMovedByCutover } from '@/domain/bilan'
 import type { SchoolYear, Validation } from '@/domain/types'
-import { formatLongDate } from '@/lib/date'
+import { formatLongDateOrdinal, isCalendarDate } from '@/lib/date'
 import { Button } from '@/ui/Button'
 import { Sheet } from '@/ui/Sheet'
 import { useToast } from '@/ui/useToast'
@@ -12,20 +11,6 @@ import styles from './bilans.module.css'
 const SAVED_MESSAGE = 'Date de changement enregistrée.'
 const SAVE_ERROR = 'La date n’a pas pu être enregistrée. Réessaie.'
 const INVALID_DATE_MESSAGE = 'Choisis une date valide.'
-
-/** `YYYY-MM-DD` existant, jamais une date décalée par le fuseau. */
-function isDateString(value: string): boolean {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false
-
-  const parsed = parseISO(value)
-  return isValid(parsed) && format(parsed, 'yyyy-MM-dd') === value
-}
-
-/** « 1 septembre 2026 » → « 1er septembre 2026 ». */
-function dayLabel(date: string): string {
-  const formatted = formatLongDate(date)
-  return formatted.startsWith('1 ') ? `1er${formatted.slice(1)}` : formatted
-}
 
 /** « 1 réussite change de bilan », « 2 réussites changent de bilan ». */
 function movedLabel(count: number): string {
@@ -73,8 +58,8 @@ export function PeriodEditor({
   const endErrorId = useId()
   const recapId = useId()
 
-  const validDate = isDateString(value)
-  const validEnd = allowPeriod2End ? isDateString(endValue) : true
+  const validDate = isCalendarDate(value)
+  const validEnd = allowPeriod2End ? isCalendarDate(endValue) : true
   const cutoverInBounds =
     validDate &&
     year.start < value &&
@@ -86,7 +71,7 @@ export function PeriodEditor({
     ? INVALID_DATE_MESSAGE
     : cutoverInBounds
       ? undefined
-      : `La date doit être comprise entre le ${dayLabel(year.start)} et le ${dayLabel(upperBound)} (bornes exclues).`
+      : `La date doit être comprise entre le ${formatLongDateOrdinal(year.start)} et le ${formatLongDateOrdinal(upperBound)} (bornes exclues).`
 
   const endError =
     allowPeriod2End && !validEnd
@@ -133,8 +118,8 @@ export function PeriodEditor({
     <Sheet open title="Modifier la date de changement" onClose={onClose}>
       <form className={styles.form} onSubmit={(event) => void handleSubmit(event)}>
         <p className={styles.formHint}>
-          Le bilan 1 commence le {dayLabel(year.start)} et s’arrête le jour choisi.
-          Le bilan 2 commence le lendemain et court jusqu’au {dayLabel(upperBound)}.
+          Le bilan 1 commence le {formatLongDateOrdinal(year.start)} et s’arrête le jour choisi.
+          Le bilan 2 commence le lendemain et court jusqu’au {formatLongDateOrdinal(upperBound)}.
         </p>
 
         <div className={styles.formField}>

@@ -1,4 +1,7 @@
-export type Section = 'PS' | 'MS' | 'GS'
+/** Sections de la classe, dans l'ordre officiel (petite, moyenne, grande). */
+export const SECTIONS = ['PS', 'MS', 'GS'] as const
+
+export type Section = (typeof SECTIONS)[number]
 export type AgeBand = 'before4' | 'from4' | 'from5'
 
 export interface Student {

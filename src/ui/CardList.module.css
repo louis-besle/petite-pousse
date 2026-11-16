@@ -1,0 +1,14 @@
+.list {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background-color: var(--card);
+  box-shadow: var(--shadow-card);
+  list-style: none;
+}
+
+.divided > li + li {
+  border-top: 1px solid var(--line);
+}

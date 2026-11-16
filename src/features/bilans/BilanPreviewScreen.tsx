@@ -1,7 +1,7 @@
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
-import { db } from '@/db/db'
+import { loadPhotosForValidations } from '@/db/photos'
 import { useSchoolYears } from '@/db/schoolYears'
 import { useSettings } from '@/db/settings'
 import { useStudents } from '@/db/students'
@@ -9,14 +9,17 @@ import { useValidationsForYear } from '@/db/validations'
 import { buildBilanModel } from '@/domain/bilan'
 import { referential } from '@/domain/referential'
 import { resolveCurrentSchoolYearId } from '@/domain/schoolYear'
-import type { Photo } from '@/domain/types'
 import { todayIso } from '@/lib/date'
+import { sortedSchoolYearIds } from '@/lib/schoolYearSelection'
 import { sharePdf } from '@/lib/share'
 import { Button } from '@/ui/Button'
 import { Icon } from '@/ui/icons'
+import { LoadingText } from '@/ui/LoadingText'
+import { TopBar } from '@/ui/TopBar'
 import { useToast } from '@/ui/useToast'
 import { BilanSheet } from './BilanSheet'
 import type { BilanPdfMeta } from './pdf'
+import { parsePeriodParam } from './period'
 import styles from './preview.module.css'
 
 const PDF_ERROR_MESSAGE = 'Le PDF n’a pas pu être généré. Réessaie.'
@@ -29,11 +32,6 @@ function isAbortError(error: unknown): boolean {
     'name' in error &&
     (error as { name?: unknown }).name === 'AbortError'
   )
-}
-
-/** Période lue dans l'URL : toute valeur autre que 2 retombe sur le bilan 1. */
-function parsePeriod(value: string | null): 1 | 2 {
-  return value === '2' ? 2 : 1
 }
 
 /**
@@ -64,10 +62,9 @@ export function BilanPreviewScreen() {
 
   const [busy, setBusy] = useState(false)
 
-  const period = parsePeriod(searchParams.get('period'))
+  const period = parsePeriodParam(searchParams.get('period')) ?? 1
   const years = schoolYears ?? []
-  const knownYearIds = years.map((year) => year.id)
-  knownYearIds.sort((a, b) => b.localeCompare(a))
+  const knownYearIds = sortedSchoolYearIds(years)
 
   // Année demandée si elle existe, sinon l'année effective (celle d'une
   // réussite datée d'aujourd'hui), sinon l'année des réglages, sinon la plus
@@ -87,29 +84,22 @@ export function BilanPreviewScreen() {
     ) ?? knownYearIds[0]
   const year = years.find((candidate) => candidate.id === selectedYearId)
   const backTo = bilansPath(period, selectedYearId ?? requestedYearId ?? undefined)
+  const backLink = (
+    <Link to={backTo} className={styles.backLink} aria-label="Retour aux bilans">
+      <Icon name="back" size={18} />
+    </Link>
+  )
 
   const validations = useValidationsForYear(selectedYearId ?? '')
 
   // Les photos du modèle sont chargées en une passe, pour l'élève seulement.
-  const photos = useLiveQuery(async () => {
-    const loaded = new Map<string, Photo>()
-    const photoIds: string[] = []
-
-    for (const validation of validations ?? []) {
-      if (validation.studentId === studentId && validation.photoId !== undefined) {
-        photoIds.push(validation.photoId)
-      }
-    }
-
-    if (photoIds.length === 0) return loaded
-
-    const rows = await db.photos.bulkGet(photoIds)
-    for (const photo of rows) {
-      if (photo !== undefined) loaded.set(photo.id, photo)
-    }
-
-    return loaded
-  }, [validations, studentId])
+  const photos = useLiveQuery(
+    async () =>
+      loadPhotosForValidations(
+        (validations ?? []).filter((validation) => validation.studentId === studentId),
+      ),
+    [validations, studentId],
+  )
 
   if (
     settings === undefined ||
@@ -120,15 +110,11 @@ export function BilanPreviewScreen() {
   ) {
     return (
       <section className={styles.screen}>
-        <div className={styles.topBar}>
-          <Link to={backTo} className={styles.backLink} aria-label="Retour aux bilans">
-            <Icon name="back" size={18} />
-          </Link>
-          <h1 className={styles.title}>Bilan</h1>
-        </div>
-        <p className={styles.loading} role="status">
-          Chargement du bilan…
-        </p>
+        <TopBar
+          left={backLink}
+          title="Bilan"
+        />
+        <LoadingText>Chargement du bilan…</LoadingText>
       </section>
     )
   }
@@ -138,12 +124,10 @@ export function BilanPreviewScreen() {
   if (student === undefined) {
     return (
       <section className={styles.screen}>
-        <div className={styles.topBar}>
-          <Link to={backTo} className={styles.backLink} aria-label="Retour aux bilans">
-            <Icon name="back" size={18} />
-          </Link>
-          <h1 className={styles.title}>Élève introuvable</h1>
-        </div>
+        <TopBar
+          left={backLink}
+          title="Élève introuvable"
+        />
         <p className={styles.emptyText}>
           Ce dossier n’existe plus ou n’a pas pu être chargé.
         </p>
@@ -157,12 +141,10 @@ export function BilanPreviewScreen() {
   if (year === undefined) {
     return (
       <section className={styles.screen}>
-        <div className={styles.topBar}>
-          <Link to={backTo} className={styles.backLink} aria-label="Retour aux bilans">
-            <Icon name="back" size={18} />
-          </Link>
-          <h1 className={styles.title}>Bilan indisponible</h1>
-        </div>
+        <TopBar
+          left={backLink}
+          title="Bilan indisponible"
+        />
         <p className={styles.emptyText}>
           Aucune année scolaire n’est enregistrée pour préparer ce bilan.
         </p>
@@ -227,13 +209,11 @@ export function BilanPreviewScreen() {
 
   return (
     <section className={styles.screen}>
-      <div className={styles.topBar}>
-        <Link to={backTo} className={styles.backLink} aria-label="Retour aux bilans">
-          <Icon name="back" size={18} />
-        </Link>
-        <h1 className={styles.title}>Bilan de {bilanStudent.firstName}</h1>
-        <span className={styles.periodPill}>Bilan {period}</span>
-      </div>
+      <TopBar
+        left={backLink}
+        title={`Bilan de ${bilanStudent.firstName}`}
+        right={<span className={styles.periodPill}>Bilan {period}</span>}
+      />
 
       <BilanSheet model={model} meta={meta} />
 

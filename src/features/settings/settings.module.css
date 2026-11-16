@@ -7,37 +7,8 @@
 }
 
 /* ------------------------------------------------------------------ */
-/* En-tête                                                             */
+/* Erreur de chargement                                                */
 /* ------------------------------------------------------------------ */
-
-.header {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.title {
-  font-family: var(--font-title);
-  font-size: clamp(32px, 8.5vw, 40px);
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: -0.035em;
-}
-
-.subtitle {
-  color: var(--muted);
-  font-size: 12.5px;
-  font-weight: 600;
-  line-height: 1.4;
-}
-
-.loading {
-  padding: 18px 0;
-  color: var(--muted);
-  font-size: 13px;
-  font-weight: 600;
-  line-height: 1.45;
-}
 
 .errorCard {
   padding: 14px 16px;
@@ -131,7 +102,9 @@
   gap: 6px;
 }
 
-.label {
+/* Étiquette en petites capitales : champs du formulaire et lignes de dates. */
+.label,
+.rangeLabel {
   color: var(--muted);
   font-size: 9px;
   font-weight: 800;
@@ -189,7 +162,10 @@
 /* Dates des bilans                                                    */
 /* ------------------------------------------------------------------ */
 
-.ranges {
+/* Conteneur de liste bordé, partagé par les dates de bilan et le résumé de
+   sauvegarde : même apparence, donc une seule règle groupée. */
+.ranges,
+.backupSummary {
   display: flex;
   flex-direction: column;
   gap: 0;
@@ -210,15 +186,6 @@
 
 .rangeRow + .rangeRow {
   border-top: 1px solid var(--line);
-}
-
-.rangeLabel {
-  color: var(--muted);
-  font-size: 9px;
-  font-weight: 800;
-  line-height: 1.2;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
 }
 
 .rangeValue {
@@ -310,17 +277,6 @@
 /* ------------------------------------------------------------------ */
 /* Sauvegarde                                                          */
 /* ------------------------------------------------------------------ */
-
-.backupSummary {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  margin: 0;
-  overflow: hidden;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  background-color: var(--paper);
-}
 
 .backupProgress {
   display: flex;

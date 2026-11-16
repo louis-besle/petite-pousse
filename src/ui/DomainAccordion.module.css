@@ -1,0 +1,146 @@
+/* ------------------------------------------------------------------ */
+/* Accordéons de domaines                                              */
+/* ------------------------------------------------------------------ */
+
+.domains {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.domainBlock {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background-color: var(--card);
+  box-shadow: var(--shadow-card);
+}
+
+/* Le titre porte le bouton : on neutralise la typographie du h2 global. */
+.domainHeading {
+  margin: 0;
+  font-family: var(--font-body);
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: normal;
+}
+
+.domainHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 56px;
+  padding: 12px 14px;
+  color: var(--ink);
+  text-align: left;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.domainHead:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: -3px;
+}
+
+.domainIcon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  border-radius: 10px;
+  background-color: var(--paper);
+  color: var(--muted);
+}
+
+.domainIcon[data-domain='langage'] {
+  background-color: var(--d-langage-soft);
+  color: var(--d-langage-ink);
+}
+
+.domainIcon[data-domain='maths'] {
+  background-color: var(--d-maths-soft);
+  color: var(--d-maths-ink);
+}
+
+.domainIcon[data-domain='corps'] {
+  background-color: var(--d-corps-soft);
+  color: var(--d-corps-ink);
+}
+
+.domainIcon[data-domain='arts'] {
+  background-color: var(--d-arts-soft);
+  color: var(--d-arts-ink);
+}
+
+.domainIcon[data-domain='temps'] {
+  background-color: var(--d-temps-soft);
+  color: var(--d-temps-ink);
+}
+
+.domainIcon[data-domain='vivant'] {
+  background-color: var(--d-vivant-soft);
+  color: var(--d-vivant-ink);
+}
+
+.domainIcon[data-domain='evar'] {
+  background-color: var(--d-evar-soft);
+  color: var(--d-evar-ink);
+}
+
+.domainText {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.domainTitle {
+  font-family: var(--font-title);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.domainCount {
+  color: var(--muted);
+  font-size: 9.5px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.chevron {
+  display: grid;
+  place-items: center;
+  flex: none;
+  color: var(--muted);
+  transition: transform 0.18s ease;
+}
+
+.chevron[data-open='true'] {
+  transform: rotate(90deg);
+}
+
+.domainBody {
+  padding: 0 10px 10px;
+}
+
+.domainEmpty {
+  padding: 12px;
+  color: var(--muted);
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+/* ------------------------------------------------------------------ */
+/* Lignes d'objectifs                                                  */
+/* ------------------------------------------------------------------ */
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}

@@ -10,7 +10,8 @@ import {
 } from 'pdf-lib'
 import type { BilanEntry, BilanModel } from '@/domain/bilan'
 import type { Domain, SchoolYear, Student } from '@/domain/types'
-import { formatShortDate } from '@/lib/date'
+import { formatPeriodRangeLong, formatShortDate } from '@/lib/date'
+import { studentFullName, successLabel } from '@/lib/text'
 import displayFontUrl from '../../assets/fonts/Fraunces-Bold.ttf?url'
 import boldFontUrl from '../../assets/fonts/Nunito-Bold.ttf?url'
 import regularFontUrl from '../../assets/fonts/Nunito-Regular.ttf?url'
@@ -90,25 +91,9 @@ const DOMAIN_SOFT: Record<Domain['id'], RGB> = {
 const FALLBACK_COLOR = rgb(0.42, 0.38, 0.33)
 const FALLBACK_SOFT = rgb(0.961, 0.949, 0.925)
 
-/** « 1 réussite », « 2 réussites ». */
-function successLabel(count: number): string {
-  return `${count} réussite${count > 1 ? 's' : ''}`
-}
-
-/** « Léa » ou « Léa M. » selon que l'initiale est renseignée. */
-function studentLabel(student: Student): string {
-  const initial = student.lastNameInitial?.trim()
-
-  return initial === undefined || initial === ''
-    ? student.firstName
-    : `${student.firstName} ${initial}.`
-}
-
 /** Une ligne de période lisible : « Du 1 sept. 2026 au 31 janv. 2027 ». */
 function periodLabel(model: BilanModel): string {
-  return `Du ${formatShortDate(model.start)} ${model.start.slice(0, 4)} au ${formatShortDate(
-    model.end,
-  )} ${model.end.slice(0, 4)}`
+  return formatPeriodRangeLong(model.start, model.end)
 }
 
 /**
@@ -231,7 +216,7 @@ function drawTitleBlock(
     color: INK,
   })
 
-  page.drawText(studentLabel(model.student), {
+  page.drawText(studentFullName(model.student), {
     x: MARGIN,
     y: NAME_BASELINE - 14,
     size: 14,
@@ -444,7 +429,7 @@ export async function generateBilanPdf(
   const bold = await document.embedFont(fonts.bold, { subset: true })
   const display = await document.embedFont(fonts.display, { subset: true })
 
-  document.setTitle(`Bilan de ${studentLabel(model.student)}`)
+  document.setTitle(`Bilan de ${studentFullName(model.student)}`)
   document.setSubject('Bilan des réussites')
   document.setAuthor(meta.teacherName.trim() || meta.schoolName.trim() || 'Petite pousse')
   document.setCreator('Petite pousse')
@@ -506,6 +491,22 @@ export async function generateBilanPdf(
     }
   }
 
+  /**
+   * Intitulé du domaine en haut de la colonne courante. Les deux appels (début
+   * de domaine et reprise après saut de colonne) dessinent exactement la même
+   * chose : même ordre, mêmes arguments, curseur mis à jour.
+   */
+  function drawDomainHeaderAtCursor(group: BilanModel['domains'][number]): void {
+    cursorY = drawDomainHeader(
+      page,
+      { regular, bold },
+      group.domain,
+      group.entries.length,
+      columnX(column),
+      cursorY,
+    )
+  }
+
   startPage()
 
   if (model.total === 0) {
@@ -548,28 +549,14 @@ export async function generateBilanPdf(
       firstEntry === undefined ? 0 : measureEntry(firstEntry, bold) + ENTRY_GAP
 
     ensureSpace(DOMAIN_HEADER_HEIGHT + firstEntryHeight)
-    cursorY = drawDomainHeader(
-      page,
-      { regular, bold },
-      group.domain,
-      group.entries.length,
-      columnX(column),
-      cursorY,
-    )
+    drawDomainHeaderAtCursor(group)
 
     for (const entry of group.entries) {
       const entryHeight = measureEntry(entry, bold) + ENTRY_GAP
 
       if (cursorY - entryHeight < CONTENT_BOTTOM) {
         advanceColumn()
-        cursorY = drawDomainHeader(
-          page,
-          { regular, bold },
-          group.domain,
-          group.entries.length,
-          columnX(column),
-          cursorY,
-        )
+        drawDomainHeaderAtCursor(group)
       }
 
       cursorY = drawEntry(
@@ -611,7 +598,7 @@ function slugify(value: string): string {
 
 /** Nom de fichier stable et sans accents : `bilan-lea-1-2026-2027.pdf`. */
 export function pdfFileName(student: Student, year: SchoolYear, period: 1 | 2): string {
-  return `bilan-${slugify(studentLabel(student))}-${period}-${year.id}.pdf`
+  return `bilan-${slugify(studentFullName(student))}-${period}-${year.id}.pdf`
 }
 
 async function fetchFont(url: string): Promise<Uint8Array> {

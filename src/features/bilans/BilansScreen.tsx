@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { db } from '@/db/db'
+import { loadPhotosForValidations } from '@/db/photos'
 import { useSchoolYears } from '@/db/schoolYears'
 import { useSettings } from '@/db/settings'
 import { useStudents } from '@/db/students'
@@ -12,47 +12,31 @@ import {
   periodRange,
   resolveCurrentSchoolYearId,
 } from '@/domain/schoolYear'
-import type { Photo, SchoolYear } from '@/domain/types'
-import { formatShortDate, todayIso } from '@/lib/date'
+import type { SchoolYear } from '@/domain/types'
+import { formatPeriodRange, todayIso } from '@/lib/date'
+import { sortedSchoolYearIds } from '@/lib/schoolYearSelection'
 import { downloadBlob } from '@/lib/share'
+import { studentCountLabel, successLabel } from '@/lib/text'
 import { Avatar } from '@/ui/Avatar'
 import { Button } from '@/ui/Button'
+import { CardList } from '@/ui/CardList'
+import { EmptyState, EmptyStateLink } from '@/ui/EmptyState'
 import { Icon } from '@/ui/icons'
+import { LoadingText } from '@/ui/LoadingText'
+import { ScreenHeader } from '@/ui/ScreenHeader'
+import uiStyles from '@/ui/ui.module.css'
 import { useToast } from '@/ui/useToast'
+import { YearSelect } from '@/ui/YearSelect'
 import type { BatchProgress } from './batch'
 import styles from './bilans.module.css'
 import { PeriodEditor } from './PeriodEditor'
+import { parsePeriodParam } from './period'
 
 type PeriodTone = 'current' | 'upcoming' | 'done' | 'past'
 
 interface PeriodStatus {
   label: string
   tone: PeriodTone
-}
-
-/** « 1 réussite », « 2 réussites ». */
-function successLabel(count: number): string {
-  return `${count} réussite${count > 1 ? 's' : ''}`
-}
-
-/** « 1 élève », « 2 élèves ». */
-function studentCountLabel(count: number): string {
-  return `${count} élève${count > 1 ? 's' : ''}`
-}
-
-/** Période lue dans l'URL : seules les valeurs 1 et 2 sont acceptées. */
-function parsePeriod(value: string | null): 1 | 2 | undefined {
-  if (value === '1') return 1
-  if (value === '2') return 2
-  return undefined
-}
-
-/**
- * « 1 sept. 2026 → 31 janv. 2027 ». L'année est répétée quand les bornes
- * changent d'année civile, ce qui est le cas des deux bilans.
- */
-function formatRange(start: string, end: string): string {
-  return `${formatShortDate(start)} ${start.slice(0, 4)} → ${formatShortDate(end)} ${end.slice(0, 4)}`
 }
 
 /**
@@ -90,36 +74,6 @@ function batchActionLabel(count: number): string {
 }
 
 /**
- * Charge en une passe les photos des réussites de l'année : le modèle de bilan
- * les retrouve par identifiant, sans requête par élève.
- */
-async function loadPhotos(
-  validations: readonly { photoId?: string }[],
-): Promise<Map<string, Photo>> {
-  const photoIds: string[] = []
-  for (const validation of validations) {
-    if (validation.photoId !== undefined) photoIds.push(validation.photoId)
-  }
-
-  const photos = new Map<string, Photo>()
-  if (photoIds.length === 0) return photos
-
-  for (const photo of await db.photos.bulkGet(photoIds)) {
-    if (photo !== undefined) photos.set(photo.id, photo)
-  }
-  return photos
-}
-
-function BilansHeader() {
-  return (
-    <header className={styles.header}>
-      <h1 className={styles.title}>Bilans</h1>
-      <p className={styles.subtitle}>Deux fois par an, une feuille A4 par élève</p>
-    </header>
-  )
-}
-
-/**
  * Vue d'ensemble des bilans : sélecteur d'année, deux périodes sélectionnables
  * et la liste de tous les élèves avec leur nombre de réussites pour la période.
  *
@@ -146,8 +100,7 @@ export function BilansScreen() {
     settings?.currentSchoolYearId,
     todayIso(),
   )
-  const yearIds = years.map((year) => year.id)
-  yearIds.sort((a, b) => b.localeCompare(a))
+  const yearIds = sortedSchoolYearIds(years)
 
   // L'année et la période vivent dans l'URL : revenir depuis un bilan, par le
   // lien de retour ou par l'historique du navigateur, restaure la sélection.
@@ -170,10 +123,11 @@ export function BilansScreen() {
   ) {
     return (
       <section className={styles.screen}>
-        <BilansHeader />
-        <p className={styles.loading} role="status">
-          Chargement des bilans…
-        </p>
+        <ScreenHeader
+          title="Bilans"
+          subtitle="Deux fois par an, une feuille A4 par élève"
+        />
+        <LoadingText>Chargement des bilans…</LoadingText>
       </section>
     )
   }
@@ -200,7 +154,7 @@ export function BilansScreen() {
   })
 
   const defaultPeriod = periodForDate(today, year) ?? 1
-  const selectedPeriod = parsePeriod(searchParams.get('period')) ?? defaultPeriod
+  const selectedPeriod = parsePeriodParam(searchParams.get('period')) ?? defaultPeriod
   const selectedRange = periodRange(year, selectedPeriod)
 
   // Compteurs de la période sélectionnée, regroupés en une seule passe.
@@ -245,7 +199,7 @@ export function BilansScreen() {
     setBatchProgress(null)
     try {
       const { generateBilanBundle } = await import('./batch')
-      const photos = await loadPhotos(validations ?? [])
+      const photos = await loadPhotosForValidations(validations ?? [])
       const bundle = await generateBilanBundle(
         {
           students: batchStudents,
@@ -276,31 +230,21 @@ export function BilansScreen() {
 
   return (
     <section className={styles.screen}>
-      <BilansHeader />
+      <ScreenHeader
+        title="Bilans"
+        subtitle="Deux fois par an, une feuille A4 par élève"
+      />
 
-      <div className={styles.yearRow}>
-        <label htmlFor="bilans-year" className={styles.yearLabel}>
-          Année scolaire
-        </label>
-        <select
-          id="bilans-year"
-          className={styles.yearSelect}
-          value={year.id}
-          disabled={batchBusy}
-          onChange={(event) => handleYearChange(event.target.value)}
-        >
-          {yearIds.map((yearId) => (
-            <option key={yearId} value={yearId}>
-              {yearId}
-            </option>
-          ))}
-        </select>
-      </div>
+      <YearSelect
+        id="bilans-year"
+        yearIds={yearIds}
+        value={year.id}
+        disabled={batchBusy}
+        onChange={handleYearChange}
+      />
 
       {validations === undefined ? (
-        <p className={styles.loading} role="status">
-          Chargement des bilans…
-        </p>
+        <LoadingText>Chargement des bilans…</LoadingText>
       ) : (
         <>
           <div
@@ -326,7 +270,7 @@ export function BilansScreen() {
                   <span className={styles.periodText}>
                     <span className={styles.periodTitle}>Bilan {item.period}</span>
                     <span className={styles.periodRange}>
-                      {formatRange(item.start, item.end)}
+                      {formatPeriodRange(item.start, item.end)}
                     </span>
                     <span className={styles.periodCount}>
                       {successLabel(item.count)}
@@ -351,15 +295,12 @@ export function BilansScreen() {
           </button>
 
           {students.length === 0 ? (
-            <div className={styles.empty}>
-              <p className={styles.emptyTitle}>Aucun élève dans la classe</p>
-              <p className={styles.emptyText}>
-                Ajoute les enfants de ta classe pour préparer leurs bilans.
-              </p>
-              <Link to="/students" className={styles.emptyLink}>
-                Ajouter un élève
-              </Link>
-            </div>
+            <EmptyState
+              title="Aucun élève dans la classe"
+              text="Ajoute les enfants de ta classe pour préparer leurs bilans."
+            >
+              <EmptyStateLink to="/students">Ajouter un élève</EmptyStateLink>
+            </EmptyState>
           ) : (
             <>
               <div className={styles.batch}>
@@ -401,7 +342,7 @@ export function BilansScreen() {
                 {studentCountLabel(students.length)}
               </p>
 
-              <ul className={styles.list}>
+              <CardList>
                 {students.map((student) => {
                   const count = counts.get(student.id) ?? 0
 
@@ -411,7 +352,7 @@ export function BilansScreen() {
                         to={`/bilans/${student.id}?period=${selectedPeriod}&year=${encodeURIComponent(year.id)}`}
                         className={styles.studentRow}
                       >
-                        <span className={styles.srOnly}>
+                        <span className={uiStyles.srOnly}>
                           {`${student.firstName}, section ${student.section}, ${successLabel(
                             count,
                           )} pour le bilan ${selectedPeriod}`}
@@ -436,7 +377,7 @@ export function BilansScreen() {
                     </li>
                   )
                 })}
-              </ul>
+              </CardList>
             </>
           )}
 

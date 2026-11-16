@@ -5,29 +5,18 @@ import { useSettings } from '@/db/settings'
 import { useStudents } from '@/db/students'
 import { useAllValidations, useValidationsForYear } from '@/db/validations'
 import { resolveCurrentSchoolYearId } from '@/domain/schoolYear'
-import type { Section } from '@/domain/types'
 import { shouldRemindBackup } from '@/features/settings/backup'
 import { formatLongDate, todayIso } from '@/lib/date'
+import { successLabel } from '@/lib/text'
 import { Avatar } from '@/ui/Avatar'
 import { Button } from '@/ui/Button'
-import { Chip } from '@/ui/Chip'
+import { EmptyState, EmptyStateLink } from '@/ui/EmptyState'
 import { FlowerMark } from '@/ui/FlowerMark'
 import { Icon } from '@/ui/icons'
+import { LoadingText } from '@/ui/LoadingText'
+import { SectionFilterChips, type SectionFilter } from '@/ui/SectionFilterChips'
+import uiStyles from '@/ui/ui.module.css'
 import styles from './ClassScreen.module.css'
-
-type SectionFilter = 'all' | Section
-
-const FILTERS: { value: SectionFilter; label: string }[] = [
-  { value: 'all', label: 'Toute la classe' },
-  { value: 'PS', label: 'PS' },
-  { value: 'MS', label: 'MS' },
-  { value: 'GS', label: 'GS' },
-]
-
-/** « 1 réussite », « 2 réussites ». */
-function successLabel(count: number): string {
-  return `${count} réussite${count > 1 ? 's' : ''}`
-}
 
 /**
  * Écran d'accueil : la classe entière, filtrable par section, avec le nombre
@@ -117,32 +106,23 @@ export function ClassScreen() {
       ) : null}
 
       {students === undefined ? (
-        <p className={styles.loading} role="status">
-          Chargement de la classe…
-        </p>
+        <LoadingText>Chargement de la classe…</LoadingText>
       ) : students.length === 0 ? (
-        <div className={styles.empty}>
-          <p className={styles.emptyTitle}>Aucun élève dans la classe</p>
-          <p className={styles.emptyText}>
-            Ajoute les enfants de ta classe pour commencer à noter leurs réussites.
-          </p>
-          <Link to="/students" className={styles.emptyLink}>
-            Ajouter un élève
-          </Link>
-        </div>
+        <EmptyState
+          title="Aucun élève dans la classe"
+          text="Ajoute les enfants de ta classe pour commencer à noter leurs réussites."
+        >
+          <EmptyStateLink to="/students">Ajouter un élève</EmptyStateLink>
+        </EmptyState>
       ) : (
         <>
-          <div className={styles.filters} role="group" aria-label="Filtrer par section">
-            {FILTERS.map((item) => (
-              <Chip
-                key={item.value}
-                active={filter === item.value}
-                onClick={() => setFilter(item.value)}
-              >
-                {item.label}
-              </Chip>
-            ))}
-          </div>
+          <SectionFilterChips
+            value={filter}
+            onChange={setFilter}
+            ariaLabel="Filtrer par section"
+            allLabel="Toute la classe"
+            className={styles.filters}
+          />
 
           {visibleStudents.length === 0 ? (
             <p className={styles.filterEmpty} role="status">
@@ -157,7 +137,7 @@ export function ClassScreen() {
                 return (
                   <li key={student.id}>
                     <Link to={`/students/${student.id}`} className={styles.card}>
-                      <span className={styles.srOnly}>
+                      <span className={uiStyles.srOnly}>
                         {`${student.firstName}, section ${student.section}, ${countLabel}`}
                       </span>
                       <span className={styles.cardTop} aria-hidden="true">

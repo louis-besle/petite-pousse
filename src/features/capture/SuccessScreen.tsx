@@ -6,6 +6,7 @@ import type { Student, Validation } from '@/domain/types'
 import { formatShortDate } from '@/lib/date'
 import { Button } from '@/ui/Button'
 import { Icon } from '@/ui/icons'
+import { LoadingText } from '@/ui/LoadingText'
 import styles from './capture.module.css'
 
 interface SuccessSnapshot {
@@ -49,9 +50,7 @@ export function SuccessScreen() {
   if (snapshot === undefined) {
     return (
       <section className={styles.successScreen}>
-        <p className={styles.loading} role="status">
-          Chargement de la réussite…
-        </p>
+        <LoadingText>Chargement de la réussite…</LoadingText>
       </section>
     )
   }

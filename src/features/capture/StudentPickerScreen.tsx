@@ -1,33 +1,19 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { getCaptureDraft, saveCaptureDraft } from '@/db/drafts'
 import { useStudents } from '@/db/students'
-import type { CaptureDraft, Section, Student } from '@/domain/types'
+import type { CaptureDraft, Student } from '@/domain/types'
+import { normalizeSearch } from '@/lib/text'
 import { Avatar } from '@/ui/Avatar'
-import { Chip } from '@/ui/Chip'
-import { Field } from '@/ui/Field'
+import { EmptyState, EmptyStateLink } from '@/ui/EmptyState'
 import { Icon } from '@/ui/icons'
 import { IconButton } from '@/ui/IconButton'
+import { LoadingText } from '@/ui/LoadingText'
+import { SearchField } from '@/ui/SearchField'
+import { SectionFilterChips, type SectionFilter } from '@/ui/SectionFilterChips'
+import uiStyles from '@/ui/ui.module.css'
 import { useToast } from '@/ui/useToast'
 import styles from './capture.module.css'
-
-type SectionFilter = 'all' | Section
-
-const FILTERS: { value: SectionFilter; label: string }[] = [
-  { value: 'all', label: 'Toute' },
-  { value: 'PS', label: 'PS' },
-  { value: 'MS', label: 'MS' },
-  { value: 'GS', label: 'GS' },
-]
-
-/** Recherche insensible à la casse et aux accents (« lea » trouve « Léa »). */
-function normalizeSearch(value: string): string {
-  return value
-    .trim()
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-}
 
 /**
  * Étape 1 de la capture : choisir l'élève. La sélection écrit le brouillon
@@ -94,43 +80,30 @@ export function StudentPickerScreen() {
       </div>
 
       {students === undefined ? (
-        <p className={styles.loading} role="status">
-          Chargement de la classe…
-        </p>
+        <LoadingText>Chargement de la classe…</LoadingText>
       ) : students.length === 0 ? (
-        <div className={styles.empty}>
-          <p className={styles.emptyTitle}>Aucun élève dans la classe</p>
-          <p className={styles.emptyText}>
-            Ajoute les enfants de ta classe pour commencer à noter leurs réussites.
-          </p>
-          <Link to="/students" className={styles.emptyLink}>
-            Ajouter un élève
-          </Link>
-        </div>
+        <EmptyState
+          title="Aucun élève dans la classe"
+          text="Ajoute les enfants de ta classe pour commencer à noter leurs réussites."
+        >
+          <EmptyStateLink to="/students">Ajouter un élève</EmptyStateLink>
+        </EmptyState>
       ) : (
         <>
-          <Field
-            type="search"
+          <SearchField
             label="Rechercher un élève"
-            icon={<Icon name="search" size={17} />}
             placeholder="Rechercher un élève…"
             value={query}
-            autoComplete="off"
-            enterKeyHint="search"
-            onChange={(event) => setQuery(event.target.value)}
+            onChange={setQuery}
           />
 
-          <div className={styles.filters} role="group" aria-label="Filtrer par section">
-            {FILTERS.map((item) => (
-              <Chip
-                key={item.value}
-                active={filter === item.value}
-                onClick={() => setFilter(item.value)}
-              >
-                {item.label}
-              </Chip>
-            ))}
-          </div>
+          <SectionFilterChips
+            value={filter}
+            onChange={setFilter}
+            ariaLabel="Filtrer par section"
+            allLabel="Toute"
+            className={styles.filters}
+          />
 
           {visibleStudents.length === 0 ? (
             <p className={styles.filterEmpty} role="status">
@@ -149,7 +122,7 @@ export function StudentPickerScreen() {
                       void chooseStudent(student)
                     }}
                   >
-                    <span className={styles.srOnly}>
+                    <span className={uiStyles.srOnly}>
                       {`${student.firstName}, section ${student.section}`}
                     </span>
                     <span className={styles.studentAvatar} aria-hidden="true">

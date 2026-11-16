@@ -10,13 +10,6 @@
 /* En-tête                                                             */
 /* ------------------------------------------------------------------ */
 
-.topBar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-height: var(--tap-target);
-}
-
 .backLink {
   display: grid;
   place-items: center;
@@ -47,17 +40,6 @@
   }
 }
 
-.title {
-  min-width: 0;
-  overflow: hidden;
-  font-size: clamp(24px, 6.5vw, 30px);
-  font-weight: 600;
-  line-height: 1.05;
-  letter-spacing: -0.03em;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 .periodPill {
   display: inline-flex;
   align-items: center;
@@ -73,14 +55,6 @@
   font-weight: 800;
   line-height: 1.2;
   white-space: nowrap;
-}
-
-.loading {
-  padding: 18px 0;
-  color: var(--muted);
-  font-size: 13px;
-  font-weight: 600;
-  line-height: 1.45;
 }
 
 .emptyText {

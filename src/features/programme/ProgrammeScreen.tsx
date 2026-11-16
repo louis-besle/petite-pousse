@@ -3,81 +3,39 @@ import { useSchoolYears } from '@/db/schoolYears'
 import { useSettings } from '@/db/settings'
 import { useStudents } from '@/db/students'
 import { useAllValidations, useValidationsForYear } from '@/db/validations'
-import { referential } from '@/domain/referential'
+import { ageBandForSection, referential, sectionForAgeBand } from '@/domain/referential'
 import { schoolYearIdForDate } from '@/domain/schoolYear'
-import type {
-  AgeBand,
-  Domain,
-  Objective,
-  Section,
-  Student,
-} from '@/domain/types'
+import type { AgeBand, Domain, Objective, Section, Student } from '@/domain/types'
 import { todayIso } from '@/lib/date'
-import { Chip } from '@/ui/Chip'
-import { Field } from '@/ui/Field'
-import { Icon, type IconName } from '@/ui/icons'
+import { sortedSchoolYearIds } from '@/lib/schoolYearSelection'
+import {
+  normalizeSearch,
+  objectiveCountLabel,
+  studentCountLabel,
+  validationCountLabel,
+} from '@/lib/text'
+import {
+  DomainAccordion,
+  DomainAccordionEmpty,
+  DomainAccordionList,
+  DomainAccordionRows,
+} from '@/ui/DomainAccordion'
+import { domainIcon } from '@/ui/domainIcon'
+import { Icon } from '@/ui/icons'
+import { LoadingText } from '@/ui/LoadingText'
+import { SearchField } from '@/ui/SearchField'
+import { SectionFilterChips } from '@/ui/SectionFilterChips'
+import uiStyles from '@/ui/ui.module.css'
 import { useToast } from '@/ui/useToast'
+import { YearSelect } from '@/ui/YearSelect'
 import { ObjectiveSheet } from './ObjectiveSheet'
 import styles from './programme.module.css'
 
 type LevelFilter = 'all' | Section
 
-const LEVEL_FILTERS: { value: LevelFilter; label: string }[] = [
-  { value: 'all', label: 'Tous' },
-  { value: 'PS', label: 'PS' },
-  { value: 'MS', label: 'MS' },
-  { value: 'GS', label: 'GS' },
-]
-
-const AGE_BAND_BY_SECTION: Record<Section, AgeBand> = {
-  PS: 'before4',
-  MS: 'from4',
-  GS: 'from5',
-}
-
-const SECTION_BY_AGE_BAND: Record<AgeBand, Section> = {
-  before4: 'PS',
-  from4: 'MS',
-  from5: 'GS',
-}
-
-const DOMAIN_ICONS: Record<Domain['id'], IconName> = {
-  langage: 'book',
-  maths: 'shapes',
-  corps: 'ball',
-  arts: 'palette',
-  temps: 'clock',
-  vivant: 'leaf',
-  evar: 'heart',
-}
-
-/** Recherche insensible à la casse et aux accents (« memoriser » trouve « mémoriser »). */
-function normalizeSearch(value: string): string {
-  return value
-    .trim()
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-}
-
-/** « 1 élève », « 2 élèves ». */
-function pupilLabel(count: number): string {
-  return `${count} élève${count > 1 ? 's' : ''}`
-}
-
-/** « 1 objectif », « 2 objectifs ». */
-function objectiveLabel(count: number): string {
-  return `${count} objectif${count > 1 ? 's' : ''}`
-}
-
-/** « 1 validation », « 2 validations ». */
-function validationLabel(count: number): string {
-  return `${count} validation${count > 1 ? 's' : ''}`
-}
-
 /** Niveaux d'un objectif : « PS · MS » dans l'ordre officiel des tranches. */
 function levelLabels(objective: Objective): string {
-  return objective.ageBands.map((band) => SECTION_BY_AGE_BAND[band]).join(' · ')
+  return objective.ageBands.map((band) => sectionForAgeBand(band)).join(' · ')
 }
 
 /** Un objectif correspond-il au niveau sélectionné et à la recherche ? */
@@ -123,13 +81,9 @@ export function ProgrammeScreen() {
 
   const currentYearId = settings?.currentSchoolYearId
   const years = schoolYears ?? []
-  const yearIds = years.map((year) => year.id)
-  // Une année courante absente de la liste reste sélectionnable : le select ne
-  // doit jamais basculer silencieusement sur une autre valeur.
-  if (currentYearId !== undefined && !yearIds.includes(currentYearId)) {
-    yearIds.push(currentYearId)
-  }
-  yearIds.sort((a, b) => b.localeCompare(a))
+  // Le helper conserve l'année courante absente de la liste : le select ne doit
+  // jamais basculer silencieusement sur une autre valeur.
+  const yearIds = sortedSchoolYearIds(years, currentYearId)
 
   const requestedYear = yearChoice ?? currentYearId ?? yearIds[0] ?? 'all'
   const selectedYear =
@@ -152,15 +106,13 @@ export function ProgrammeScreen() {
   ) {
     return (
       <section className={styles.screen}>
-        <p className={styles.loading} role="status">
-          Chargement du programme…
-        </p>
+        <LoadingText>Chargement du programme…</LoadingText>
       </section>
     )
   }
 
   const domains = [...referential.domains].sort((a, b) => a.order - b.order)
-  const levelBand = level === 'all' ? undefined : AGE_BAND_BY_SECTION[level]
+  const levelBand = level === 'all' ? undefined : ageBandForSection(level)
   const normalizedQuery = normalizeSearch(query)
 
   const sectionStudents =
@@ -192,7 +144,7 @@ export function ProgrammeScreen() {
 
   const groups = domains.map((domain) => ({
     domain,
-    icon: DOMAIN_ICONS[domain.id],
+    icon: domainIcon(domain.id),
     objectives: referential.objectives.filter(
       (objective) =>
         objective.domainId === domain.id &&
@@ -267,47 +219,27 @@ export function ProgrammeScreen() {
         </p>
       </header>
 
-      <Field
-        type="search"
+      <SearchField
         label="Rechercher un objectif"
-        icon={<Icon name="search" size={17} />}
         placeholder="Rechercher un objectif…"
         value={query}
-        autoComplete="off"
-        enterKeyHint="search"
-        onChange={(event) => handleQueryChange(event.target.value)}
+        onChange={handleQueryChange}
       />
 
-      <div className={styles.levelRow} role="group" aria-label="Filtrer par niveau">
-        {LEVEL_FILTERS.map((item) => (
-          <Chip
-            key={item.value}
-            active={level === item.value}
-            onClick={() => setLevel(item.value)}
-          >
-            {item.label}
-          </Chip>
-        ))}
-      </div>
+      <SectionFilterChips
+        value={level}
+        onChange={setLevel}
+        ariaLabel="Filtrer par niveau"
+        className={styles.levelRow}
+      />
 
-      <div className={styles.yearRow}>
-        <label htmlFor="programme-year" className={styles.yearLabel}>
-          Année scolaire
-        </label>
-        <select
-          id="programme-year"
-          className={styles.yearSelect}
-          value={selectedYear}
-          onChange={(event) => setYearChoice(event.target.value)}
-        >
-          {yearIds.map((yearId) => (
-            <option key={yearId} value={yearId}>
-              {yearId}
-            </option>
-          ))}
-          <option value="all">Toutes les années</option>
-        </select>
-      </div>
+      <YearSelect
+        id="programme-year"
+        yearIds={yearIds}
+        value={selectedYear}
+        onChange={setYearChoice}
+        includeAll
+      />
 
       {totalVisibleObjectives === 0 ? (
         <p className={styles.emptyGlobal} role="status">
@@ -315,115 +247,84 @@ export function ProgrammeScreen() {
         </p>
       ) : null}
 
-      <div className={styles.domains}>
+      <DomainAccordionList>
         {groups.map((group) => {
           const open = openDomains.has(group.domain.id)
-          const regionId = `programme-domain-${group.domain.id}`
 
           return (
-            <section
+            <DomainAccordion
               key={group.domain.id}
-              className={styles.domainBlock}
-              data-domain={group.domain.id}
+              id={group.domain.id}
+              title={group.domain.label}
+              icon={group.icon}
+              meta={`${objectiveCountLabel(group.objectives.length)} · ${validationCountLabel(group.validationCount)}`}
+              open={open}
+              onToggle={() => toggleDomain(group.domain.id)}
+              regionPrefix="programme"
             >
-              <h2 className={styles.domainHeading}>
-                <button
-                  type="button"
-                  className={styles.domainHead}
-                  aria-expanded={open}
-                  aria-controls={open ? regionId : undefined}
-                  onClick={() => toggleDomain(group.domain.id)}
-                >
-                  <span
-                    className={styles.domainIcon}
-                    data-domain={group.domain.id}
-                    aria-hidden="true"
-                  >
-                    <Icon name={group.icon} size={17} />
-                  </span>
-                  <span className={styles.domainText}>
-                    <span className={styles.domainTitle}>{group.domain.label}</span>
-                    <span className={styles.domainCount}>
-                      {objectiveLabel(group.objectives.length)} ·{' '}
-                      {validationLabel(group.validationCount)}
-                    </span>
-                  </span>
-                  <span className={styles.chevron} data-open={open} aria-hidden="true">
-                    <Icon name="chevron" size={16} />
-                  </span>
-                </button>
-              </h2>
+              {group.objectives.length === 0 ? (
+                <DomainAccordionEmpty>
+                  Aucun objectif ne correspond à ces filtres.
+                </DomainAccordionEmpty>
+              ) : (
+                <DomainAccordionRows>
+                  {group.objectives.map((objective) => {
+                    const numerator = validatedPupils.get(objective.id)?.size ?? 0
+                    const percent =
+                      denominator === 0
+                        ? 0
+                        : Math.round((numerator / denominator) * 100)
 
-              {open ? (
-                <div
-                  id={regionId}
-                  className={styles.domainBody}
-                  role="region"
-                  aria-label={group.domain.label}
-                >
-                  {group.objectives.length === 0 ? (
-                    <p className={styles.domainEmpty}>
-                      Aucun objectif ne correspond à ces filtres.
-                    </p>
-                  ) : (
-                    <ul className={styles.rows}>
-                      {group.objectives.map((objective) => {
-                        const numerator = validatedPupils.get(objective.id)?.size ?? 0
-                        const percent =
-                          denominator === 0
-                            ? 0
-                            : Math.round((numerator / denominator) * 100)
-
-                        return (
-                          <li
-                            key={objective.id}
-                            className={styles.rowItem}
-                            data-domain={group.domain.id}
-                          >
-                            <button
-                              type="button"
-                              className={styles.rowAction}
-                              onClick={() => setSelectedObjectiveId(objective.id)}
+                    return (
+                      <li
+                        key={objective.id}
+                        className={styles.rowItem}
+                        data-domain={group.domain.id}
+                      >
+                        <button
+                          type="button"
+                          className={styles.rowAction}
+                          onClick={() => setSelectedObjectiveId(objective.id)}
+                        >
+                          <span className={uiStyles.srOnly}>Ouvrir l’objectif : </span>
+                          <span className={styles.rowTop}>
+                            <span className={styles.rowLabel}>{objective.label}</span>
+                            <span className={styles.rowChevron} aria-hidden="true">
+                              <Icon name="chevron" size={14} />
+                            </span>
+                          </span>
+                          <span className={styles.rowMeta}>
+                            <span className={styles.levelTag}>
+                              {levelLabels(objective)}
+                            </span>
+                            <span
+                              className={styles.bar}
+                              role="progressbar"
+                              aria-valuenow={numerator}
+                              aria-valuemin={0}
+                              aria-valuemax={denominator}
+                              aria-label={`${objective.label} : ${studentCountLabel(numerator)} sur ${denominator}`}
                             >
-                              <span className={styles.srOnly}>Ouvrir l’objectif : </span>
-                              <span className={styles.rowTop}>
-                                <span className={styles.rowLabel}>{objective.label}</span>
-                                <span className={styles.rowChevron} aria-hidden="true">
-                                  <Icon name="chevron" size={14} />
-                                </span>
-                              </span>
-                              <span className={styles.rowMeta}>
-                                <span className={styles.levelTag}>
-                                  {levelLabels(objective)}
-                                </span>
-                                <span
-                                  className={styles.bar}
-                                  role="progressbar"
-                                  aria-valuenow={numerator}
-                                  aria-valuemin={0}
-                                  aria-valuemax={denominator}
-                                  aria-label={`${objective.label} : ${pupilLabel(numerator)} sur ${denominator}`}
-                                >
-                                  <span
-                                    className={styles.barFill}
-                                    style={{ width: `${percent}%` }}
-                                    aria-hidden="true"
-                                  />
-                                </span>
-                                <span className={styles.count}>{pupilLabel(numerator)}</span>
-                              </span>
-                            </button>
-                          </li>
-                        )
-                      })}
-                    </ul>
-                  )}
-                </div>
-              ) : null}
-            </section>
+                              <span
+                                className={styles.barFill}
+                                style={{ width: `${percent}%` }}
+                                aria-hidden="true"
+                              />
+                            </span>
+                            <span className={styles.count}>
+                              {studentCountLabel(numerator)}
+                            </span>
+                          </span>
+                        </button>
+                      </li>
+                    )
+                  })}
+                </DomainAccordionRows>
+              )}
+            </DomainAccordion>
           )
         })}
-      </div>
+      </DomainAccordionList>
 
       {selectedObjective === undefined ? null : (
         <ObjectiveSheet

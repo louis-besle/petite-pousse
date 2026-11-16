@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Button } from '@/ui/Button'
+import { LoadingText } from '@/ui/LoadingText'
 import styles from './settings.module.css'
 
 const UNITS = ['o', 'Ko', 'Mo', 'Go', 'To'] as const
@@ -133,9 +134,7 @@ export function StoragePanel() {
       <p className={styles.hint}>Tout reste dans ce navigateur, sur cet appareil.</p>
 
       {estimate.status === 'loading' ? (
-        <p className={styles.loading} role="status">
-          Estimation de l’espace utilisé…
-        </p>
+        <LoadingText>Estimation de l’espace utilisé…</LoadingText>
       ) : null}
 
       {estimate.status === 'unsupported' ? (
