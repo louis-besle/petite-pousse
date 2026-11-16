@@ -8,7 +8,7 @@ Version applicative **1.1.1**, en ligne : <https://carnet-de-reussites.vercel.ap
 
 Dépôt : <https://github.com/louis-besle/petite-pousse>
 
-PWA installable et utilisable hors ligne, couverte par **344 tests unitaires**, **51 parcours E2E** (**45 Chromium** et **6 WebKit**) et **1 test de rechargement hors ligne**.
+PWA installable et utilisable hors ligne, couverte par **344 tests unitaires**, **51 parcours E2E** (**45 Chromium** et **6 WebKit**) et **1 test de rechargement hors ligne** — compteurs de `main` au 16 novembre 2026.
 
 ### Depuis la 1.1.1
 
@@ -66,6 +66,15 @@ Le déploiement est un build statique Vite, configuré par `vercel.ts` (framewor
 
 Le projet Vercel est relié au dépôt GitHub : chaque push sur `main` déploie automatiquement la production, et les autres branches créent des déploiements de prévisualisation. Si nécessaire, un déploiement manuel reste possible avec `npx vercel@latest deploy --prod --project carnet-de-reussites`.
 
+## Documentation
+
+- [`docs/README.md`](docs/README.md) : index de la documentation et état de chaque document.
+- [`docs/GUIDE-UTILISATION.md`](docs/GUIDE-UTILISATION.md) : mode d’emploi enseignante et familles.
+- [`docs/accessibility/`](docs/accessibility/) : audit WCAG/RGAA, matrice des critères et protocole lecteurs d’écran.
+- [`docs/operations/RELEASE.md`](docs/operations/RELEASE.md) : runbook de release.
+- [`CHANGELOG.md`](CHANGELOG.md) : journal des versions.
+- [`CONTRIBUTING.md`](CONTRIBUTING.md) : installation, tests et règles de contribution.
+
 ## Accessibilité
 
 L’application est auditée selon WCAG 2.1/2.2 AA et le RGAA 4.1.2. Le rapport complet et la matrice des 106 critères sont dans `docs/accessibility/`.
@@ -77,7 +86,7 @@ Deux réserves subsistent :
 - **RGAA 7.1** : la matrice VoiceOver/TalkBack n’a pas encore été exécutée sur appareils réels. Le protocole est prêt dans `docs/accessibility/PROTOCOLE-LECTEURS-ECRAN.md`.
 - **RGAA 13.3** : le PDF n’est pas balisé. L’aperçu HTML A4 est la version accessible de référence.
 
-L’audit doit être rafraîchi après les évolutions de navigation et le passage au référentiel `2026.2.0`.
+L’audit a été révisé le **16 novembre 2026** pour le référentiel `2026.2.0` et la navigation actuelle. Les 19 états et les 6 parcours WebKit ont été rejoués sans violation axe A/AA.
 
 ## Limites connues
 
@@ -97,11 +106,16 @@ Distribué sous licence [MIT](./LICENSE). Copyright © 2026 Louis BESLE.
 
 ## Contenu
 
+- `docs/README.md` : index de la documentation et état des documents.
+- `docs/GUIDE-UTILISATION.md` : mode d’emploi enseignante et familles.
 - `docs/accessibility/` : audit WCAG/RGAA, matrice des critères et protocole lecteurs d’écran.
+- `docs/operations/` : runbook de release.
 - `docs/superpowers/specs/` : document de conception.
 - `docs/superpowers/plans/` : plans d’implémentation.
 - `scripts/referential/source/` : transcription officielle du référentiel et notes de vérification.
 - `maquettes/` : prototype HTML cliquable, captures d’écran et exemple de bilan imprimé.
+- `CHANGELOG.md` : journal des versions.
+- `CONTRIBUTING.md` : guide de contribution.
 
 ## Prototype
 

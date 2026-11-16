@@ -58,7 +58,7 @@ Deux fois par an, l'application produit une feuille A4 par élève (ou plusieurs
 - Gestion de plusieurs classes ou d'une école entière.
 - Notes chiffrées, moyennes, bulletin scolaire.
 - Analyse d'image, reconnaissance faciale, suggestion automatique d'objectif.
-- Programme EVAR (éducation à la vie affective et relationnelle) : hors périmètre v1, livré en v1.1.
+- Programme EVAR (éducation à la vie affective et relationnelle) : hors périmètre de la v1, livré en v1.1 (voir § 15).
 - Application native iOS/iPadOS/Android : l'application est une PWA installable.
 
 ### Anti-objectifs
@@ -93,7 +93,7 @@ Deux fois par an, l'application produit une feuille A4 par élève (ou plusieurs
 
 ### 5.2 Structure
 
-Le programme est organisé en **six domaines**, eux-mêmes découpés en compétences, puis en **objectifs d'apprentissage** déclinés par âge, avec des **exemples de réussite**.
+Le programme est organisé en **six domaines officiels 2026**, complétés en v1.1 par le programme **EVAR**, eux-mêmes découpés en compétences, puis en **objectifs d'apprentissage** déclinés par âge, avec des **exemples de réussite**.
 
 Domaines :
 
@@ -103,6 +103,7 @@ Domaines :
 4. L'acquisition des premiers outils mathématiques
 5. Se repérer dans le temps et l'espace
 6. Découvrir le monde du vivant, de la matière et des objets
+7. Éducation à la vie affective et relationnelle (EVAR), ajoutée en v1.1
 
 Chaque objectif porte :
 
@@ -163,7 +164,7 @@ Depuis le dossier, deux entrées permettent de court-circuiter la photo :
 
 ### 6.4 Programme
 
-- En-tête « Programme », sous-titre « Les six domaines du programme 2026, objectif par objectif ».
+- En-tête « Programme », sous-titre « Les six domaines du programme 2026 et le programme EVAR, objectif par objectif ».
 - Recherche plein texte sur l'intitulé et le domaine.
 - Filtres de niveau : Tous / PS / MS / GS.
 - Domaines en accordéon. Chaque domaine affiche le nombre d'objectifs et le nombre de validations de la classe.
@@ -256,7 +257,7 @@ Accessible par l'avatar de l'enseignante (rond « M »). La gestion des élèves
 - `navigator.storage.persist()` demandé au premier lancement pour limiter l'éviction ; sur iPhone et iPad, l'installation sur l'écran d'accueil est fortement recommandée.
 - Export ZIP complet (toutes les années) : `data.json`, le référentiel utilisé et les photos, écrit en streaming avec barre de progression.
 - Import : validation du schéma et de la version, résumé (élèves, années, photos), confirmation de remplacement complet. C'est aussi le mécanisme de transfert entre appareils.
-- Au-delà de 300 Mo, l'app prévient et recommande de garder l'écran allumé. Un export par année et une fusion de sauvegardes arrivent en v1.1.
+- Au-delà de 300 Mo, l'app prévient et recommande de garder l'écran allumé. L'export d'une année seule et la fusion de sauvegardes restent des évolutions ultérieures.
 - Rappel de sauvegarde si la dernière date de sauvegarde a plus de 30 jours ou après 50 nouvelles validations (compteur enregistré lors de la dernière sauvegarde).
 - Aucune synchronisation automatique : chaque appareil a sa propre base.
 - Aucun envoi réseau au fonctionnement. Les polices sont auto-hébergées.
@@ -283,7 +284,7 @@ interface SchoolYear {
 }
 
 interface Domain {
-  id: 'langage' | 'maths' | 'corps' | 'arts' | 'temps' | 'vivant';
+  id: 'langage' | 'maths' | 'corps' | 'arts' | 'temps' | 'vivant' | 'evar';
   label: string;
   longLabel: string;
   order: number;
@@ -421,7 +422,7 @@ Un script de build lit une source vérifiée et produit `referential.json` avec 
 - Écran classe < 2 s sur un téléphone milieu de gamme et sur iPad, photos en lazy loading.
 - Génération d'un PDF < 10 s pour 30 entrées avec photos ; indicateur de progression ; pagination au-delà d'une page.
 - Stockage : ~250 Ko par photo compressée ; 1 500 photos ≈ 375 Mo. Afficher l'usage et alerter à 80 % du quota.
-- Sauvegarde : un ZIP complet de 1 500 photos peut peser plusieurs centaines de Mo ; export en streaming, avertissement au-delà de 300 Mo, restauration testée sur un jeu de 400 photos. L'export par année arrive en v1.1.
+- Sauvegarde : un ZIP complet de 1 500 photos peut peser plusieurs centaines de Mo ; export en streaming, avertissement au-delà de 300 Mo, restauration testée sur un jeu de 400 photos. L’export d’une année seule reste une évolution ultérieure.
 - Limite iOS/iPadOS : l'éviction du stockage est possible si l'app n'est pas installée ; recommander l'installation sur l'écran d'accueil et une sauvegarde régulière.
 - HEIC : le ré-encodage canvas peut échouer sur certains fichiers ; prévoir un message clair plutôt qu'une photo cassée.
 
@@ -473,7 +474,7 @@ Livré en v1.1 :
 
 - ✅ Génération des bilans en lot : un ZIP, un PDF par élève de la classe, pour l'année et la période sélectionnées.
 - ✅ Sauvegarde chiffrée par mot de passe : AES-256-GCM, PBKDF2-SHA256, manifeste en clair, aucune récupération possible. Les anciennes sauvegardes en clair restent restaurables.
-- ✅ Programme EVAR : neuvième catégorie du référentiel (`evar`), après les six domaines 2026 ; trois axes, neuf objectifs (trois par tranche d'âge), source BO n° 6 du 6 février 2025. Référentiel `2026.2.0`, 407 objectifs.
+- ✅ Programme EVAR : septième catégorie du référentiel (`evar`), après les six domaines 2026 ; trois axes, neuf objectifs (trois par tranche d'âge), source BO n° 6 du 6 février 2025. Référentiel `2026.2.0`, 407 objectifs.
 - ✅ Validation avec lecteurs d'écran : protocole VoiceOver/TalkBack livré, exécution sur appareils réels encore à faire ; couverture WebKit automatisée ajoutée.
 - ✅ Nom définitif : Petite pousse. Les identifiants techniques historiques (`carnet-de-reussites`) restent inchangés pour préserver les données et les sauvegardes.
 

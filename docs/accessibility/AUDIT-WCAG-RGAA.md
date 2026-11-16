@@ -2,12 +2,19 @@
 
 **Application :** Petite pousse (nom définitif ; audit conduit sous le nom de travail « Carnet de réussites »).  
 **Date de l’audit :** 7 novembre 2026  
-**Version auditée :** `main` après les correctifs de cet audit (référentiel 2026.1.0)  
+**Révision :** 16 novembre 2026 (référentiel `2026.2.0`, navigation Classe / Programme / Bilans)  
+**Version auditée :** `main` au 16 novembre 2026 (référentiel `2026.2.0`), contrôles automatisés rejoués sur l’arbre de travail du même jour  
 **Normes de référence :** WCAG 2.1 AA, WCAG 2.2 AA, RGAA 4.1.2
 
 ## 1. Synthèse
 
 **Verdict : partiellement conforme.**
+
+> **Révision du 16 novembre 2026.** Les 19 états (28 tests Chromium) et les
+> 6 parcours WebKit ont été rejoués après les évolutions de navigation et le
+> passage au référentiel `2026.2.0` : aucune violation axe A/AA. Les
+> vérifications manuelles ci-dessous restent celles du 7 novembre 2026 ; elles
+> n’ont pas été rejouées sur appareil physique.
 
 - **WCAG 2.1 / 2.2 A et AA :** aucune violation détectée par axe sur les **19 états audités** (13 écrans et 6 feuilles modales). Les vérifications clavier, focus, contraste, reflow, espacement du texte, orientation et mouvement réduit passent. Un contrôle complémentaire est rejoué sur **WebKit**, le moteur de Safari sur iPhone et iPad.
 - **RGAA 4.1.2 :** les 106 critères ont été examinés. **57 sont conformes**, **47 sont non applicables** (aucune vidéo, aucun tableau, aucun cadre, etc.), **1 est partiel** et **1 est non conforme** :
@@ -35,6 +42,10 @@
 | Profil | `/settings` |
 | Succès | `/success/:validationId` |
 | Page introuvable | `/inconnu` |
+
+La navigation basse comporte trois onglets — **Classe / Programme / Bilans**.
+Le profil, les réglages et la gestion des élèves sont accessibles par l’avatar
+de l’enseignante ; les routes correspondantes restent auditées ci-dessus.
 
 ### Feuilles modales
 
@@ -76,6 +87,8 @@
 ### WebKit — preuve complémentaire
 
 `e2e/webkit.spec.ts` rejoue dans WebKit, au format iPhone 13 (390 × 844, tactile), les parcours critiques : chargement et titre, classe, filtre du programme, validation d’une capture, aperçu HTML du bilan et analyse axe des écrans principaux. Aucune violation WCAG A/AA n’y est détectée.
+
+Les scans axe attendent désormais que l’onglet actif de la navigation ait ses couleurs finales avant l’analyse, afin de ne pas capturer le contraste transitoire que WebKit peut exposer pendant un changement d’état.
 
 Cette preuve **complète** Chromium : elle vérifie que le moteur de Safari iOS ne casse ni la sémantique, ni le focus, ni les styles. Elle **ne remplace pas** les tests VoiceOver et TalkBack, qui restent à exécuter sur appareil réel — voir le § 7.2.
 
@@ -186,7 +199,7 @@ L’aperçu A4 utilise un `zoom` CSS pour tenir sur un téléphone. À 320 px, l
 
 ### 7.4 Déclaration d’accessibilité
 
-Aucune déclaration d’accessibilité légale n’est publiée. Elle n’est pas nécessaire pour une application personnelle non diffusée, mais si l’application devient un service public ou scolaire diffusé, il faudra publier une déclaration, un schéma pluriannuel et organiser les tests utilisateurs.
+Aucune déclaration d’accessibilité légale n’est publiée. Elle n’est pas nécessaire pour une application personnelle non diffusée, mais si l’application devient un service public ou scolaire diffusé, il faudra publier une déclaration, un schéma pluriannuel et organiser les tests utilisateurs. Un modèle de travail existe dans `docs/legal`, mais il n’est ni validé par le DPO ni publié : il ne peut pas être invoqué comme déclaration en vigueur.
 
 ## 8. Matrice RGAA 4.1.2
 
@@ -217,6 +230,9 @@ La matrice détaillée, avec le statut et la justification de chaque critère, e
 - **NC** : non conforme, réserve documentée ci-dessus (PDF non balisé, critère 13.3).
 
 ## 9. Reproduction
+
+Révision automatisée du **16 novembre 2026** : les commandes ci-dessous ont été
+rejouées sur `main` (référentiel `2026.2.0`).
 
 ```bash
 # Audit WCAG complet (écrans, feuilles, clavier, reflow, mouvement) — Chromium
