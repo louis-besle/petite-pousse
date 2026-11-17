@@ -7,8 +7,19 @@ applique le [versionnage sémantique](https://semver.org/lang/fr/).
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-11-17
+
 ### Ajouté
 
+- **Objectifs personnalisés** : depuis **Programme**, le bouton **Ajouter un
+  objectif** crée un objectif sur mesure (intitulé, domaine, niveaux, exemple
+  facultatif par niveau). Il apparaît en fin de domaine avec la marque
+  **Ajouté**, se propose à la capture et se valide comme un objectif officiel ;
+  il peut aussi être modifié ou supprimé. Les réussites déjà enregistrées
+  conservent leur instantané : supprimer un objectif ne retire jamais une
+  observation d’un dossier ni d’un bilan.
+- Les objectifs personnalisés sont inclus dans la sauvegarde et restaurés avec le
+  reste des données.
 - Licence **MIT** (`LICENSE`), copyright 2026 Louis BESLE.
 - Modèles légaux dans `docs/legal/` : information des familles sur les données
   personnelles (RGPD) et déclaration d'accessibilité, à compléter et à faire
@@ -54,8 +65,8 @@ applique le [versionnage sémantique](https://semver.org/lang/fr/).
 - Scans axe fiabilisés sur WebKit : attente de la stabilisation des couleurs de
   navigation avant l'analyse, et rendu « mouvement réduit » forcé pour ne plus
   capturer une transition à mi-parcours.
-- CI verte sur `main` au 16 novembre 2026 : 344 tests unitaires, 51 parcours E2E
-  (45 Chromium, 6 WebKit) et 1 test de rechargement hors ligne.
+- CI verte le 17 novembre 2026 : 418 tests unitaires, 53 parcours E2E
+  (47 Chromium, 6 WebKit) et 1 test de rechargement hors ligne.
 
 ## [1.1.1] - 2026-11-07
 
@@ -141,7 +152,8 @@ Cette release correspond à l'état déployé au commit `d2a2588`, avant l'incr�
 v1.1. Le champ `version` de `package.json` était encore à `0.0.0` ; le versionnage
 sémantique démarre avec la 1.1.0.
 
-[Unreleased]: https://github.com/louis-besle/petite-pousse/compare/v1.1.1...HEAD
+[Unreleased]: https://github.com/louis-besle/petite-pousse/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/louis-besle/petite-pousse/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/louis-besle/petite-pousse/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/louis-besle/petite-pousse/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/louis-besle/petite-pousse/releases/tag/v1.0.0

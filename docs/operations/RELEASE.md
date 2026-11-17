@@ -1,10 +1,9 @@
 # Runbook de release — Petite pousse
 
-> **Ne pas exécuter ce runbook maintenant : aucune release 1.1.2 n'est planifiée.**
-> Ce document décrit la procédure à suivre le jour où une version est réellement
-> décidée. La dernière release publiée reste la **1.1.1** ; `main` et `dev`
-> pointent pour l'instant sur le même commit, qui contient des évolutions non
-> versionnées.
+> **Release 1.2.0 prête sur `dev`, pas encore publiée.** Ce document décrit la
+> procédure à suivre le jour où la publication est décidée. La dernière release
+> publiée est la **1.1.1** : `main` s'y trouve encore, alors que `dev` porte déjà
+> la 1.2.0 versionnée.
 
 Application : **Petite pousse**, <https://carnet-de-reussites.vercel.app> — dépôt : <https://github.com/louis-besle/petite-pousse>.
 
