@@ -13,6 +13,8 @@ import { FlowerMark } from '@/ui/FlowerMark'
 import { Icon } from '@/ui/icons'
 import { IconButton } from '@/ui/IconButton'
 import { LoadingText } from '@/ui/LoadingText'
+import { Sheet } from '@/ui/Sheet'
+import { SheetActions } from '@/ui/SheetActions'
 import { useToast } from '@/ui/useToast'
 import { StudentRecap } from './StudentRecap'
 import styles from './capture.module.css'
@@ -52,6 +54,8 @@ export function PhotoScreen() {
   const [snapshot, setSnapshot] = useState<PhotoSnapshot>()
   // État de l'enregistrement sans photo, distinct de celui du champ fichier.
   const [validateBusy, setValidateBusy] = useState(false)
+  // Choix entre caméra et photothèque, ouvert par « Prendre la photo ».
+  const [chooserOpen, setChooserOpen] = useState(false)
   const imageRef = useRef<HTMLImageElement>(null)
 
   /**
@@ -81,6 +85,8 @@ export function PhotoScreen() {
   const {
     inputRef,
     openPicker,
+    libraryInputRef,
+    openLibrary,
     busy: photoBusy,
     handleChange,
   } = usePhotoFileInput({
@@ -190,8 +196,22 @@ export function PhotoScreen() {
     if (hasPhoto) {
       navigate('/capture/objective')
     } else {
-      openPicker()
+      setChooserOpen(true)
     }
+  }
+
+  /**
+   * La feuille se ferme puis le champ fichier est cliqué dans le même geste
+   * utilisateur : le navigateur ouvre bien l'appareil photo ou la photothèque.
+   */
+  function chooseCamera(): void {
+    setChooserOpen(false)
+    openPicker()
+  }
+
+  function chooseLibrary(): void {
+    setChooserOpen(false)
+    openLibrary()
   }
 
   return (
@@ -255,7 +275,7 @@ export function PhotoScreen() {
             <button
               type="button"
               className={styles.textAction}
-              onClick={openPicker}
+              onClick={() => setChooserOpen(true)}
               disabled={busy}
             >
               Reprendre
@@ -288,6 +308,19 @@ export function PhotoScreen() {
         accept="image/*"
         capture="environment"
         hidden
+        data-testid="photo-camera-input"
+        onChange={(event) => {
+          void handleChange(event)
+        }}
+      />
+
+      {/* Sans `capture`, ce champ ouvre le sélecteur de photos du téléphone. */}
+      <input
+        ref={libraryInputRef}
+        type="file"
+        accept="image/*"
+        hidden
+        data-testid="photo-library-input"
         onChange={(event) => {
           void handleChange(event)
         }}
@@ -316,6 +349,23 @@ export function PhotoScreen() {
           )}
         </Button>
       </div>
+
+      <Sheet
+        open={chooserOpen}
+        onClose={() => setChooserOpen(false)}
+        title="Ajouter une photo"
+      >
+        <SheetActions>
+          <Button variant="primary" fullWidth onClick={chooseCamera}>
+            <Icon name="camera" size={18} />
+            Caméra
+          </Button>
+          <Button variant="ghost" fullWidth onClick={chooseLibrary}>
+            <Icon name="grid" size={18} />
+            Photothèque
+          </Button>
+        </SheetActions>
+      </Sheet>
     </section>
   )
 }

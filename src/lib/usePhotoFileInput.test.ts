@@ -4,7 +4,7 @@ import { ImageDecodeError } from '@/domain/errors'
 import type { CompressedPhoto } from '@/domain/types'
 import { compressImage } from '@/lib/image'
 import { ToastProvider } from '@/ui/ToastProvider'
-import { usePhotoFileInput } from './usePhotoFileInput'
+import { usePhotoFileInput, type PhotoFileInput } from './usePhotoFileInput'
 
 vi.mock('@/lib/image', () => ({ compressImage: vi.fn() }))
 
@@ -41,6 +41,22 @@ function renderPhotoInput(onPhoto: (photo: CompressedPhoto) => Promise<void>) {
   )
 }
 
+/**
+ * Branche deux champs fichier sur les refs du hook, comme le fait l'écran de
+ * capture : caméra et photothèque restent deux champs distincts.
+ */
+function attachInputs(result: { current: PhotoFileInput }) {
+  const camera = document.createElement('input')
+  const library = document.createElement('input')
+
+  act(() => {
+    result.current.inputRef.current = camera
+    result.current.libraryInputRef.current = library
+  })
+
+  return { camera, library }
+}
+
 describe('usePhotoFileInput', () => {
   beforeEach(() => {
     compressImageMock.mockReset()
@@ -57,6 +73,34 @@ describe('usePhotoFileInput', () => {
 
     expect(onPhoto).toHaveBeenCalledWith(PHOTO)
     expect(result.current.busy).toBe(false)
+  })
+
+  it('ouvre le champ caméra sans toucher à celui de la photothèque', () => {
+    const { result } = renderPhotoInput(vi.fn(async () => {}))
+    const { camera, library } = attachInputs(result)
+    const cameraClick = vi.spyOn(camera, 'click')
+    const libraryClick = vi.spyOn(library, 'click')
+
+    act(() => {
+      result.current.openPicker()
+    })
+
+    expect(cameraClick).toHaveBeenCalledTimes(1)
+    expect(libraryClick).not.toHaveBeenCalled()
+  })
+
+  it('ouvre le champ photothèque sans toucher à celui de la caméra', () => {
+    const { result } = renderPhotoInput(vi.fn(async () => {}))
+    const { camera, library } = attachInputs(result)
+    const cameraClick = vi.spyOn(camera, 'click')
+    const libraryClick = vi.spyOn(library, 'click')
+
+    act(() => {
+      result.current.openLibrary()
+    })
+
+    expect(libraryClick).toHaveBeenCalledTimes(1)
+    expect(cameraClick).not.toHaveBeenCalled()
   })
 
   it('avertit et n’enregistre rien quand le décodage échoue', async () => {

@@ -18,8 +18,12 @@ export interface UsePhotoFileInputOptions {
 }
 
 export interface PhotoFileInput {
+  /** Champ caméra (`capture="environment"`). */
   inputRef: RefObject<HTMLInputElement | null>
   openPicker: () => void
+  /** Champ photothèque, sans `capture` : sélecteur de photos du téléphone. */
+  libraryInputRef: RefObject<HTMLInputElement | null>
+  openLibrary: () => void
   busy: boolean
   handleChange: (event: ChangeEvent<HTMLInputElement>) => Promise<void>
 }
@@ -28,6 +32,10 @@ export interface PhotoFileInput {
  * Pipeline photo commun aux écrans qui prennent ou remplacent une photo :
  * compression, toast d'erreur et état occupé. L'écriture réelle est déléguée à
  * `onPhoto`, qui reçoit la photo compressée.
+ *
+ * Deux champs fichier partagent le même traitement : la caméra (`openPicker`)
+ * et la photothèque (`openLibrary`). Les écrans qui n'offrent que la caméra
+ * ignorent simplement le second.
  *
  * Le champ fichier est vidé dès la lecture : reprendre exactement le même
  * fichier relance bien le traitement.
@@ -41,9 +49,14 @@ export function usePhotoFileInput({
   const { showToast } = useToast()
   const [busy, setBusy] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
+  const libraryInputRef = useRef<HTMLInputElement>(null)
 
   function openPicker(): void {
     inputRef.current?.click()
+  }
+
+  function openLibrary(): void {
+    libraryInputRef.current?.click()
   }
 
   async function handleChange(event: ChangeEvent<HTMLInputElement>): Promise<void> {
@@ -75,5 +88,5 @@ export function usePhotoFileInput({
     }
   }
 
-  return { inputRef, openPicker, busy, handleChange }
+  return { inputRef, openPicker, libraryInputRef, openLibrary, busy, handleChange }
 }

@@ -163,7 +163,14 @@ export async function captureWithPhoto(
     }),
   ).toBeVisible()
 
-  await page.locator('input[type="file"]').setInputFiles(PHOTO_FIXTURE)
+  // « Prendre la photo » ouvre un choix : on passe par la photothèque, qui
+  // n'ouvre pas la caméra de l'appareil.
+  await page.getByRole('button', { name: 'Prendre la photo' }).click()
+  await page
+    .getByRole('dialog', { name: 'Ajouter une photo' })
+    .getByRole('button', { name: 'Photothèque' })
+    .click()
+  await page.getByTestId('photo-library-input').setInputFiles(PHOTO_FIXTURE)
 
   const preview = page.getByRole('img', { name: `Photo de réussite de ${name}` })
   await expect(preview).toHaveAttribute('src', /^blob:/)
