@@ -115,8 +115,8 @@ export function ProgrammeScreen() {
   const allValidations = useAllValidations()
   const activeValidations = selectedYear === 'all' ? allValidations : yearValidations
 
-  // L'en-tête et le bouton d'ajout sont statiques : ils s'affichent dès le
-  // premier rendu, pendant que les données vivantes se chargent encore.
+  // L'en-tête est statique : il s'affiche dès le premier rendu, pendant que les
+  // données vivantes se chargent encore.
   const header = (
     <header className={styles.header}>
       <h1 className={styles.title}>Programme</h1>
@@ -127,9 +127,13 @@ export function ProgrammeScreen() {
   )
 
   const addObjectiveButton = (
-    <Button variant="dark" fullWidth onClick={() => setFormObjective(null)}>
+    <Button
+      variant="dark"
+      aria-label="Ajouter un objectif"
+      className={styles.addObjectiveButton}
+      onClick={() => setFormObjective(null)}
+    >
       <Icon name="plus" size={18} />
-      Ajouter un objectif
     </Button>
   )
 
@@ -144,7 +148,6 @@ export function ProgrammeScreen() {
     return (
       <section className={styles.screen}>
         {header}
-        {addObjectiveButton}
         <LoadingText>Chargement du programme…</LoadingText>
       </section>
     )
@@ -271,14 +274,17 @@ export function ProgrammeScreen() {
     <section className={styles.screen}>
       {header}
 
-      {addObjectiveButton}
-
-      <SearchField
-        label="Rechercher un objectif"
-        placeholder="Rechercher un objectif…"
-        value={query}
-        onChange={handleQueryChange}
-      />
+      <div className={styles.searchRow}>
+        <div className={styles.searchField}>
+          <SearchField
+            label="Rechercher un objectif"
+            placeholder="Rechercher un objectif…"
+            value={query}
+            onChange={handleQueryChange}
+          />
+        </div>
+        {addObjectiveButton}
+      </div>
 
       <SectionFilterChips
         value={level}

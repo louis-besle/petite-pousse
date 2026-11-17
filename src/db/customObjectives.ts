@@ -39,7 +39,8 @@ function normalizeAgeBands(ageBands: AgeBand[]): AgeBand[] {
 
 /**
  * Applique les règles métier sur une saisie : intitulé, tranches d’âge puis
- * exemples. Renvoie les valeurs nettoyées, prêtes à être enregistrées.
+ * exemples facultatifs. Renvoie les valeurs nettoyées, prêtes à être
+ * enregistrées.
  */
 function cleanInput(input: CustomObjectiveInput): {
   label: string
@@ -64,9 +65,10 @@ function cleanInput(input: CustomObjectiveInput): {
 
   const examples: Partial<Record<AgeBand, string>> = {}
   for (const band of ageBands) {
+    // L’exemple est facultatif : une tranche laissée vide n’est pas enregistrée.
     const example = (input.examples[band] ?? '').trim()
     if (example === '') {
-      throw new Error(`L’exemple en ${sectionForAgeBand(band)} est obligatoire.`)
+      continue
     }
     if (example.length > MAX_OBJECTIVE_EXAMPLE_LENGTH) {
       throw new Error(

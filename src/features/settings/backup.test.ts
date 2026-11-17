@@ -803,7 +803,7 @@ describe('objectifs personnalisés dans la sauvegarde', () => {
   )
 
   it(
-    'refuse un objectif personnalisé sans exemple',
+    'accepte un objectif personnalisé sans exemple',
     async () => {
       await seedBackupData()
       await createCustomObjective({
@@ -818,7 +818,8 @@ describe('objectifs personnalisés dans la sauvegarde', () => {
         data.customObjectives[0]!.examples = {}
       })
 
-      await expect(readBackup(file, () => {})).rejects.toThrow(/invalide/)
+      const backup = await readBackup(file, () => {})
+      expect(backup.data.customObjectives[0]!.examples).toEqual({})
     },
     ZIP_TIMEOUT_MS,
   )

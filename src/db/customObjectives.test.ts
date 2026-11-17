@@ -48,16 +48,27 @@ describe('createCustomObjective', () => {
     ).rejects.toThrow('L’intitulé ne peut pas dépasser 160 caractères.')
   })
 
-  it('refuse un objectif sans niveau ou sans exemple', async () => {
+  it('refuse un objectif sans niveau et un exemple trop long', async () => {
     await expect(
       createCustomObjective(input({ ageBands: [] })),
     ).rejects.toThrow('Choisis au moins un niveau.')
     await expect(
-      createCustomObjective(input({ ageBands: ['from4', 'from5'], examples: { from4: 'ok' } })),
-    ).rejects.toThrow('L’exemple en GS est obligatoire.')
-    await expect(
       createCustomObjective(input({ examples: { from4: 'ok', from5: 'x'.repeat(201) } })),
     ).rejects.toThrow('L’exemple en GS ne peut pas dépasser 200 caractères.')
+  })
+
+  it('accepte un objectif sans exemple et ignore les niveaux laissés vides', async () => {
+    const partial = await createCustomObjective(
+      input({ examples: { from4: '  ok  ' } }),
+    )
+    expect(partial.examples).toEqual({ from4: 'ok' })
+    expect((await db.customObjectives.get(partial.id))?.examples).toEqual({ from4: 'ok' })
+
+    const withoutExamples = await createCustomObjective(
+      input({ label: 'Nommer les couleurs', examples: {} }),
+    )
+    expect(withoutExamples.examples).toEqual({})
+    expect((await db.customObjectives.get(withoutExamples.id))?.examples).toEqual({})
   })
 
   it('refuse un doublon officiel ou personnalisé, casse et accents ignorés', async () => {

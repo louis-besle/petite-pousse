@@ -699,19 +699,6 @@ function assertBackupIntegrity(data: BackupData): void {
       )
     }
   }
-
-  // Un objectif ajouté est inutilisable sans exemple pour chaque niveau qu’il
-  // déclare : la saisie de réussite s’appuie dessus.
-  for (const objective of data.customObjectives) {
-    for (const band of objective.ageBands) {
-      if (objective.examples[band] === undefined) {
-        throw new BackupReadError(
-          `La sauvegarde est invalide : l’objectif ajouté « ${objective.id} » ` +
-            `n’a pas d’exemple pour « ${band} ».`,
-        )
-      }
-    }
-  }
 }
 
 /**
