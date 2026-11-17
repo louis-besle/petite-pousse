@@ -10,7 +10,7 @@
 
 Le programme officiel ne couvre pas tout ce que l'enseignante observe en classe. Elle veut pouvoir ajouter ses propres objectifs d'apprentissage, sans quitter l'application ni passer par un fichier.
 
-Le geste attendu : depuis **Programme**, un bouton « Ajouter un objectif », une fiche courte (intitulé, domaine, niveaux, un exemple par niveau), et l'objectif apparaît dans son domaine comme les autres. Il peut ensuite être validé pour un élève exactement comme un objectif officiel.
+Le geste attendu : depuis **Programme**, un bouton « Ajouter un objectif », une fiche courte (intitulé, domaine, niveaux, un exemple facultatif par niveau), et l'objectif apparaît dans son domaine comme les autres. Il peut ensuite être validé pour un élève exactement comme un objectif officiel.
 
 Vocabulaire : l'application appelle « objectif » la ligne que l'on valide. Le bouton et les libellés emploient ce mot, pas « compétence ».
 
@@ -54,8 +54,8 @@ Décisions prises avec l'enseignante :
 
 | Sujet | Décision |
 |---|---|
-| Champs de la fiche | Intitulé, domaine, niveaux (plusieurs possibles), un petit exemple par niveau coché. |
-| Emplacement du bouton | En haut de Programme, à côté du titre « Programme ». Pas de « + » par domaine : le domaine se choisit dans la fiche. |
+| Champs de la fiche | Intitulé, domaine, niveaux (plusieurs possibles), un petit exemple facultatif par niveau coché. |
+| Emplacement du bouton | En haut de Programme, à la fin de la barre de recherche, réduit à l'icône `plus`. Pas de « + » par domaine : le domaine se choisit dans la fiche. |
 | Place dans la liste | En fin de domaine, après les objectifs officiels, dans l'ordre de création. |
 | Distinction | Une marque discrète « Ajouté » sur la ligne et dans la fiche de l'objectif. |
 | Modification / suppression | Les deux sont possibles, à tout moment. |
@@ -66,7 +66,7 @@ Appels du concepteur (à vérifier à la lecture) :
 | Sujet | Appel |
 |---|---|
 | Longueur | Intitulé 160 caractères maximum, exemple 200 maximum. |
-| Exemples | Obligatoires pour chaque niveau coché, comme pour les objectifs officiels, qui en affichent un par niveau. |
+| Exemples | Facultatifs pour chaque niveau coché ; les objectifs officiels, eux, en affichent toujours un par niveau. |
 | Doublons | Refus d'un second objectif de même intitulé (comparaison insensible à la casse et aux accents) dans le même domaine. |
 | Domaine verrouillé | Le domaine peut être changé même après des validations ; l'historique garde le domaine d'origine dans son instantané. |
 | Suppression | Confirmée par une feuille de confirmation ; les réussites déjà enregistrées restent dans les dossiers et les bilans. |
@@ -97,7 +97,7 @@ interface CustomObjective extends Objective {
 - `competencyId` : `'custom'` (valeur technique, jamais affichée).
 - `source` : `{ bo: 'Objectif ajouté par l’enseignant' }` (jamais affiché).
 - `ageBands` : au moins une tranche, dans l'ordre officiel PS → MS → GS.
-- `examples` : une entrée par tranche déclarée.
+- `examples` : une entrée facultative par tranche déclarée.
 
 Le référentiel officiel n'est jamais réécrit.
 
@@ -121,17 +121,17 @@ Aucun autre écran ne lit `referential.objectives` : le dossier et les bilans s'
 
 ### 9.1 Bouton
 
-En tête de Programme, sous le sous-titre : bouton pleine largeur « Ajouter un objectif », icône `plus`, même style que « Ajouter un élève » dans Gérer les élèves.
+En tête de Programme, à la fin de la barre de recherche : bouton encre (`dark`) réduit à l'icône `plus`, carré de la taille d'une cible tactile, sur la même ligne que le champ. Son nom accessible, jamais affiché, reste « Ajouter un objectif ».
 
 ### 9.2 Fiche d'ajout / d'édition
 
-Feuille (`Sheet`) sur le modèle de `StudentFormSheet`, montée à chaque ouverture :
+Feuille (`Sheet`) sur le modèle de `StudentFormSheet`, montée à chaque ouverture. Chaque groupe de choix est introduit par un petit titre visible (« Domaine », « Niveaux », « Exemples »), qui sert aussi de nom accessible au groupe de puces.
 
 - En-tête : « Ajouter un objectif » ou « Modifier l'objectif ».
 - **Intitulé** : champ texte obligatoire, 160 caractères.
 - **Domaine** : groupe de puces à choix unique, les sept domaines, obligatoire.
 - **Niveaux** : groupe de puces à choix multiple PS / MS / GS, au moins un.
-- **Exemples** : un champ par niveau coché, libellé « Exemple en PS » etc., obligatoire. Décocher un niveau masque son exemple sans perdre le texte saisi si on le recoche.
+- **Exemples** : un champ par niveau coché, libellé « Exemple en PS » etc., facultatif. Décocher un niveau masque son exemple sans perdre le texte saisi si on le recoche.
 - Erreur de doublon affichée sous l'intitulé, annoncée (`role="alert"`).
 - Actions : « Ajouter l'objectif » / « Enregistrer », puis « Annuler ».
 - En édition, un bouton « Supprimer » en ton danger, qui ouvre `ConfirmSheet`.
@@ -177,7 +177,7 @@ La suppression est définitive, sans corbeille : l'intitulé redevient libre et 
 - La restauration vide puis réinsère `customObjectives` dans la même transaction que le reste.
 - `referential.json` continue de ne contenir que le référentiel officiel.
 - Le schéma Zod de `data.json` déclare `customObjectives` avec une valeur par défaut vide, pour que les archives v1 passent la validation.
-- Contrôles d'intégrité à la lecture : identifiants uniques, domaine connu, au moins un niveau, un exemple par niveau déclaré.
+- Contrôles d'intégrité à la lecture : identifiants uniques, domaine connu, au moins un niveau.
 - `settings.schemaVersion` reste à 1 : cette valeur héritée n'est jamais lue, et la version qui fait foi pour les archives est celle de `data.json`. Aucune migration de réglages n'est donc nécessaire.
 
 ## 12. Cas limites
@@ -195,7 +195,7 @@ La suppression est définitive, sans corbeille : l'intitulé redevient libre et 
 
 ## 13. Accessibilité
 
-- Chaque champ a un libellé associé ; les groupes de puces ont un nom (`role="group"`, `aria-label`).
+- Chaque champ a un libellé associé ; les groupes de puces sont nommés par leur titre visible (`role="group"`, `aria-labelledby`).
 - L'état des puces de niveau est porté par `aria-pressed`.
 - L'erreur de doublon est annoncée (`role="alert"`) et le focus va sur le champ fautif.
 - L'étiquette « Ajouté » n'est pas seulement visuelle : elle est incluse dans le nom accessible de la ligne.
@@ -205,7 +205,7 @@ La suppression est définitive, sans corbeille : l'intitulé redevient libre et 
 
 Unitaires :
 
-- `customObjectives` : création, édition, suppression, nettoyage des espaces, au moins un niveau, un exemple par niveau, refus du doublon, identifiant préfixé.
+- `customObjectives` : création, édition, suppression, nettoyage des espaces, au moins un niveau, refus du doublon, identifiant préfixé.
 - Doublon : refusé tant que les deux objectifs existent ; autorisé après suppression du premier.
 - Niveaux : retirer un niveau met à jour la fiche sans toucher aux validations déjà enregistrées à ce niveau.
 - `mergeObjectives` : officiels d'abord dans l'ordre du JSON, personnalisés ensuite par date de création, aucun officiel modifié.

@@ -514,7 +514,7 @@ describe('ProgrammeScreen', () => {
 describe('objectifs personnalisés', () => {
   async function addCustomObjectiveFromUi(user: ReturnType<typeof userEvent.setup>) {
     await user.click(
-      screen.getByRole('button', { name: 'Ajouter un objectif' }),
+      await screen.findByRole('button', { name: 'Ajouter un objectif' }),
     )
     const dialog = await screen.findByRole('dialog', { name: 'Ajouter un objectif' })
 
@@ -558,6 +558,49 @@ describe('objectifs personnalisés', () => {
     })
   })
 
+  it('affiche des exemples de saisie et accepte un objectif sans exemple', async () => {
+    const user = userEvent.setup()
+    renderApp({ route: '/programme' })
+    await user.click(
+      await screen.findByRole('button', { name: 'Ajouter un objectif' }),
+    )
+    const dialog = await screen.findByRole('dialog', { name: 'Ajouter un objectif' })
+
+    expect(within(dialog).getByLabelText('Intitulé')).toHaveAttribute(
+      'placeholder',
+      'Objectif',
+    )
+
+    const levels = within(dialog).getByRole('group', { name: 'Niveaux' })
+    for (const section of ['PS', 'MS', 'GS'] as const) {
+      await user.click(within(levels).getByRole('button', { name: section }))
+      expect(within(dialog).getByLabelText(`Exemple en ${section}`)).toHaveAttribute(
+        'placeholder',
+        section,
+      )
+    }
+
+    await user.type(
+      within(dialog).getByLabelText('Intitulé'),
+      'Compter jusqu’à douze',
+    )
+    await user.click(
+      within(within(dialog).getByRole('group', { name: 'Domaine' })).getByRole('button', { name: 'Maths' }),
+    )
+    await user.click(within(dialog).getByRole('button', { name: 'Ajouter l’objectif' }))
+
+    await waitFor(() => expect(dialog).not.toBeInTheDocument())
+    expect(await screen.findByText('Objectif ajouté.')).toBeInTheDocument()
+
+    await searchObjective('douze')
+    const maths = await screen.findByRole('region', { name: 'Maths' })
+    expect(within(maths).getByText('Compter jusqu’à douze')).toBeInTheDocument()
+
+    const stored = await db.customObjectives.toArray()
+    expect(stored).toHaveLength(1)
+    expect(stored[0]!.examples).toEqual({})
+  })
+
   it('refuse un intitulé déjà pris et annonce l’erreur', async () => {
     const official = referential.objectives.find(
       (objective) => objective.domainId === 'maths',
@@ -566,7 +609,7 @@ describe('objectifs personnalisés', () => {
     const user = userEvent.setup()
     renderApp({ route: '/programme' })
     await user.click(
-      screen.getByRole('button', { name: 'Ajouter un objectif' }),
+      await screen.findByRole('button', { name: 'Ajouter un objectif' }),
     )
 
     const dialog = await screen.findByRole('dialog', { name: 'Ajouter un objectif' })

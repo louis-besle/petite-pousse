@@ -28,6 +28,9 @@ import { useToast } from '@/ui/useToast'
 import styles from './programme.module.css'
 
 const ERROR_ID = 'custom-objective-error'
+const DOMAIN_TITLE_ID = 'custom-objective-domain'
+const LEVELS_TITLE_ID = 'custom-objective-levels'
+const EXAMPLES_TITLE_ID = 'custom-objective-examples'
 
 type ErrorField = 'label' | AgeBand
 
@@ -54,7 +57,7 @@ export interface CustomObjectiveSheetProps {
 /**
  * Formulaire d'ajout ou de modification d'un objectif personnalisé. L'intitulé
  * est libre, le domaine et les niveaux se choisissent par puces, et un exemple
- * est saisi pour chaque niveau coché.
+ * facultatif peut être saisi pour chaque niveau coché.
  */
 export function CustomObjectiveSheet({
   open,
@@ -133,6 +136,7 @@ export function CustomObjectiveSheet({
         <div className={styles.formField}>
           <Field
             label="Intitulé"
+            placeholder="Objectif"
             value={label}
             maxLength={MAX_OBJECTIVE_LABEL_LENGTH}
             autoComplete="off"
@@ -151,58 +155,84 @@ export function CustomObjectiveSheet({
           )}
         </div>
 
-        <div role="group" aria-label="Domaine" className={styles.chipRow}>
-          {domains.map((domain) => (
-            <Chip
-              key={domain.id}
-              active={domainId === domain.id}
-              onClick={() => setDomainId(domain.id)}
-            >
-              {domain.label}
-            </Chip>
-          ))}
-        </div>
-
-        <div role="group" aria-label="Niveaux" className={styles.chipRow}>
-          {SECTIONS.map((section) => {
-            const band = ageBandForSection(section)
-            return (
+        <div className={styles.formSection}>
+          <h3 id={DOMAIN_TITLE_ID} className={styles.formSectionTitle}>
+            Domaine
+          </h3>
+          <div
+            role="group"
+            aria-labelledby={DOMAIN_TITLE_ID}
+            className={styles.chipRow}
+          >
+            {domains.map((domain) => (
               <Chip
-                key={section}
-                active={ageBands.includes(band)}
-                onClick={() => toggleBand(band)}
+                key={domain.id}
+                active={domainId === domain.id}
+                onClick={() => setDomainId(domain.id)}
               >
-                {section}
+                {domain.label}
               </Chip>
-            )
-          })}
+            ))}
+          </div>
         </div>
 
-        {AGE_BANDS.filter((band) => ageBands.includes(band)).map((band) => {
-          const section = sectionForAgeBand(band)
-          return (
-            <div key={band} className={styles.formField}>
-              <Field
-                label={`Exemple en ${section}`}
-                value={examples[band] ?? ''}
-                maxLength={MAX_OBJECTIVE_EXAMPLE_LENGTH}
-                autoComplete="off"
-                inputRef={(element) => {
-                  exampleRefs.current[band] = element
-                }}
-                aria-invalid={error?.field === band ? true : undefined}
-                aria-describedby={error?.field === band ? ERROR_ID : undefined}
-                onChange={(event) => {
-                  setExamples((previous) => ({
-                    ...previous,
-                    [band]: event.target.value,
-                  }))
-                  if (error?.field === band) setError(undefined)
-                }}
-              />
-            </div>
-          )
-        })}
+        <div className={styles.formSection}>
+          <h3 id={LEVELS_TITLE_ID} className={styles.formSectionTitle}>
+            Niveaux
+          </h3>
+          <div
+            role="group"
+            aria-labelledby={LEVELS_TITLE_ID}
+            className={styles.chipRow}
+          >
+            {SECTIONS.map((section) => {
+              const band = ageBandForSection(section)
+              return (
+                <Chip
+                  key={section}
+                  active={ageBands.includes(band)}
+                  onClick={() => toggleBand(band)}
+                >
+                  {section}
+                </Chip>
+              )
+            })}
+          </div>
+        </div>
+
+        {ageBands.length === 0 ? null : (
+          <div className={styles.formSection}>
+            <h3 id={EXAMPLES_TITLE_ID} className={styles.formSectionTitle}>
+              Exemples
+            </h3>
+            {AGE_BANDS.filter((band) => ageBands.includes(band)).map((band) => {
+              const section = sectionForAgeBand(band)
+              return (
+                <div key={band} className={styles.formField}>
+                  <Field
+                    label={`Exemple en ${section}`}
+                    placeholder={section}
+                    value={examples[band] ?? ''}
+                    maxLength={MAX_OBJECTIVE_EXAMPLE_LENGTH}
+                    autoComplete="off"
+                    inputRef={(element) => {
+                      exampleRefs.current[band] = element
+                    }}
+                    aria-invalid={error?.field === band ? true : undefined}
+                    aria-describedby={error?.field === band ? ERROR_ID : undefined}
+                    onChange={(event) => {
+                      setExamples((previous) => ({
+                        ...previous,
+                        [band]: event.target.value,
+                      }))
+                      if (error?.field === band) setError(undefined)
+                    }}
+                  />
+                </div>
+              )
+            })}
+          </div>
+        )}
 
         <SheetActions>
           <Button
