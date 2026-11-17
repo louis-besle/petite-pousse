@@ -18,8 +18,9 @@
   padding: 20px 20px 32px;
 }
 
-/* Cible du lien d'évitement : le focus programme ne doit pas dessiner d'anneau. */
-.main:focus:not(:focus-visible) {
+/* `main` est focalisé par programme à chaque changement de route : l'anneau
+   global dessinerait un liseré encre en travers du bas de l'écran. */
+.main:focus {
   outline: none;
 }
 

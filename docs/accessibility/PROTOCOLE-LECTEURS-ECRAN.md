@@ -171,13 +171,15 @@ guillemets sont les textes attendus dans l’interface.
 
 ### Étape 5 — Capture photo
 
-- **Action :** activer « Prendre la photo » (ou le champ d’import), choisir une
+- **Action :** activer « Prendre la photo », choisir **Caméra** (ou
+  **Photothèque** pour une image déjà présente sur l’appareil), choisir une
   image, revenir à l’application.
 - **Attendu :** l’image est annoncée « Photo de réussite de Léa, image » ; le
   badge « Photo prise » est annoncé ; le bouton « Choisir l’objectif » est
   disponible.
-- **Échec si :** l’image est muette, sans alternative, ou si le retour depuis
-  l’appareil photo perd le focus.
+- **Échec si :** l’image est muette, sans alternative, si la feuille
+  « Ajouter une photo » n’est pas annoncée comme une boîte de dialogue nommée,
+  ou si le retour depuis l’appareil photo perd le focus.
 
 ### Étape 6 — Choix de l’objectif
 
@@ -218,14 +220,16 @@ guillemets sont les textes attendus dans l’interface.
 
 - **Action :** ouvrir « Programme » depuis la navigation basse, filtrer par
   niveau **PS** avec le groupe « Filtrer par niveau », rechercher
-  « syllabes », ouvrir un objectif, activer « Valider pour un élève », choisir
-  « Léa, section MS ».
+  « syllabes », ouvrir un objectif, choisir « Léa, section MS ».
 - **Attendu :** le titre « Programme » est annoncé ; le filtre est annoncé comme
-  groupe de boutons avec l’état actif ; le compteur et la barre de progression
-  sont annoncés (« 1 élève sur 2 ») ; le message « Réussite ajoutée à Léa. »
-  est annoncé par la région `aria-live="polite"` ; la valeur de la barre évolue.
+  groupe de boutons avec l’état actif ; la liste des élèves est présente dès
+  l’ouverture de la fiche ; le compteur et la barre de progression sont annoncés
+  (« 1 élève sur 2 ») ; le message « Réussite ajoutée à Léa. » est annoncé par la
+  région `aria-live="polite"` ; la ligne de Léa annonce désormais « Léa, section
+  MS, déjà validé » et la fiche reste ouverte pour valider l’élève suivant.
 - **Échec si :** le filtre n’a pas de nom, la progression n’est pas annoncée,
-  ou le message de confirmation est silencieux.
+  le message de confirmation est silencieux, ou la fiche se referme avant qu’un
+  autre élève puisse être validé.
 
 ### Étape 10 — Aperçu HTML du bilan
 

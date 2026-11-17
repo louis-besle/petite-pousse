@@ -1,7 +1,7 @@
 # Guide d’utilisation — Petite pousse
 
 **Application :** Petite pousse, suivi des apprentissages en maternelle (PS, MS, GS)  
-**Version décrite :** 1.1.1 + évolutions de `main` au 16 novembre 2026 — **Date de rédaction :** 16 novembre 2026  
+**Version décrite :** 1.2.0 — **Date de rédaction :** 17 novembre 2026  
 **Adresse :** <https://carnet-de-reussites.vercel.app>
 
 > **Note de maintenance.** Guide à relire après chaque évolution de l’interface :
@@ -11,7 +11,7 @@
 
 Ce guide s’adresse d’abord à l’enseignante qui tient la classe, puis aux familles qui reçoivent un bilan imprimé. Il décrit les gestes de tous les jours, sans supposer de compétence technique particulière.
 
-Petite pousse remplace les photos « perdues dans le téléphone » par un classeur numérique : élèves filtrables par section, réussites avec photo facultative, programme officiel 2026 et programme EVAR, dossier par élève, bilans A4 et sauvegarde complète. L’application ne crée aucun compte, n’envoie rien sur Internet et ne propose ni synchronisation, ni notes chiffrées, ni statistiques de classe, ni objectifs personnalisés, ni import CSV. Ces absences sont volontaires : l’outil reste un carnet d’observation, pas un logiciel administratif.
+Petite pousse remplace les photos « perdues dans le téléphone » par un classeur numérique : élèves filtrables par section, réussites avec photo facultative, programme officiel 2026 et programme EVAR, objectifs personnalisés, dossier par élève, bilans A4 et sauvegarde complète. L’application ne crée aucun compte, n’envoie rien sur Internet et ne propose ni synchronisation, ni notes chiffrées, ni statistiques de classe, ni import CSV. Ces absences sont volontaires : l’outil reste un carnet d’observation, pas un logiciel administratif.
 
 ## 2. Installer l’application sur iPhone, iPad, Android ou ordinateur
 
@@ -75,8 +75,8 @@ Le parcours se fait en trois étapes, avec un repère **1 / 3**, **2 / 3**, **3 
 
 ### Étape 2 — Photo facultative
 
-1. Touchez **Prendre la photo** : l’appareil photo natif du téléphone ou de la tablette s’ouvre. Cadrez, prenez la photo, puis vérifiez l’aperçu : le badge **Photo prise** confirme l’ajout.
-2. Touchez **Reprendre** pour remplacer la photo, puis **Choisir l'objectif**. Pour renoncer à la photo, touchez **Valider sans photo** : vous passez directement au choix de l’objectif.
+1. Touchez **Prendre la photo** : choisissez **Caméra** pour ouvrir l’appareil photo natif du téléphone ou de la tablette, ou **Photothèque** pour reprendre une photo déjà enregistrée sur l’appareil. Cadrez ou choisissez l’image, puis vérifiez l’aperçu : le badge **Photo prise** confirme l’ajout.
+2. Touchez **Reprendre** pour remplacer la photo — le choix **Caméra** / **Photothèque** réapparaît — puis **Choisir l'objectif**. Pour renoncer à la photo, touchez **Valider sans photo** : vous passez directement au choix de l’objectif.
 
 Une réussite peut toujours être enregistrée **sans photo**. Elle apparaît dans le dossier et dans le bilan avec les mentions « Observation en classe » et « sans photo » ; une photo pourra être ajoutée plus tard. La photo est compressée, ses métadonnées sont retirées et elle ne quitte pas l’appareil, sauf si vous partagez vous-même un PDF ou une sauvegarde.
 
@@ -104,10 +104,18 @@ L’onglet **Programme** donne accès au référentiel embarqué : **407 objecti
 
 1. Touchez un objectif pour ouvrir sa fiche : domaine complet, niveaux et **exemples de réussite** par tranche d’âge (« Avant 4 ans », « À partir de 4 ans », « À partir de 5 ans »).
 2. La fiche indique les élèves qui ont déjà validé l’objectif, ou « Aucun élève n’a encore validé cet objectif. ».
-3. Touchez **Valider pour un élève**, filtrez éventuellement par section, puis touchez **Valider** sur la ligne de l’élève. Une ligne déjà validée affiche **déjà validé** et reste inactive.
-4. La validation rapide enregistre la réussite **sans photo**, à la date du jour, et affiche « Réussite ajoutée à Léa. » ; la photo pourra être ajoutée depuis le dossier. Touchez **Fermer** pour revenir au programme.
+3. La fiche liste directement les élèves : filtrez éventuellement par section, puis touchez **Valider** sur la ligne de l’élève. La fiche reste ouverte après chaque validation : la ligne passe à **déjà validé**, les compteurs se mettent à jour et vous pouvez enchaîner sur les élèves suivants.
+4. La validation rapide enregistre la réussite **sans photo**, à la date du jour, et affiche « Réussite ajoutée à Léa. » ; la photo pourra être ajoutée depuis le dossier. Touchez **Terminer** pour revenir au programme.
 
 Les compteurs suivent l’année sélectionnée. Les objectifs déjà validés le restent indépendamment de l’année affichée.
+
+### Objectifs personnalisés
+
+1. Touchez **Ajouter un objectif** (icône `+`) à la fin de la barre de recherche de **Programme**.
+2. Renseignez l’**Intitulé**, choisissez le **Domaine**, cochez les **Niveaux** et, si vous le souhaitez, un **Exemple** par niveau coché, puis validez avec **Ajouter l’objectif**.
+3. L’objectif rejoint la fin de son domaine, marqué **Ajouté**. Il se recherche, se filtre et se valide exactement comme un objectif officiel, y compris à l’étape « Choisir l’objectif » de la capture.
+4. Ouvrez sa fiche pour le **Modifier** ou le **Supprimer**. La suppression demande une confirmation ; les réussites déjà enregistrées restent dans les dossiers et les bilans.
+5. Les objectifs personnalisés sont compris dans la sauvegarde et restaurés avec le reste des données. Un intitulé déjà utilisé dans le même domaine est refusé.
 
 ## 7. Dossier élève : réussites par domaine et par année
 
@@ -242,4 +250,4 @@ Non, il n’est pas balisé. L’aperçu HTML A4 à l’écran est la version ac
 Rien n’est effacé. Utilisez **Passer à l’année suivante** dans le profil pour ouvrir la nouvelle année et ses dates de bilan.
 
 **Où voir la version de l’application ?**  
-En bas du profil, par exemple « Version 1.1.1 ».
+En bas du profil, par exemple « Version 1.2.0 ».

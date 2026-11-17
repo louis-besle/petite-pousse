@@ -4,19 +4,22 @@ Application locale de suivi des compétences pour une classe de maternelle (PS, 
 
 ## État
 
-Version applicative **1.1.1**, en ligne : <https://carnet-de-reussites.vercel.app>
+Version applicative **1.2.0**, prête sur `dev` et pas encore publiée : <https://carnet-de-reussites.vercel.app> (production en **1.1.1**)
 
 Dépôt : <https://github.com/louis-besle/petite-pousse>
 
-PWA installable et utilisable hors ligne, couverte par **344 tests unitaires**, **51 parcours E2E** (**45 Chromium** et **6 WebKit**) et **1 test de rechargement hors ligne** — compteurs de `main` au 16 novembre 2026.
+PWA installable et utilisable hors ligne, couverte par **418 tests unitaires**, **53 parcours E2E** (**47 Chromium** et **6 WebKit**) et **1 test de rechargement hors ligne** — compteurs de la 1.2.0 au 17 novembre 2026.
 
-### Depuis la 1.1.1
+### Nouveautés de la 1.2
 
+- **Objectifs personnalisés** : ajoutez vos propres objectifs depuis **Programme** (intitulé, domaine, niveaux, exemples facultatifs), validez-les comme les objectifs officiels et retrouvez-les dans les dossiers et les bilans. Ils sont inclus dans les sauvegardes.
+- **Programme** : la fiche d’un objectif permet de valider plusieurs élèves d’affilée, avec compteurs mis à jour en direct.
+- **Capture photo** : « Prendre la photo » propose désormais **Caméra** ou **Photothèque**.
 - **Navigation** : trois onglets **Classe / Programme / Bilans**. Le profil, les réglages et la gestion des élèves sont accessibles par l’avatar de l’enseignante.
 - **Bilans** : la période et l’année choisies sont conservées dans l’URL et restent sélectionnées au retour depuis l’aperçu d’un élève, y compris avec le bouton Retour du navigateur.
-- **Accessibilité** : contraste de la navigation stabilisé et smoke WebKit fiabilisé.
+- **Accessibilité** : contraste de la navigation stabilisé et scans axe fiabilisés sur WebKit.
 
-Ces évolutions sont déployées depuis `main`, mais ne sont pas encore couvertes par un tag de release : la dernière release GitHub reste la **1.1.1**.
+Les nouveaux travaux se fusionnent dans `dev`, la branche d’intégration ; `main` reste l’état publié de la dernière release, la **1.1.1**, et recevra `dev` au moment de la publication de la 1.2.0.
 
 ### Nouveautés de la v1.1
 
@@ -65,6 +68,8 @@ npm run referential:build    # régénère le référentiel depuis le CSV offici
 Le déploiement est un build statique Vite, configuré par `vercel.ts` (framework `vite`, sortie `dist/`). Le routage par hash ne nécessite aucune réécriture serveur.
 
 Le projet Vercel est relié au dépôt GitHub : chaque push sur `main` déploie automatiquement la production, et les autres branches créent des déploiements de prévisualisation. Si nécessaire, un déploiement manuel reste possible avec `npx vercel@latest deploy --prod --project carnet-de-reussites`.
+
+Les branches longues sont `dev` (intégration : tout ce qui n’est pas une release s’y fusionne) et `main` (état publié, mis à jour uniquement lors d’une release). Les nouvelles branches courtes partent de `dev` et leurs PR y sont fusionnées ; voir [`CONTRIBUTING.md`](CONTRIBUTING.md) et [`docs/operations/RELEASE.md`](docs/operations/RELEASE.md).
 
 ## Documentation
 

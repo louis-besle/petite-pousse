@@ -1,5 +1,6 @@
-import { fireEvent, screen, waitFor, within } from '@testing-library/react'
+import { act, fireEvent, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { createCustomObjective } from '@/db/customObjectives'
 import { db } from '@/db/db'
 import { ensureSeed } from '@/db/seed'
 import { updateSettings } from '@/db/settings'
@@ -10,6 +11,9 @@ import { schoolYearIdForDate } from '@/domain/schoolYear'
 import { todayIso } from '@/lib/date'
 import { makeSchoolYear, makeStudent } from '@/test/fixtures'
 import { renderApp } from '@/test/render'
+
+// Le rendu complet de Programme est lourd sous charge parallèle : 15 s par test.
+vi.setConfig({ testTimeout: 15_000 })
 
 const LANGAGE_1 = objective('lang-vocabulaire-01')
 const LANGAGE_2 = objective('lang-vocabulaire-02')
@@ -181,7 +185,7 @@ describe('ProgrammeScreen', () => {
     expect(within(validated).getByText('Adam')).toBeInTheDocument()
   })
 
-  it('valide une réussite sans photo, ferme la fiche et met à jour le compteur', async () => {
+  it('valide une réussite sans photo et met à jour le compteur', async () => {
     const lea = await addStudent('Léa', 'MS')
     await addStudent('Adam', 'PS')
 
@@ -197,15 +201,14 @@ describe('ProgrammeScreen', () => {
       within(sheet).queryByRole('list', { name: 'Élèves ayant validé cet objectif' }),
     ).not.toBeInTheDocument()
 
-    await user.click(
-      within(sheet).getByRole('button', { name: 'Valider pour un élève' }),
-    )
     await user.click(within(sheet).getByRole('button', { name: /^Léa/ }))
+    expect(await screen.findByText('Réussite ajoutée à Léa.')).toBeInTheDocument()
 
+    // La fiche reste ouverte : on la ferme quand on a fini.
+    await user.click(within(sheet).getByRole('button', { name: 'Terminer' }))
     await waitFor(() =>
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
     )
-    expect(await screen.findByText('Réussite ajoutée à Léa.')).toBeInTheDocument()
 
     const stored = await db.validations.toArray()
     expect(stored).toHaveLength(1)
@@ -225,6 +228,60 @@ describe('ProgrammeScreen', () => {
     )
   })
 
+  it('reste ouverte pour valider plusieurs élèves d’affilée', async () => {
+    const lea = await addStudent('Léa', 'MS')
+    const adam = await addStudent('Adam', 'PS')
+
+    const user = userEvent.setup()
+    renderApp({ route: '/programme' })
+
+    await searchObjective('memoriser')
+    await screen.findByText(LANGAGE_1.label)
+    await openObjective(user, LANGAGE_1.label)
+
+    const sheet = await screen.findByRole('dialog')
+    await user.click(within(sheet).getByRole('button', { name: /^Léa/ }))
+
+    // Le focus passe au prochain élève, pour enchaîner sans revenir en haut.
+    await waitFor(() =>
+      expect(within(sheet).getByRole('button', { name: /^Adam/ })).toHaveFocus(),
+    )
+
+    // La fiche ne se ferme pas : on enchaîne sur un autre élève.
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+    expect(
+      await within(sheet).findByText('Déjà validé par 1 élève'),
+    ).toBeInTheDocument()
+    expect(
+      within(sheet).getByRole('button', { name: 'Léa, section MS, déjà validé' }),
+    ).toBeDisabled()
+
+    await user.click(within(sheet).getByRole('button', { name: /^Adam/ }))
+
+    expect(
+      await within(sheet).findByText('Déjà validé par 2 élèves'),
+    ).toBeInTheDocument()
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+
+    // Dernier élève : le focus va au bouton qui referme la fiche.
+    await waitFor(() =>
+      expect(within(sheet).getByRole('button', { name: 'Terminer' })).toHaveFocus(),
+    )
+
+    const stored = await db.validations.toArray()
+    expect(stored.map((validation) => validation.studentId).sort()).toEqual(
+      [lea.id, adam.id].sort(),
+    )
+
+    await user.click(within(sheet).getByRole('button', { name: 'Terminer' }))
+    await waitFor(() =>
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
+    )
+    expect(
+      within(objectiveItem(LANGAGE_1.label)).getByText('2 élèves'),
+    ).toBeInTheDocument()
+  })
+
   it('désactive un élève qui a déjà validé l’objectif, même une autre année', async () => {
     const lea = await addStudent('Léa', 'MS')
     await addStudent('Adam', 'PS')
@@ -238,13 +295,10 @@ describe('ProgrammeScreen', () => {
     await openObjective(user, LANGAGE_2.label)
 
     const sheet = await screen.findByRole('dialog')
-    await user.click(
-      within(sheet).getByRole('button', { name: 'Valider pour un élève' }),
-    )
 
     const leaButton = within(sheet).getByRole('button', { name: /^Léa/ })
     expect(leaButton).toBeDisabled()
-    expect(within(leaButton).getByText(/déjà validé/i)).toBeInTheDocument()
+    expect(leaButton).toHaveAccessibleName('Léa, section MS, déjà validé')
 
     expect(within(sheet).getByRole('button', { name: /^Adam/ })).toBeEnabled()
   })
@@ -309,10 +363,9 @@ describe('ProgrammeScreen', () => {
     await screen.findByText(LANGAGE_1.label)
     await openObjective(user, LANGAGE_1.label)
     const sheet = await screen.findByRole('dialog')
-    await user.click(
-      within(sheet).getByRole('button', { name: 'Valider pour un élève' }),
-    )
     await user.click(within(sheet).getByRole('button', { name: /^Léa/ }))
+    expect(await screen.findByText('Réussite ajoutée à Léa.')).toBeInTheDocument()
+    await user.click(within(sheet).getByRole('button', { name: 'Terminer' }))
 
     await waitFor(() =>
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
@@ -346,15 +399,14 @@ describe('ProgrammeScreen', () => {
 
     await openObjective(user, LANGAGE_2.label)
     const sheet = await screen.findByRole('dialog')
-    await user.click(
-      within(sheet).getByRole('button', { name: 'Valider pour un élève' }),
-    )
     await user.click(within(sheet).getByRole('button', { name: /^Léa/ }))
+    expect(await screen.findByText('Réussite ajoutée à Léa.')).toBeInTheDocument()
 
+    // La fiche reste ouverte : on la ferme quand on a fini.
+    await user.click(within(sheet).getByRole('button', { name: 'Terminer' }))
     await waitFor(() =>
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
     )
-    expect(await screen.findByText('Réussite ajoutée à Léa.')).toBeInTheDocument()
 
     // « Toutes les années » reste le filtre choisi : la nouvelle ligne y est déjà.
     expect(screen.getByRole('combobox', { name: 'Année scolaire' })).toHaveValue('all')
@@ -379,10 +431,9 @@ describe('ProgrammeScreen', () => {
     await screen.findByText(LANGAGE_1.label)
     await openObjective(user, LANGAGE_1.label)
     const sheet = await screen.findByRole('dialog')
-    await user.click(
-      within(sheet).getByRole('button', { name: 'Valider pour un élève' }),
-    )
     await user.click(within(sheet).getByRole('button', { name: /^Léa/ }))
+    expect(await screen.findByText('Réussite ajoutée à Léa.')).toBeInTheDocument()
+    await user.click(within(sheet).getByRole('button', { name: 'Terminer' }))
 
     await waitFor(() =>
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
@@ -457,5 +508,245 @@ describe('ProgrammeScreen', () => {
         `${psObjectives.length} objectifs · 2 validations`,
       ),
     )
+  })
+})
+
+describe('objectifs personnalisés', () => {
+  async function addCustomObjectiveFromUi(user: ReturnType<typeof userEvent.setup>) {
+    await user.click(
+      await screen.findByRole('button', { name: 'Ajouter un objectif' }),
+    )
+    const dialog = await screen.findByRole('dialog', { name: 'Ajouter un objectif' })
+
+    await user.type(within(dialog).getByLabelText('Intitulé'), 'Compter jusqu’à douze')
+    await user.click(
+      within(within(dialog).getByRole('group', { name: 'Domaine' })).getByRole('button', { name: 'Maths' }),
+    )
+    await user.click(
+      within(within(dialog).getByRole('group', { name: 'Niveaux' })).getByRole('button', { name: 'MS' }),
+    )
+    await user.type(
+      within(dialog).getByLabelText('Exemple en MS'),
+      'Réciter la comptine jusqu’à douze.',
+    )
+    await user.click(within(dialog).getByRole('button', { name: 'Ajouter l’objectif' }))
+
+    return dialog
+  }
+
+  it('ajoute un objectif, le range en fin de domaine et le marque « Ajouté »', async () => {
+    const user = userEvent.setup()
+    renderApp({ route: '/programme' })
+
+    const dialog = await addCustomObjectiveFromUi(user)
+    await waitFor(() => expect(dialog).not.toBeInTheDocument())
+    expect(await screen.findByText('Objectif ajouté.')).toBeInTheDocument()
+
+    // La recherche ouvre le domaine Maths, fermé par défaut.
+    await searchObjective('douze')
+    const maths = await screen.findByRole('region', { name: 'Maths' })
+    const row = within(maths).getByText('Compter jusqu’à douze').closest('li')!
+    expect(within(row).getByText('Ajouté')).toBeInTheDocument()
+    expect(within(row).getByText('MS')).toBeInTheDocument()
+
+    const stored = await db.customObjectives.toArray()
+    expect(stored).toHaveLength(1)
+    expect(stored[0]).toMatchObject({
+      label: 'Compter jusqu’à douze',
+      domainId: 'maths',
+      ageBands: ['from4'],
+    })
+  })
+
+  it('affiche des exemples de saisie et accepte un objectif sans exemple', async () => {
+    const user = userEvent.setup()
+    renderApp({ route: '/programme' })
+    await user.click(
+      await screen.findByRole('button', { name: 'Ajouter un objectif' }),
+    )
+    const dialog = await screen.findByRole('dialog', { name: 'Ajouter un objectif' })
+
+    expect(within(dialog).getByLabelText('Intitulé')).toHaveAttribute(
+      'placeholder',
+      'Objectif',
+    )
+
+    const levels = within(dialog).getByRole('group', { name: 'Niveaux' })
+    for (const section of ['PS', 'MS', 'GS'] as const) {
+      await user.click(within(levels).getByRole('button', { name: section }))
+      expect(within(dialog).getByLabelText(`Exemple en ${section}`)).toHaveAttribute(
+        'placeholder',
+        section,
+      )
+    }
+
+    await user.type(
+      within(dialog).getByLabelText('Intitulé'),
+      'Compter jusqu’à douze',
+    )
+    await user.click(
+      within(within(dialog).getByRole('group', { name: 'Domaine' })).getByRole('button', { name: 'Maths' }),
+    )
+    await user.click(within(dialog).getByRole('button', { name: 'Ajouter l’objectif' }))
+
+    await waitFor(() => expect(dialog).not.toBeInTheDocument())
+    expect(await screen.findByText('Objectif ajouté.')).toBeInTheDocument()
+
+    await searchObjective('douze')
+    const maths = await screen.findByRole('region', { name: 'Maths' })
+    expect(within(maths).getByText('Compter jusqu’à douze')).toBeInTheDocument()
+
+    const stored = await db.customObjectives.toArray()
+    expect(stored).toHaveLength(1)
+    expect(stored[0]!.examples).toEqual({})
+  })
+
+  it('refuse un intitulé déjà pris et annonce l’erreur', async () => {
+    const official = referential.objectives.find(
+      (objective) => objective.domainId === 'maths',
+    )!
+
+    const user = userEvent.setup()
+    renderApp({ route: '/programme' })
+    await user.click(
+      await screen.findByRole('button', { name: 'Ajouter un objectif' }),
+    )
+
+    const dialog = await screen.findByRole('dialog', { name: 'Ajouter un objectif' })
+    await user.type(within(dialog).getByLabelText('Intitulé'), official.label)
+    await user.click(
+      within(within(dialog).getByRole('group', { name: 'Domaine' })).getByRole('button', { name: 'Maths' }),
+    )
+    await user.click(
+      within(within(dialog).getByRole('group', { name: 'Niveaux' })).getByRole('button', { name: 'MS' }),
+    )
+    await user.type(within(dialog).getByLabelText('Exemple en MS'), 'Un exemple.')
+    await user.click(within(dialog).getByRole('button', { name: 'Ajouter l’objectif' }))
+
+    expect(await within(dialog).findByRole('alert')).toHaveTextContent(
+      'Un objectif porte déjà cet intitulé dans ce domaine.',
+    )
+    expect(await db.customObjectives.count()).toBe(0)
+  })
+
+  it('modifie un objectif ajouté depuis sa fiche', async () => {
+    const created = await createCustomObjective({
+      label: 'Compter jusqu’à douze',
+      domainId: 'maths',
+      ageBands: ['from4'],
+      examples: { from4: 'Réciter la comptine.' },
+    })
+    await db.students.add(makeStudent({ firstName: 'Léa', section: 'MS' }))
+
+    const user = userEvent.setup()
+    renderApp({ route: '/programme' })
+    await searchObjective('douze')
+    await screen.findByText(created.label)
+    await openObjective(user, created.label)
+
+    const sheet = await screen.findByRole('dialog')
+    const mathsDomain = referential.domains.find((domain) => domain.id === 'maths')!
+    expect(within(sheet).getByText(mathsDomain.longLabel)).toBeInTheDocument()
+    expect(within(sheet).getByText('Objectif ajouté')).toBeInTheDocument()
+    await user.click(within(sheet).getByRole('button', { name: 'Modifier l’objectif' }))
+
+    const form = await screen.findByRole('dialog', { name: 'Modifier l’objectif' })
+    const label = within(form).getByLabelText('Intitulé')
+    await user.clear(label)
+    await user.type(label, 'Compter jusqu’à vingt')
+    await user.click(within(form).getByRole('button', { name: 'Enregistrer' }))
+
+    await waitFor(() =>
+      expect(screen.queryByRole('dialog', { name: 'Modifier l’objectif' }))
+        .not.toBeInTheDocument(),
+    )
+    expect(await screen.findByText('Compter jusqu’à vingt')).toBeInTheDocument()
+    expect((await db.customObjectives.get(created.id))?.label).toBe(
+      'Compter jusqu’à vingt',
+    )
+  })
+
+  it('supprime après confirmation et laisse la réussite dans le dossier', async () => {
+    const created = await createCustomObjective({
+      label: 'Compter jusqu’à douze',
+      domainId: 'maths',
+      ageBands: ['from4'],
+      examples: { from4: 'Réciter la comptine.' },
+    })
+    const student = await addStudent('Léa', 'MS')
+    await createValidation({
+      studentId: student.id,
+      objective: created,
+      ageBand: 'from4',
+      date: '2026-11-10',
+      referentialVersion: REFERENTIAL_VERSION,
+    })
+
+    const user = userEvent.setup()
+    renderApp({ route: '/programme' })
+    await searchObjective('douze')
+    await screen.findByText(created.label)
+    await openObjective(user, created.label)
+    await user.click(
+      within(await screen.findByRole('dialog')).getByRole('button', {
+        name: 'Supprimer l’objectif',
+      }),
+    )
+
+    const confirm = await screen.findByRole('dialog', {
+      name: /Supprimer « Compter jusqu’à douze »/,
+    })
+    await user.click(within(confirm).getByRole('button', { name: 'Supprimer définitivement' }))
+
+    await waitFor(() => expect(screen.queryByText(created.label)).not.toBeInTheDocument())
+    expect(await db.customObjectives.count()).toBe(0)
+    expect(await db.validations.count()).toBe(1)
+  })
+
+  it('signale un objectif supprimé entre-temps au moment d’enregistrer', async () => {
+    const created = await createCustomObjective({
+      label: 'Compter jusqu’à douze',
+      domainId: 'maths',
+      ageBands: ['from4'],
+      examples: { from4: 'Réciter la comptine.' },
+    })
+
+    const user = userEvent.setup()
+    renderApp({ route: '/programme' })
+    await searchObjective('douze')
+    await screen.findByText(created.label)
+    await openObjective(user, created.label)
+    await user.click(
+      within(await screen.findByRole('dialog')).getByRole('button', {
+        name: 'Modifier l’objectif',
+      }),
+    )
+
+    const form = await screen.findByRole('dialog', { name: 'Modifier l’objectif' })
+    await act(async () => {
+      await db.customObjectives.delete(created.id)
+    })
+    await user.click(within(form).getByRole('button', { name: 'Enregistrer' }))
+
+    expect(await within(form).findByRole('alert')).toHaveTextContent(
+      'Objectif introuvable.',
+    )
+  })
+
+  it('ne propose ni modification ni suppression sur un objectif officiel', async () => {
+    await db.students.add(makeStudent({ firstName: 'Léa', section: 'MS' }))
+    const user = userEvent.setup()
+    renderApp({ route: '/programme' })
+    await searchObjective('memoriser')
+    await screen.findByText(LANGAGE_1.label)
+    await openObjective(user, LANGAGE_1.label)
+
+    const sheet = await screen.findByRole('dialog')
+    expect(
+      within(sheet).queryByRole('button', { name: 'Modifier l’objectif' }),
+    ).not.toBeInTheDocument()
+    expect(
+      within(sheet).queryByRole('button', { name: 'Supprimer l’objectif' }),
+    ).not.toBeInTheDocument()
   })
 })

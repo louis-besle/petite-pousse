@@ -1,11 +1,20 @@
 import { useState } from 'react'
+import { deleteCustomObjective, useCustomObjectives } from '@/db/customObjectives'
 import { useSchoolYears } from '@/db/schoolYears'
 import { useSettings } from '@/db/settings'
 import { useStudents } from '@/db/students'
 import { useAllValidations, useValidationsForYear } from '@/db/validations'
+import { isCustomObjective, mergeObjectives } from '@/domain/objectives'
 import { ageBandForSection, referential, sectionForAgeBand } from '@/domain/referential'
 import { schoolYearIdForDate } from '@/domain/schoolYear'
-import type { AgeBand, Domain, Objective, Section, Student } from '@/domain/types'
+import type {
+  AgeBand,
+  CustomObjective,
+  Domain,
+  Objective,
+  Section,
+  Student,
+} from '@/domain/types'
 import { todayIso } from '@/lib/date'
 import { sortedSchoolYearIds } from '@/lib/schoolYearSelection'
 import {
@@ -20,6 +29,8 @@ import {
   DomainAccordionList,
   DomainAccordionRows,
 } from '@/ui/DomainAccordion'
+import { Button } from '@/ui/Button'
+import { ConfirmSheet } from '@/ui/ConfirmSheet'
 import { domainIcon } from '@/ui/domainIcon'
 import { Icon } from '@/ui/icons'
 import { LoadingText } from '@/ui/LoadingText'
@@ -28,6 +39,7 @@ import { SectionFilterChips } from '@/ui/SectionFilterChips'
 import uiStyles from '@/ui/ui.module.css'
 import { useToast } from '@/ui/useToast'
 import { YearSelect } from '@/ui/YearSelect'
+import { CustomObjectiveSheet } from './CustomObjectiveSheet'
 import { ObjectiveSheet } from './ObjectiveSheet'
 import styles from './programme.module.css'
 
@@ -78,6 +90,12 @@ export function ProgrammeScreen() {
     () => new Set(['langage']),
   )
   const [selectedObjectiveId, setSelectedObjectiveId] = useState<string>()
+  const customObjectives = useCustomObjectives()
+  const [formObjective, setFormObjective] = useState<
+    CustomObjective | null | undefined
+  >(undefined)
+  const [deleteTarget, setDeleteTarget] = useState<CustomObjective | null>(null)
+  const [deleting, setDeleting] = useState(false)
 
   const currentYearId = settings?.currentSchoolYearId
   const years = schoolYears ?? []
@@ -97,21 +115,46 @@ export function ProgrammeScreen() {
   const allValidations = useAllValidations()
   const activeValidations = selectedYear === 'all' ? allValidations : yearValidations
 
+  // L'en-tête est statique : il s'affiche dès le premier rendu, pendant que les
+  // données vivantes se chargent encore.
+  const header = (
+    <header className={styles.header}>
+      <h1 className={styles.title}>Programme</h1>
+      <p className={styles.subtitle}>
+        Les six domaines du programme 2026 et le programme EVAR, objectif par objectif
+      </p>
+    </header>
+  )
+
+  const addObjectiveButton = (
+    <Button
+      variant="dark"
+      aria-label="Ajouter un objectif"
+      className={styles.addObjectiveButton}
+      onClick={() => setFormObjective(null)}
+    >
+      <Icon name="plus" size={18} />
+    </Button>
+  )
+
   if (
     settings === undefined ||
     schoolYears === undefined ||
     students === undefined ||
     activeValidations === undefined ||
-    allValidations === undefined
+    allValidations === undefined ||
+    customObjectives === undefined
   ) {
     return (
       <section className={styles.screen}>
+        {header}
         <LoadingText>Chargement du programme…</LoadingText>
       </section>
     )
   }
 
   const domains = [...referential.domains].sort((a, b) => a.order - b.order)
+  const catalog = mergeObjectives(referential.objectives, customObjectives)
   const levelBand = level === 'all' ? undefined : ageBandForSection(level)
   const normalizedQuery = normalizeSearch(query)
 
@@ -145,7 +188,7 @@ export function ProgrammeScreen() {
   const groups = domains.map((domain) => ({
     domain,
     icon: domainIcon(domain.id),
-    objectives: referential.objectives.filter(
+    objectives: catalog.filter(
       (objective) =>
         objective.domainId === domain.id &&
         matchesFilters(objective, domain, levelBand, normalizedQuery),
@@ -160,7 +203,7 @@ export function ProgrammeScreen() {
   const selectedObjective =
     selectedObjectiveId === undefined
       ? undefined
-      : referential.objectives.find((objective) => objective.id === selectedObjectiveId)
+      : catalog.find((objective) => objective.id === selectedObjectiveId)
 
   function toggleDomain(domainId: string): void {
     setOpenDomains((previous) => {
@@ -183,7 +226,7 @@ export function ProgrammeScreen() {
     setOpenDomains((previous) => {
       const next = new Set(previous)
       for (const domain of domains) {
-        const hasMatch = referential.objectives.some(
+        const hasMatch = catalog.some(
           (objective) =>
             objective.domainId === domain.id &&
             matchesFilters(objective, domain, levelBand, normalized),
@@ -194,9 +237,8 @@ export function ProgrammeScreen() {
     })
   }
 
-  /** La fiche est fermée par la validation rapide ; le compteur doit suivre. */
+  /** La fiche reste ouverte : on peut valider plusieurs élèves d'affilée. */
   function handleValidated(student: Student): void {
-    setSelectedObjectiveId(undefined)
     showToast(`Réussite ajoutée à ${student.firstName}.`)
 
     // `ensureSeed` ne fait jamais avancer `settings.currentSchoolYearId` : la
@@ -210,21 +252,39 @@ export function ProgrammeScreen() {
     }
   }
 
+  /** Supprime un objectif personnalisé après confirmation, sans toucher les validations. */
+  async function handleDelete(): Promise<void> {
+    if (deleteTarget === null || deleting) return
+
+    setDeleting(true)
+    try {
+      await deleteCustomObjective(deleteTarget.id)
+      setDeleteTarget(null)
+      setFormObjective(undefined)
+      showToast('Objectif supprimé.')
+    } catch (error) {
+      console.error('Suppression de l’objectif impossible.', error)
+      showToast('L’objectif n’a pas pu être supprimé. Réessaie.')
+    } finally {
+      setDeleting(false)
+    }
+  }
+
   return (
     <section className={styles.screen}>
-      <header className={styles.header}>
-        <h1 className={styles.title}>Programme</h1>
-        <p className={styles.subtitle}>
-          Les six domaines du programme 2026 et le programme EVAR, objectif par objectif
-        </p>
-      </header>
+      {header}
 
-      <SearchField
-        label="Rechercher un objectif"
-        placeholder="Rechercher un objectif…"
-        value={query}
-        onChange={handleQueryChange}
-      />
+      <div className={styles.searchRow}>
+        <div className={styles.searchField}>
+          <SearchField
+            label="Rechercher un objectif"
+            placeholder="Rechercher un objectif…"
+            value={query}
+            onChange={handleQueryChange}
+          />
+        </div>
+        {addObjectiveButton}
+      </div>
 
       <SectionFilterChips
         value={level}
@@ -297,6 +357,9 @@ export function ProgrammeScreen() {
                             <span className={styles.levelTag}>
                               {levelLabels(objective)}
                             </span>
+                            {isCustomObjective(objective) ? (
+                              <span className={styles.addedTag}>Ajouté</span>
+                            ) : null}
                             <span
                               className={styles.bar}
                               role="progressbar"
@@ -333,8 +396,48 @@ export function ProgrammeScreen() {
           allValidations={allValidations}
           onClose={() => setSelectedObjectiveId(undefined)}
           onValidated={handleValidated}
+          onEdit={
+            isCustomObjective(selectedObjective)
+              ? () => {
+                  setSelectedObjectiveId(undefined)
+                  // L'édition peut renommer l'objectif : on réaffiche tout pour
+                  // que le nouveau libellé reste visible.
+                  setQuery('')
+                  setFormObjective(selectedObjective as CustomObjective)
+                }
+              : undefined
+          }
+          onDelete={
+            isCustomObjective(selectedObjective)
+              ? () => {
+                  setSelectedObjectiveId(undefined)
+                  setDeleteTarget(selectedObjective as CustomObjective)
+                }
+              : undefined
+          }
         />
       )}
+
+      {formObjective === undefined ? null : (
+        <CustomObjectiveSheet
+          open
+          objective={formObjective}
+          onClose={() => setFormObjective(undefined)}
+          onRequestDelete={(objective) => setDeleteTarget(objective)}
+        />
+      )}
+
+      <ConfirmSheet
+        open={deleteTarget !== null}
+        title={`Supprimer « ${deleteTarget?.label ?? ''} » ?`}
+        description="Les réussites déjà enregistrées restent dans les dossiers des élèves. Cette action est définitive."
+        confirmLabel="Supprimer définitivement"
+        tone="danger"
+        onConfirm={() => {
+          void handleDelete()
+        }}
+        onClose={() => setDeleteTarget(null)}
+      />
     </section>
   )
 }

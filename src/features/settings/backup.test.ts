@@ -1,5 +1,6 @@
 import { Blob as NodeBlob } from 'node:buffer'
 import { strFromU8, strToU8, unzipSync, zipSync, type Unzipped } from 'fflate'
+import { createCustomObjective } from '@/db/customObjectives'
 import { SETTINGS_ID, db } from '@/db/db'
 import { ensureSeed } from '@/db/seed'
 import { getSettings, updateSettings } from '@/db/settings'
@@ -75,6 +76,10 @@ interface EditableBackupData {
   photos: {
     id: string
     validationId: string
+    [key: string]: unknown
+  }[]
+  customObjectives: {
+    examples: Record<string, string>
     [key: string]: unknown
   }[]
 }
@@ -278,7 +283,7 @@ describe('chiffrement des sauvegardes', () => {
       expect(backup.summary.students).toBe(2)
       expect(backup.summary.validations).toBe(2)
       expect(backup.summary.photos).toBe(1)
-      expect(backup.data.schemaVersion).toBe(1)
+      expect(backup.data.schemaVersion).toBe(2)
       expect(backup.data.students.map((student) => student.firstName).sort()).toEqual([
         'Adam',
         'Léa',
@@ -527,7 +532,7 @@ describe('exportBackup / readBackup / restoreBackup', () => {
       if (!dataEntry) throw new Error('data.json absent du ZIP de test.')
 
       const data = JSON.parse(strFromU8(dataEntry)) as { schemaVersion: number }
-      data.schemaVersion = 2
+      data.schemaVersion = 3
       files['data.json'] = strToU8(JSON.stringify(data))
 
       await expect(readBackup(rewriteZip(files), () => {})).rejects.toThrow(
@@ -741,6 +746,80 @@ describe('exportBackup / readBackup / restoreBackup', () => {
       const stamp = new Date(stored!.lastBackupAt!).getTime()
       expect(stamp).toBeGreaterThanOrEqual(before)
       expect(stamp).toBeLessThanOrEqual(after)
+    },
+    ZIP_TIMEOUT_MS,
+  )
+})
+
+describe('objectifs personnalisés dans la sauvegarde', () => {
+  it(
+    'exporte et restaure les objectifs ajoutés',
+    async () => {
+      await seedBackupData()
+      const created = await createCustomObjective({
+        label: 'Compter jusqu’à douze',
+        domainId: 'maths',
+        ageBands: ['from4'],
+        examples: { from4: 'Réciter la comptine jusqu’à douze.' },
+      })
+
+      const blob = await exportBackup(() => {})
+      await db.customObjectives.clear()
+      expect(await db.customObjectives.count()).toBe(0)
+
+      const backup = await readBackup(await asZipFile(blob), () => {})
+      expect(backup.data.customObjectives).toEqual([created])
+
+      await restoreBackup(await withNodeBlobs(backup), () => {})
+      expect(await db.customObjectives.get(created.id)).toEqual(created)
+    },
+    ZIP_TIMEOUT_MS,
+  )
+
+  it(
+    'accepte une archive v1 sans objectifs personnalisés et vide la table',
+    async () => {
+      await seedBackupData()
+      await createCustomObjective({
+        label: 'Compter jusqu’à douze',
+        domainId: 'maths',
+        ageBands: ['from4'],
+        examples: { from4: 'Réciter la comptine jusqu’à douze.' },
+      })
+
+      const blob = await exportBackup(() => {})
+      const file = await mutateBackupData(blob, (data) => {
+        data.schemaVersion = 1
+        delete (data as { customObjectives?: unknown }).customObjectives
+      })
+
+      const backup = await readBackup(file, () => {})
+      expect(backup.data.customObjectives).toEqual([])
+
+      await restoreBackup(await withNodeBlobs(backup), () => {})
+      expect(await db.customObjectives.count()).toBe(0)
+    },
+    ZIP_TIMEOUT_MS,
+  )
+
+  it(
+    'accepte un objectif personnalisé sans exemple',
+    async () => {
+      await seedBackupData()
+      await createCustomObjective({
+        label: 'Compter jusqu’à douze',
+        domainId: 'maths',
+        ageBands: ['from4'],
+        examples: { from4: 'Réciter la comptine jusqu’à douze.' },
+      })
+
+      const blob = await exportBackup(() => {})
+      const file = await mutateBackupData(blob, (data) => {
+        data.customObjectives[0]!.examples = {}
+      })
+
+      const backup = await readBackup(file, () => {})
+      expect(backup.data.customObjectives[0]!.examples).toEqual({})
     },
     ZIP_TIMEOUT_MS,
   )

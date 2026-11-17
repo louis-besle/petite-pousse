@@ -7,8 +7,19 @@ applique le [versionnage sémantique](https://semver.org/lang/fr/).
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-11-17
+
 ### Ajouté
 
+- **Objectifs personnalisés** : depuis **Programme**, le bouton **Ajouter un
+  objectif** crée un objectif sur mesure (intitulé, domaine, niveaux, exemple
+  facultatif par niveau). Il apparaît en fin de domaine avec la marque
+  **Ajouté**, se propose à la capture et se valide comme un objectif officiel ;
+  il peut aussi être modifié ou supprimé. Les réussites déjà enregistrées
+  conservent leur instantané : supprimer un objectif ne retire jamais une
+  observation d’un dossier ni d’un bilan.
+- Les objectifs personnalisés sont inclus dans la sauvegarde et restaurés avec le
+  reste des données.
 - Licence **MIT** (`LICENSE`), copyright 2026 Louis BESLE.
 - Modèles légaux dans `docs/legal/` : information des familles sur les données
   personnelles (RGPD) et déclaration d'accessibilité, à compléter et à faire
@@ -16,6 +27,10 @@ applique le [versionnage sémantique](https://semver.org/lang/fr/).
 
 ### Modifié
 
+- **Programme** : la fiche d’un objectif permet de valider plusieurs élèves
+  d’affilée. Elle reste ouverte après chaque validation, la ligne de l’élève
+  passe à « déjà validé », les compteurs se mettent à jour en direct et le focus
+  suit l’élève suivant ; **Terminer** referme la fiche.
 - **README** actualisé : état de la version, fonctionnalités, commandes de
   vérification, accessibilité, limites connues et licence.
 - **Navigation** : trois onglets **Classe / Programme / Bilans**. Le profil, les
@@ -23,6 +38,13 @@ applique le [versionnage sémantique](https://semver.org/lang/fr/).
   l'enseignante ; l'onglet « Élèves » et l'onglet « Profil » séparés disparaissent.
 - **Documentation** : guide utilisateur, index de la documentation, runbook de
   release (`docs/operations/RELEASE.md`) et modèles légaux.
+- **Capture photo** : « Prendre la photo » ouvre un choix entre **Caméra** et
+  **Photothèque**, pour ajouter une image déjà enregistrée sur le téléphone au
+  lieu de passer systématiquement par l’appareil photo.
+- **Branches** : `dev` devient la branche d'intégration. Hors release, les
+  branches courtes partent de `dev` et leurs PR y sont fusionnées ; `main` n'est
+  mise à jour qu'au moment d'une release, avec son tag (voir `CONTRIBUTING.md` et
+  `docs/operations/RELEASE.md`).
 - **Audit d'accessibilité** révisé pour le référentiel `2026.2.0` et la
   navigation Classe / Programme / Bilans, avec réexécution des scans Chromium et
   WebKit.
@@ -36,15 +58,16 @@ applique le [versionnage sémantique](https://semver.org/lang/fr/).
   restent actives au retour depuis l'aperçu d'un élève, y compris avec le bouton
   Retour du navigateur.
 - **Accessibilité** : contraste de la barre de navigation stabilisé pendant les
-  changements de route.
+  changements de route, et le conteneur principal ne dessine plus d'anneau de
+  focus après une navigation au clavier.
 
 ### Tests
 
 - Scans axe fiabilisés sur WebKit : attente de la stabilisation des couleurs de
   navigation avant l'analyse, et rendu « mouvement réduit » forcé pour ne plus
   capturer une transition à mi-parcours.
-- CI verte sur `main` au 16 novembre 2026 : 344 tests unitaires, 51 parcours E2E
-  (45 Chromium, 6 WebKit) et 1 test de rechargement hors ligne.
+- CI verte le 17 novembre 2026 : 418 tests unitaires, 53 parcours E2E
+  (47 Chromium, 6 WebKit) et 1 test de rechargement hors ligne.
 
 ## [1.1.1] - 2026-11-07
 
@@ -130,7 +153,8 @@ Cette release correspond à l'état déployé au commit `d2a2588`, avant l'incr�
 v1.1. Le champ `version` de `package.json` était encore à `0.0.0` ; le versionnage
 sémantique démarre avec la 1.1.0.
 
-[Unreleased]: https://github.com/louis-besle/petite-pousse/compare/v1.1.1...HEAD
+[Unreleased]: https://github.com/louis-besle/petite-pousse/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/louis-besle/petite-pousse/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/louis-besle/petite-pousse/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/louis-besle/petite-pousse/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/louis-besle/petite-pousse/releases/tag/v1.0.0

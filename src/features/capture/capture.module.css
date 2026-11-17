@@ -626,6 +626,22 @@
   color: var(--sage-ink);
 }
 
+/* Étiquette « Ajouté » : un objectif personnalisé, pas officiel. */
+.addedTag {
+  display: inline-block;
+  margin-left: 5px;
+  padding: 1px 5px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background-color: var(--paper);
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1.2;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
 /* ------------------------------------------------------------------ */
 /* Succès : composition centrée, sans navigation basse                 */
 /* ------------------------------------------------------------------ */

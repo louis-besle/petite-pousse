@@ -303,6 +303,22 @@ test.describe('navigation au clavier et focus', () => {
     await expect(page.locator('#main')).toBeFocused()
   })
 
+  test('le conteneur principal ne dessine pas d’anneau une fois focalisé', async ({
+    page,
+  }) => {
+    await seed(page)
+    await gotoRoute(page, '/bilans')
+
+    // Navigation au clavier : elle seule laisse le focus programmé en mode
+    // `:focus-visible`, le cas où l'anneau dessinait un liseré en bas d'écran.
+    const programme = page.getByRole('link', { name: 'Programme', exact: true })
+    await programme.focus()
+    await page.keyboard.press('Enter')
+
+    await expect(page.locator('#main')).toBeFocused()
+    await expect(page.locator('#main')).toHaveCSS('outline-style', 'none')
+  })
+
   test('une feuille piège le focus, se ferme avec Échap et le rend au déclencheur', async ({
     page,
   }) => {

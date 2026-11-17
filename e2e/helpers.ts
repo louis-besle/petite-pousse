@@ -15,7 +15,12 @@ export const PHOTO_FIXTURE = path.resolve(process.cwd(), 'e2e/fixtures/photo.jpg
 const DB_NAME = 'carnet-de-reussites'
 
 /** Tables de la base dont un test peut compter les lignes. */
-export type StoreName = 'students' | 'validations' | 'photos' | 'schoolYears'
+export type StoreName =
+  | 'students'
+  | 'validations'
+  | 'photos'
+  | 'schoolYears'
+  | 'customObjectives'
 
 /** Échappe une chaîne pour l'utiliser dans un `RegExp` construit dynamiquement. */
 function escapeRegExp(value: string): string {
@@ -163,7 +168,14 @@ export async function captureWithPhoto(
     }),
   ).toBeVisible()
 
-  await page.locator('input[type="file"]').setInputFiles(PHOTO_FIXTURE)
+  // « Prendre la photo » ouvre un choix : on passe par la photothèque, qui
+  // n'ouvre pas la caméra de l'appareil.
+  await page.getByRole('button', { name: 'Prendre la photo' }).click()
+  await page
+    .getByRole('dialog', { name: 'Ajouter une photo' })
+    .getByRole('button', { name: 'Photothèque' })
+    .click()
+  await page.getByTestId('photo-library-input').setInputFiles(PHOTO_FIXTURE)
 
   const preview = page.getByRole('img', { name: `Photo de réussite de ${name}` })
   await expect(preview).toHaveAttribute('src', /^blob:/)
@@ -290,6 +302,7 @@ interface DevDatabase {
   schoolYears: DevTable
   validations: DevTable
   photos: DevTable
+  customObjectives: DevTable
   settings: DevTable
   drafts: DevTable
   transaction(
@@ -502,6 +515,7 @@ export async function clearDb(page: Page): Promise<void> {
         database.schoolYears,
         database.validations,
         database.photos,
+        database.customObjectives,
         database.settings,
         database.drafts,
       ],
@@ -510,6 +524,7 @@ export async function clearDb(page: Page): Promise<void> {
         await database.schoolYears.clear()
         await database.validations.clear()
         await database.photos.clear()
+        await database.customObjectives.clear()
         await database.settings.clear()
         await database.drafts.clear()
       },

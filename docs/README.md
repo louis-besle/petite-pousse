@@ -14,7 +14,7 @@ commandes.
 | Connaître le niveau d’accessibilité | [`accessibility/AUDIT-WCAG-RGAA.md`](accessibility/AUDIT-WCAG-RGAA.md) |
 | Tester avec VoiceOver ou TalkBack | [`accessibility/PROTOCOLE-LECTEURS-ECRAN.md`](accessibility/PROTOCOLE-LECTEURS-ECRAN.md) |
 | Préparer une release | [`operations/RELEASE.md`](operations/RELEASE.md) |
-| Contribuer au code | [`../CONTRIBUTING.md`](../CONTRIBUTING.md) |
+| Contribuer au code, savoir où fusionner une PR | [`../CONTRIBUTING.md`](../CONTRIBUTING.md) |
 | Suivre les versions | [`../CHANGELOG.md`](../CHANGELOG.md) |
 | Vérifier le référentiel officiel | [`../scripts/referential/source/VERIFICATION.md`](../scripts/referential/source/VERIFICATION.md) |
 
@@ -29,11 +29,11 @@ commandes.
 | [`legal/README.md`](legal/README.md) | Statut et procédure de validation des documents légaux | Courant | 16 novembre 2026 |
 | [`legal/DECLARATION-ACCESSIBILITE.md`](legal/DECLARATION-ACCESSIBILITE.md) | Modèle de déclaration légale | **Brouillon, non publiable en l’état** | 9 novembre 2026 |
 | [`legal/INFORMATION-RGPD-FAMILLES.md`](legal/INFORMATION-RGPD-FAMILLES.md) | Modèle d’information RGPD | **Brouillon, non diffusable en l’état** | 9 novembre 2026 |
-| [`operations/RELEASE.md`](operations/RELEASE.md) | Runbook de release | Prêt ; **aucune release 1.1.2 planifiée** | 16 novembre 2026 |
+| [`operations/RELEASE.md`](operations/RELEASE.md) | Runbook de release et flux `dev` → `main` | Prêt ; **1.2.0 prête sur `dev`, publication à décider** | 17 novembre 2026 |
 | [`superpowers/specs/2026-11-06-livret-suivi-apprentissage-design.md`](superpowers/specs/2026-11-06-livret-suivi-apprentissage-design.md) | Document de conception | Référence courante ; certains passages racontent l’historique v1 | 16 novembre 2026 |
 | [`superpowers/plans/2026-11-06-livret-suivi-apprentissage.md`](superpowers/plans/2026-11-06-livret-suivi-apprentissage.md) | Plan d’implémentation initial | Historique | 6 novembre 2026 |
 | [`superpowers/plans/2026-11-07-roadmap-v1.1.md`](superpowers/plans/2026-11-07-roadmap-v1.1.md) | Roadmap v1.1 | Historique + actualisation du 16 novembre 2026 | 16 novembre 2026 |
-| [`../CHANGELOG.md`](../CHANGELOG.md) | Journal des versions | `Unreleased` + 1.1.1, 1.1.0, 1.0.0 | 16 novembre 2026 |
+| [`../CHANGELOG.md`](../CHANGELOG.md) | Journal des versions | `Unreleased` + 1.2.0, 1.1.1, 1.1.0, 1.0.0 | 17 novembre 2026 |
 | [`../CONTRIBUTING.md`](../CONTRIBUTING.md) | Guide de contribution | Courant | 16 novembre 2026 |
 
 ## Règles de maintenance
@@ -50,6 +50,8 @@ commandes.
    dans `VERIFICATION.md`.
 5. **Les plans et roadmaps** sont datés : ne pas réécrire l’historique, ajouter
    une section « Actualisation » avec la nouvelle date.
+6. **Hors release, les fusions vont sur `dev`** : `main` ne reçoit `dev` qu’au
+   moment d’une version, tag inclus (voir `operations/RELEASE.md`).
 
 ## Sources de vérité
 

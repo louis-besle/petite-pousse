@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useObjectiveCatalog } from '@/db/customObjectives'
 import { db } from '@/db/db'
 import { clearCaptureDraft, getCaptureDraft } from '@/db/drafts'
 import { createValidation, useValidationsForStudent } from '@/db/validations'
 import { AlreadyValidatedError } from '@/domain/errors'
+import { isCustomObjective } from '@/domain/objectives'
 import {
   REFERENTIAL_VERSION,
   ageBandForSection,
@@ -95,6 +97,7 @@ export function ObjectiveScreen() {
 
   const studentId = snapshot?.student?.id ?? ''
   const validations = useValidationsForStudent(studentId)
+  const catalog = useObjectiveCatalog()
 
   if (snapshot === undefined) {
     return (
@@ -108,6 +111,14 @@ export function ObjectiveScreen() {
     return (
       <section className={styles.screen}>
         <LoadingText>Retour au choix de l’élève…</LoadingText>
+      </section>
+    )
+  }
+
+  if (catalog === undefined) {
+    return (
+      <section className={styles.screen}>
+        <LoadingText>Chargement des objectifs…</LoadingText>
       </section>
     )
   }
@@ -138,7 +149,7 @@ export function ObjectiveScreen() {
   const domainOrder = new Map(domains.map((domain) => [domain.id, domain.order]))
 
   const normalizedQuery = normalizeSearch(query)
-  const visibleObjectives = referential.objectives
+  const visibleObjectives = catalog
     .filter((objective) => {
       const matchesLevel = showAllLevels || objective.ageBands.includes(studentBand)
       const matchesDomain = domainFilter === 'all' || objective.domainId === domainFilter
@@ -169,9 +180,7 @@ export function ObjectiveScreen() {
   const selectedObjective =
     selectedObjectiveId === undefined || validatedByObjective.has(selectedObjectiveId)
       ? undefined
-      : referential.objectives.find(
-          (objective) => objective.id === selectedObjectiveId,
-        )
+      : catalog.find((objective) => objective.id === selectedObjectiveId)
 
   async function handleValidate(): Promise<void> {
     if (selectedObjective === undefined || busy) return
@@ -331,6 +340,12 @@ export function ObjectiveScreen() {
                         : selected
                           ? 'Prêt à valider'
                           : `${sectionForAgeBand(band)} · ${domain?.label ?? ''}`}
+                      {isCustomObjective(objective) ? (
+                        <>
+                          {' '}
+                          <span className={styles.addedTag}>Ajouté</span>
+                        </>
+                      ) : null}
                     </span>
                   </span>
                 </button>

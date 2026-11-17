@@ -2,6 +2,7 @@
 import { Blob as NodeBlob } from 'node:buffer'
 import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { createCustomObjective } from '@/db/customObjectives'
 import { db } from '@/db/db'
 import { getCaptureDraft, saveCaptureDraft } from '@/db/drafts'
 import { ensureSeed } from '@/db/seed'
@@ -55,12 +56,27 @@ async function seedDraft(studentId: string, withPhoto = true): Promise<CaptureDr
   return draft
 }
 
-function photoInput(): HTMLInputElement {
-  const input = document.querySelector('input[type="file"]')
+function fileInput(testId: string): HTMLInputElement {
+  const input = document.querySelector(`[data-testid="${testId}"]`)
   if (!(input instanceof HTMLInputElement)) {
-    throw new Error('Aucun input fichier dans l’écran photo.')
+    throw new Error(`Champ fichier introuvable dans l’écran photo : ${testId}`)
   }
   return input
+}
+
+/** Champ caméra : c'est lui qui porte `capture="environment"`. */
+function photoInput(): HTMLInputElement {
+  return fileInput('photo-camera-input')
+}
+
+/** Champ photothèque : sélecteur de photos, sans `capture`. */
+function libraryInput(): HTMLInputElement {
+  return fileInput('photo-library-input')
+}
+
+/** Feuille de choix ouverte par « Prendre la photo » et « Reprendre ». */
+function chooserDialog(): HTMLElement {
+  return screen.getByRole('dialog', { name: 'Ajouter une photo' })
 }
 
 function makeCompressedPhoto(label: string): CompressedPhoto {
@@ -213,10 +229,83 @@ describe('StudentPickerScreen', () => {
 })
 
 describe('PhotoScreen', () => {
-  it('compresse le fichier choisi et le stocke dans le brouillon', async () => {
+  it('« Prendre la photo » ouvre une feuille de choix entre caméra et photothèque', async () => {
+    const lea = await addStudent('Léa', 'PS')
+    await seedDraft(lea.id, false)
+    const user = userEvent.setup()
+
+    renderApp({ route: `/capture/${lea.id}/photo` })
+
+    await user.click(
+      await screen.findByRole('button', { name: 'Prendre la photo' }),
+    )
+
+    const dialog = chooserDialog()
+    expect(within(dialog).getByRole('button', { name: 'Caméra' })).toBeInTheDocument()
+    expect(
+      within(dialog).getByRole('button', { name: 'Photothèque' }),
+    ).toBeInTheDocument()
+  })
+
+  it('« Caméra » déclenche le champ caméra, pas celui de la photothèque', async () => {
+    const lea = await addStudent('Léa', 'PS')
+    await seedDraft(lea.id, false)
+    const user = userEvent.setup()
+
+    renderApp({ route: `/capture/${lea.id}/photo` })
+
+    await screen.findByRole('button', { name: 'Prendre la photo' })
+
+    const camera = photoInput()
+    expect(camera).toHaveAttribute('accept', 'image/*')
+    expect(camera).toHaveAttribute('capture', 'environment')
+
+    const cameraClick = vi.spyOn(camera, 'click')
+    const libraryClick = vi.spyOn(libraryInput(), 'click')
+
+    await user.click(screen.getByRole('button', { name: 'Prendre la photo' }))
+    await user.click(within(chooserDialog()).getByRole('button', { name: 'Caméra' }))
+
+    expect(cameraClick).toHaveBeenCalledTimes(1)
+    expect(libraryClick).not.toHaveBeenCalled()
+    expect(
+      screen.queryByRole('dialog', { name: 'Ajouter une photo' }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('« Photothèque » déclenche un champ fichier sans capture', async () => {
+    const lea = await addStudent('Léa', 'PS')
+    await seedDraft(lea.id, false)
+    const user = userEvent.setup()
+
+    renderApp({ route: `/capture/${lea.id}/photo` })
+
+    await screen.findByRole('button', { name: 'Prendre la photo' })
+
+    const library = libraryInput()
+    expect(library).toHaveAttribute('accept', 'image/*')
+    expect(library).not.toHaveAttribute('capture')
+
+    const libraryClick = vi.spyOn(library, 'click')
+    const cameraClick = vi.spyOn(photoInput(), 'click')
+
+    await user.click(screen.getByRole('button', { name: 'Prendre la photo' }))
+    await user.click(
+      within(chooserDialog()).getByRole('button', { name: 'Photothèque' }),
+    )
+
+    expect(libraryClick).toHaveBeenCalledTimes(1)
+    expect(cameraClick).not.toHaveBeenCalled()
+    expect(
+      screen.queryByRole('dialog', { name: 'Ajouter une photo' }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('compresse la photo choisie dans la photothèque et la stocke dans le brouillon', async () => {
     const lea = await addStudent('Léa', 'PS')
     await seedDraft(lea.id, false)
     compressImageMock.mockResolvedValue(makeCompressedPhoto('atelier'))
+    const user = userEvent.setup()
 
     renderApp({ route: `/capture/${lea.id}/photo` })
 
@@ -226,12 +315,13 @@ describe('PhotoScreen', () => {
     expect(screen.getByText('Prête à photographier')).toBeInTheDocument()
     expect(screen.getByText('Valider sans photo')).toBeInTheDocument()
 
-    const input = photoInput()
-    expect(input).toHaveAttribute('accept', 'image/*')
-    expect(input).toHaveAttribute('capture', 'environment')
+    await user.click(screen.getByRole('button', { name: 'Prendre la photo' }))
+    await user.click(
+      within(chooserDialog()).getByRole('button', { name: 'Photothèque' }),
+    )
 
     const file = new File(['source'], 'atelier.jpg', { type: 'image/jpeg' })
-    fireEvent.change(input, { target: { files: [file] } })
+    fireEvent.change(libraryInput(), { target: { files: [file] } })
 
     await waitFor(async () => {
       const draft = await getCaptureDraft()
@@ -480,9 +570,22 @@ describe('PhotoScreen', () => {
     ).toBeInTheDocument()
 
     const retake = screen.getByRole('button', { name: 'Reprendre' })
-    const clickSpy = vi.spyOn(photoInput(), 'click')
+    const libraryClick = vi.spyOn(libraryInput(), 'click')
+    const cameraClick = vi.spyOn(photoInput(), 'click')
+
     await user.click(retake)
-    expect(clickSpy).toHaveBeenCalled()
+
+    // Reprendre passe d'abord par la feuille de choix, comme la prise initiale.
+    const dialog = chooserDialog()
+    expect(within(dialog).getByRole('button', { name: 'Caméra' })).toBeInTheDocument()
+    expect(
+      within(dialog).getByRole('button', { name: 'Photothèque' }),
+    ).toBeInTheDocument()
+
+    await user.click(within(dialog).getByRole('button', { name: 'Photothèque' }))
+
+    expect(libraryClick).toHaveBeenCalledTimes(1)
+    expect(cameraClick).not.toHaveBeenCalled()
   })
 
   it('« Choisir l’objectif » ouvre l’étape 3', async () => {
@@ -502,5 +605,59 @@ describe('PhotoScreen', () => {
     expect(
       await screen.findByRole('heading', { level: 1, name: "Choisir l'objectif" }),
     ).toBeInTheDocument()
+  })
+})
+
+describe('objectifs personnalisés en capture', () => {
+  it('propose un objectif ajouté au niveau de l’élève et le valide', async () => {
+    await ensureSeed()
+    const student = await addStudent('Léa', 'MS')
+    const created = await createCustomObjective({
+      label: 'Compter jusqu’à douze',
+      domainId: 'maths',
+      ageBands: ['from4'],
+      examples: { from4: 'Réciter la comptine jusqu’à douze.' },
+    })
+    await seedDraft(student.id)
+
+    const user = userEvent.setup()
+    renderApp({ route: '/capture/objective' })
+
+    const card = await screen.findByRole('button', {
+      name: /Compter jusqu’à douze/,
+    })
+    expect(within(card).getByText('Ajouté')).toBeInTheDocument()
+
+    await user.click(card)
+    await user.click(screen.getByRole('button', { name: /Valider la réussite/ }))
+
+    await waitFor(async () => {
+      const stored = await db.validations.toArray()
+      expect(stored).toHaveLength(1)
+      expect(stored[0]).toMatchObject({
+        studentId: student.id,
+        objectiveId: created.id,
+        snapshot: { objectiveLabel: 'Compter jusqu’à douze', ageBand: 'from4' },
+      })
+    })
+  })
+
+  it('ne propose pas un objectif ajouté pour un autre niveau', async () => {
+    await ensureSeed()
+    const student = await addStudent('Léa', 'PS')
+    await createCustomObjective({
+      label: 'Compter jusqu’à douze',
+      domainId: 'maths',
+      ageBands: ['from4'],
+      examples: { from4: 'Réciter la comptine jusqu’à douze.' },
+    })
+    await seedDraft(student.id)
+
+    renderApp({ route: '/capture/objective' })
+
+    expect(
+      await screen.findByRole('heading', { level: 1, name: /Choisir l.objectif/ }),
+    ).toBeInTheDocument()
+    expect(screen.queryByText('Compter jusqu’à douze')).not.toBeInTheDocument()
   })
 })

@@ -50,7 +50,12 @@ test.describe('capture', () => {
     const recap = page.getByRole('group', { name: /^Élève Noah, section MS$/ })
     await expect(recap).toBeVisible()
 
-    await page.locator('input[type="file"]').setInputFiles(PHOTO_FIXTURE)
+    await page.getByRole('button', { name: 'Prendre la photo' }).click()
+    await page
+      .getByRole('dialog', { name: 'Ajouter une photo' })
+      .getByRole('button', { name: 'Photothèque' })
+      .click()
+    await page.getByTestId('photo-library-input').setInputFiles(PHOTO_FIXTURE)
     await expect(
       page.getByRole('img', { name: 'Photo de réussite de Noah' }),
     ).toHaveAttribute('src', /^blob:/)
