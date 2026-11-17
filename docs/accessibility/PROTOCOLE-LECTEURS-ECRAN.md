@@ -171,13 +171,15 @@ guillemets sont les textes attendus dans l’interface.
 
 ### Étape 5 — Capture photo
 
-- **Action :** activer « Prendre la photo » (ou le champ d’import), choisir une
+- **Action :** activer « Prendre la photo », choisir **Caméra** (ou
+  **Photothèque** pour une image déjà présente sur l’appareil), choisir une
   image, revenir à l’application.
 - **Attendu :** l’image est annoncée « Photo de réussite de Léa, image » ; le
   badge « Photo prise » est annoncé ; le bouton « Choisir l’objectif » est
   disponible.
-- **Échec si :** l’image est muette, sans alternative, ou si le retour depuis
-  l’appareil photo perd le focus.
+- **Échec si :** l’image est muette, sans alternative, si la feuille
+  « Ajouter une photo » n’est pas annoncée comme une boîte de dialogue nommée,
+  ou si le retour depuis l’appareil photo perd le focus.
 
 ### Étape 6 — Choix de l’objectif
 

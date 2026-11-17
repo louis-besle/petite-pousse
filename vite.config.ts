@@ -86,6 +86,11 @@ export default defineConfig({
       '@': path.resolve(import.meta.dirname, 'src'),
     },
   },
+  server: {
+    // Noms MagicDNS Tailscale (`*.ts.net`) : permet de tester sur téléphone via
+    // `tailscale serve`, en HTTPS, sans exposer le serveur de dev ailleurs.
+    allowedHosts: ['.ts.net'],
+  },
   test: {
     environment: 'jsdom',
     setupFiles: './src/test/setup.ts',
