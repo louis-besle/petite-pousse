@@ -23,6 +23,9 @@ applique le [versionnage sémantique](https://semver.org/lang/fr/).
   l'enseignante ; l'onglet « Élèves » et l'onglet « Profil » séparés disparaissent.
 - **Documentation** : guide utilisateur, index de la documentation, runbook de
   release (`docs/operations/RELEASE.md`) et modèles légaux.
+- **Capture photo** : « Prendre la photo » ouvre un choix entre **Caméra** et
+  **Photothèque**, pour ajouter une image déjà enregistrée sur le téléphone au
+  lieu de passer systématiquement par l’appareil photo.
 - **Branches** : `dev` devient la branche d'intégration. Hors release, les
   branches courtes partent de `dev` et leurs PR y sont fusionnées ; `main` n'est
   mise à jour qu'au moment d'une release, avec son tag (voir `CONTRIBUTING.md` et

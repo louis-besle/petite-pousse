@@ -75,8 +75,8 @@ Le parcours se fait en trois étapes, avec un repère **1 / 3**, **2 / 3**, **3 
 
 ### Étape 2 — Photo facultative
 
-1. Touchez **Prendre la photo** : l’appareil photo natif du téléphone ou de la tablette s’ouvre. Cadrez, prenez la photo, puis vérifiez l’aperçu : le badge **Photo prise** confirme l’ajout.
-2. Touchez **Reprendre** pour remplacer la photo, puis **Choisir l'objectif**. Pour renoncer à la photo, touchez **Valider sans photo** : vous passez directement au choix de l’objectif.
+1. Touchez **Prendre la photo** : choisissez **Caméra** pour ouvrir l’appareil photo natif du téléphone ou de la tablette, ou **Photothèque** pour reprendre une photo déjà enregistrée sur l’appareil. Cadrez ou choisissez l’image, puis vérifiez l’aperçu : le badge **Photo prise** confirme l’ajout.
+2. Touchez **Reprendre** pour remplacer la photo — le choix **Caméra** / **Photothèque** réapparaît — puis **Choisir l'objectif**. Pour renoncer à la photo, touchez **Valider sans photo** : vous passez directement au choix de l’objectif.
 
 Une réussite peut toujours être enregistrée **sans photo**. Elle apparaît dans le dossier et dans le bilan avec les mentions « Observation en classe » et « sans photo » ; une photo pourra être ajoutée plus tard. La photo est compressée, ses métadonnées sont retirées et elle ne quitte pas l’appareil, sauf si vous partagez vous-même un PDF ou une sauvegarde.
 
