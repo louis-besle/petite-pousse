@@ -29,7 +29,7 @@ commandes.
 | [`legal/README.md`](legal/README.md) | Statut et procédure de validation des documents légaux | Courant | 16 novembre 2026 |
 | [`legal/DECLARATION-ACCESSIBILITE.md`](legal/DECLARATION-ACCESSIBILITE.md) | Modèle de déclaration légale | **Brouillon, non publiable en l’état** | 9 novembre 2026 |
 | [`legal/INFORMATION-RGPD-FAMILLES.md`](legal/INFORMATION-RGPD-FAMILLES.md) | Modèle d’information RGPD | **Brouillon, non diffusable en l’état** | 9 novembre 2026 |
-| [`operations/RELEASE.md`](operations/RELEASE.md) | Runbook de release et flux `dev` → `main` | Prêt ; **1.2.0 prête sur `dev`, publication à décider** | 17 novembre 2026 |
+| [`operations/RELEASE.md`](operations/RELEASE.md) | Runbook de release et flux `dev` → `main` | Prêt ; **1.2.0 publiée** (tag `v1.2.0`) | 19 novembre 2026 |
 | [`superpowers/specs/2026-11-06-livret-suivi-apprentissage-design.md`](superpowers/specs/2026-11-06-livret-suivi-apprentissage-design.md) | Document de conception | Référence courante ; certains passages racontent l’historique v1 | 16 novembre 2026 |
 | [`superpowers/plans/2026-11-06-livret-suivi-apprentissage.md`](superpowers/plans/2026-11-06-livret-suivi-apprentissage.md) | Plan d’implémentation initial | Historique | 6 novembre 2026 |
 | [`superpowers/plans/2026-11-07-roadmap-v1.1.md`](superpowers/plans/2026-11-07-roadmap-v1.1.md) | Roadmap v1.1 | Historique + actualisation du 16 novembre 2026 | 16 novembre 2026 |

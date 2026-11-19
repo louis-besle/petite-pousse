@@ -7,6 +7,12 @@ applique le [versionnage sémantique](https://semver.org/lang/fr/).
 
 ## [Unreleased]
 
+### Modifié
+
+- **Classe** : la bannière **« Sauvegarde conseillée »** disparaît de l’écran
+  d’accueil. Le rappel de sauvegarde reste visible dans la carte **Sauvegarde**
+  du profil.
+
 ## [1.2.0] - 2026-11-17
 
 ### Ajouté

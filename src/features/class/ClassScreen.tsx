@@ -3,9 +3,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useSchoolYears } from '@/db/schoolYears'
 import { useSettings } from '@/db/settings'
 import { useStudents } from '@/db/students'
-import { useAllValidations, useValidationsForYear } from '@/db/validations'
+import { useValidationsForYear } from '@/db/validations'
 import { resolveCurrentSchoolYearId } from '@/domain/schoolYear'
-import { shouldRemindBackup } from '@/features/settings/backup'
 import { formatLongDate, todayIso } from '@/lib/date'
 import { successLabel } from '@/lib/text'
 import { Avatar } from '@/ui/Avatar'
@@ -37,7 +36,6 @@ export function ClassScreen() {
     todayIso(),
   )
   const validations = useValidationsForYear(currentYearId ?? '')
-  const allValidations = useAllValidations()
   const navigate = useNavigate()
   const [filter, setFilter] = useState<SectionFilter>('all')
 
@@ -59,11 +57,6 @@ export function ClassScreen() {
         : students.filter((student) => student.section === filter)
 
   const hasStudents = studentCount > 0
-  // Aucun rappel tant que les réglages ou les réussites ne sont pas chargés.
-  const showBackupReminder =
-    settings !== undefined &&
-    allValidations !== undefined &&
-    shouldRemindBackup(settings, allValidations.length)
 
   return (
     <section className={styles.screen}>
@@ -94,16 +87,6 @@ export function ClassScreen() {
           ) : null}
         </p>
       </header>
-
-      {showBackupReminder ? (
-        <Link to="/settings" className={styles.backupReminder}>
-          <Icon name="download" size={16} />
-          <span>
-            <strong>Sauvegarde conseillée.</strong> Pense à exporter tes données
-            depuis ton profil.
-          </span>
-        </Link>
-      ) : null}
 
       {students === undefined ? (
         <LoadingText>Chargement de la classe…</LoadingText>

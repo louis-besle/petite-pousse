@@ -1,9 +1,8 @@
 # Runbook de release — Petite pousse
 
-> **Release 1.2.0 prête sur `dev`, pas encore publiée.** Ce document décrit la
-> procédure à suivre le jour où la publication est décidée. La dernière release
-> publiée est la **1.1.1** : `main` s'y trouve encore, alors que `dev` porte déjà
-> la 1.2.0 versionnée.
+> **Release 1.2.0 publiée** (tag `v1.2.0`). Ce document décrit la procédure à
+> suivre pour les publications suivantes. La dernière release publiée est la
+> **1.2.0** : `main` et `dev` partent du même commit versionné.
 
 Application : **Petite pousse**, <https://carnet-de-reussites.vercel.app> — dépôt : <https://github.com/louis-besle/petite-pousse>.
 

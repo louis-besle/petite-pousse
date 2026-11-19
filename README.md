@@ -4,11 +4,11 @@ Application locale de suivi des compétences pour une classe de maternelle (PS, 
 
 ## État
 
-Version applicative **1.2.0**, prête sur `dev` et pas encore publiée : <https://carnet-de-reussites.vercel.app> (production en **1.1.1**)
+Version applicative **1.2.0**, publiée en production : <https://carnet-de-reussites.vercel.app>
 
 Dépôt : <https://github.com/louis-besle/petite-pousse>
 
-PWA installable et utilisable hors ligne, couverte par **418 tests unitaires**, **53 parcours E2E** (**47 Chromium** et **6 WebKit**) et **1 test de rechargement hors ligne** — compteurs de la 1.2.0 au 17 novembre 2026.
+PWA installable et utilisable hors ligne, couverte par **416 tests unitaires**, **53 parcours E2E** (**47 Chromium** et **6 WebKit**) et **1 test de rechargement hors ligne** — compteurs au 19 novembre 2026.
 
 ### Nouveautés de la 1.2
 
@@ -19,7 +19,7 @@ PWA installable et utilisable hors ligne, couverte par **418 tests unitaires**, 
 - **Bilans** : la période et l’année choisies sont conservées dans l’URL et restent sélectionnées au retour depuis l’aperçu d’un élève, y compris avec le bouton Retour du navigateur.
 - **Accessibilité** : contraste de la navigation stabilisé et scans axe fiabilisés sur WebKit.
 
-Les nouveaux travaux se fusionnent dans `dev`, la branche d’intégration ; `main` reste l’état publié de la dernière release, la **1.1.1**, et recevra `dev` au moment de la publication de la 1.2.0.
+Les nouveaux travaux se fusionnent dans `dev`, la branche d’intégration ; `main` porte la dernière release publiée, la **1.2.0** (tag `v1.2.0`), et reçoit `dev` au moment de chaque publication.
 
 ### Nouveautés de la v1.1
 
@@ -31,9 +31,9 @@ Les nouveaux travaux se fusionnent dans `dev`, la branche d’intégration ; `ma
 
 ## Fonctionnalités
 
-- **Classe** : liste des élèves filtrable par section (PS, MS, GS), nombre de réussites par élève, ajout et suppression d’élèves, accès au dossier individuel.
+- **Classe** : liste des élèves filtrable par section (PS, MS, GS), nombre de réussites par élève, accès au dossier individuel ; la gestion des élèves (ajout, modification, suppression) se fait depuis le profil.
 - **Capture** : choix de l’élève, de l’objectif puis d’une photo facultative prise avec l’appareil. Une réussite peut être enregistrée sans photo.
-- **Programme** : référentiel officiel 2026 (six domaines) et programme EVAR, soit **407 objectifs** répartis en sept catégories, consultables par domaine, compétence et objectif.
+- **Programme** : référentiel officiel 2026 (six domaines) et programme EVAR, soit **407 objectifs** répartis en sept catégories, consultables par domaine, filtrables par niveau et recherchables par intitulé.
 - **Dossiers élèves** : réussites regroupées par domaine et par année scolaire, vignettes des photos, suppression d’une réussite et ajout sans photo.
 - **Bilans** : deux bilans par année scolaire, choix de la période et de l’année, aperçu A4 fidèle, export PDF individuel, partage natif sur mobile et génération d’un ZIP contenant un PDF par élève.
 - **Sauvegarde** : export ZIP de toutes les années, réussites et photos, avec protection facultative par mot de passe (AES-256-GCM, PBKDF2-SHA256). La restauration remplace les données existantes après confirmation. Un panneau indique l’espace utilisé, le quota et permet de demander la persistance du stockage.
@@ -75,6 +75,7 @@ Les branches longues sont `dev` (intégration : tout ce qui n’est pas une rele
 
 - [`docs/README.md`](docs/README.md) : index de la documentation et état de chaque document.
 - [`docs/GUIDE-UTILISATION.md`](docs/GUIDE-UTILISATION.md) : mode d’emploi enseignante et familles.
+- [`docs/legal/`](docs/legal/) : modèles d’information RGPD et de déclaration d’accessibilité (brouillons à compléter et à valider).
 - [`docs/accessibility/`](docs/accessibility/) : audit WCAG/RGAA, matrice des critères et protocole lecteurs d’écran.
 - [`docs/operations/RELEASE.md`](docs/operations/RELEASE.md) : runbook de release.
 - [`CHANGELOG.md`](CHANGELOG.md) : journal des versions.
@@ -102,7 +103,7 @@ L’audit a été révisé le **16 novembre 2026** pour le référentiel `2026.2
 - **Restauration** : une sauvegarde remplace l’ensemble des données présentes. Il n’existe ni fusion de sauvegardes ni export limité à une année.
 - **Bilans en lot** : les PDF sont générés l’un après l’autre, sans annulation possible. Une classe chargée en photos peut être longue à traiter.
 - **Aperçu A4 sur petit écran** : à 320 px, la feuille est réduite et le texte devient petit ; le zoom du navigateur reste nécessaire.
-- **Fonctionnalités absentes** : objectifs personnalisés, import CSV des élèves, statistiques de classe et PDF combiné du lot.
+- **Fonctionnalités absentes** : import CSV des élèves, statistiques de classe et PDF combiné du lot.
 - **Identifiant historique** : `carnet-de-reussites` reste utilisé pour la base IndexedDB, les sauvegardes et l’URL de production afin de préserver les données déjà saisies.
 
 ## Licence
@@ -114,6 +115,7 @@ Distribué sous licence [MIT](./LICENSE). Copyright © 2026 Louis BESLE.
 - `docs/README.md` : index de la documentation et état des documents.
 - `docs/GUIDE-UTILISATION.md` : mode d’emploi enseignante et familles.
 - `docs/accessibility/` : audit WCAG/RGAA, matrice des critères et protocole lecteurs d’écran.
+- `docs/legal/` : modèles d’information RGPD et de déclaration d’accessibilité.
 - `docs/operations/` : runbook de release.
 - `docs/superpowers/specs/` : document de conception.
 - `docs/superpowers/plans/` : plans d’implémentation.

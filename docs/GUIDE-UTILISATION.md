@@ -53,7 +53,6 @@ L’écran **Classe** est l’accueil. La navigation basse propose **Classe**, *
 2. Filtrez avec les pastilles **Toute la classe**, **PS**, **MS** ou **GS**.
 3. Touchez la carte d’un élève pour ouvrir son **dossier**. La carte indique son prénom, sa section et son nombre de réussites de l’année en cours.
 4. Touchez **Prendre une photo** pour lancer une nouvelle réussite. Ce bouton est désactivé tant que la classe est vide.
-5. Le rappel **« Sauvegarde conseillée »** renvoie au profil. Il se déclenche dès qu’une réussite existe sans sauvegarde, après 30 jours sans sauvegarde ou après 50 nouvelles réussites.
 
 ### Ajouter, modifier ou supprimer un élève
 
